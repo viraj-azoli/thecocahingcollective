@@ -1537,24 +1537,25 @@
       <div class="col-lg-5">
         <h5 class="mb-4">Share what's on your mind</h5>
 
-        <form class="zform text-left" method="post">
-          <input type="hidden" name="to" value="info@thecoachingcollectiveonline.com" />
+        <form class="text-left" action="https://api.web3forms.com/submit" method="POST">
+          <input type="hidden" name="access_key" value="34ef2f77-896b-4212-abe4-92c92c4b8213">
+          <input type="hidden" name="subject" value="New Message — TCCO Professionals Homepage">
+          <input type="hidden" name="redirect" value="https://www.thecoachingcollectiveonline.com/thank-you.html">
+          <input type="checkbox" name="botcheck" style="display:none;">
 
           <div class="form-group mb-3">
-            <input class="fs-0 form-control" type="text" placeholder="Your Name" required="required" />
+            <input class="fs-0 form-control" type="text" name="name" placeholder="Your Name" required />
           </div>
 
           <div class="form-group mb-3">
-            <input class="fs-0 form-control" type="email" placeholder="Your Email" required="required" />
+            <input class="fs-0 form-control" type="email" name="email" placeholder="Your Email" required />
           </div>
 
           <div class="form-group mb-3">
-            <textarea class="fs-0 form-control contact-message" rows="8"
+            <textarea class="fs-0 form-control contact-message" name="message" rows="8"
                       placeholder="Share whatever feels right..."
-                      required="required"></textarea>
+                      required></textarea>
           </div>
-
-          <div class="zform-feedback my-2"></div>
 
           <button class="btn btn-block btn-dark hvr-sweep-top" type="submit">
             Send Message

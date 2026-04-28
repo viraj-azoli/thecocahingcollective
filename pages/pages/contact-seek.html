@@ -164,7 +164,11 @@
      <section class="contact-form-section">
 
   <div class="container">
-    <form class="contact-form">
+    <form class="contact-form" action="https://api.web3forms.com/submit" method="POST">
+      <input type="hidden" name="access_key" value="34ef2f77-896b-4212-abe4-92c92c4b8213">
+      <input type="hidden" name="subject" value="New Coaching Inquiry — TCCO">
+      <input type="hidden" name="redirect" value="https://www.thecoachingcollectiveonline.com/thank-you.html">
+      <input type="checkbox" name="botcheck" style="display:none;">
 
   <!-- SECTION 1 -->
   <div class="form-section">
@@ -172,34 +176,34 @@
 
     <div class="form-group">
       <label>Email (required)</label>
-      <input type="email" class="form-control" required>
+      <input type="email" name="email" class="form-control" required>
     </div>
 
     <div class="row">
       <div class="col-md-6">
         <label>First Name (required)</label>
-        <input type="text" class="form-control" required>
+        <input type="text" name="first_name" class="form-control" required>
       </div>
       <div class="col-md-6">
         <label>Last Name (required)</label>
-        <input type="text" class="form-control" required>
+        <input type="text" name="last_name" class="form-control" required>
       </div>
     </div>
 
     <div class="row mt-3">
       <div class="col-md-6">
         <label>Country (required)</label>
-        <input type="text" class="form-control" required>
+        <input type="text" name="country" class="form-control" required>
       </div>
       <div class="col-md-6">
         <label>State (required)</label>
-        <input type="text" class="form-control" required>
+        <input type="text" name="state" class="form-control" required>
       </div>
     </div>
 
     <div class="form-group mt-3">
       <label>Phone</label>
-      <input type="text" class="form-control">
+      <input type="text" name="phone" class="form-control">
     </div>
   </div>
 
@@ -208,83 +212,76 @@
     <h5 class="form-section-title">Coaching Preferences</h5>
 
     <div class="form-group">
-  <label>Preferred method of communication (required)</label>
-  <select class="form-control" required>
-   <option value="" disabled selected hidden>Select an option</option>
-    <option value="email">Email</option>
-    <option value="text">Text Message</option>
-    <option value="call">Phone Call</option>
-  </select>
-</div>
+      <label>Preferred method of communication (required)</label>
+      <select name="preferred_contact" class="form-control" required>
+        <option value="" disabled selected hidden>Select an option</option>
+        <option value="email">Email</option>
+        <option value="text">Text Message</option>
+        <option value="call">Phone Call</option>
+      </select>
+    </div>
 
     <div class="form-group">
-  <label>What type of coaching are you interested in?</label>
+      <label>What type of coaching are you interested in?</label>
+      <div class="option-group">
+        <label class="option-card">
+          <input type="radio" name="coaching_type" value="individual">
+          <span>Individual</span>
+        </label>
+        <label class="option-card">
+          <input type="radio" name="coaching_type" value="group">
+          <span>Group</span>
+        </label>
+        <label class="option-card">
+          <input type="radio" name="coaching_type" value="organizational">
+          <span>Organizational</span>
+        </label>
+      </div>
+    </div>
 
-  <div class="option-group">
-    <label class="option-card">
-      <input type="radio" name="coaching_type" value="individual">
-      <span>Individual</span>
-    </label>
-
-    <label class="option-card">
-      <input type="radio" name="coaching_type" value="group">
-      <span>Group</span>
-    </label>
-
-    <label class="option-card">
-      <input type="radio" name="coaching_type" value="organizational">
-      <span>Organizational</span>
-    </label>
+    <div class="form-group">
+      <label>What is your age range?</label>
+      <div class="option-group">
+        <label class="option-card">
+          <input type="radio" name="age_range" value="18-35">
+          <span>18–35</span>
+        </label>
+        <label class="option-card">
+          <input type="radio" name="age_range" value="36-45">
+          <span>36–45</span>
+        </label>
+        <label class="option-card">
+          <input type="radio" name="age_range" value="46-59">
+          <span>46–59</span>
+        </label>
+        <label class="option-card">
+          <input type="radio" name="age_range" value="60+">
+          <span>60+</span>
+        </label>
+      </div>
+    </div>
   </div>
-</div>
-
-
-<div class="form-group">
-  <label>What is your age range?</label>
-
-  <div class="option-group">
-    <label class="option-card">
-      <input type="radio" name="age_range" value="18-35">
-      <span>18–35</span>
-    </label>
-
-    <label class="option-card">
-      <input type="radio" name="age_range" value="36-45">
-      <span>36–45</span>
-    </label>
-
-    <label class="option-card">
-      <input type="radio" name="age_range" value="46-59">
-      <span>46–59</span>
-    </label>
-
-    <label class="option-card">
-      <input type="radio" name="age_range" value="60+">
-      <span>60+</span>
-    </label>
-  </div>
-</div>
 
   <!-- SECTION 3 -->
   <div class="form-section">
-    <h5 class="form-section-title">Identity & Background</h5>
+    <h5 class="form-section-title">Identity &amp; Background</h5>
 
     <div class="form-group">
       <label>What are your pronouns? (required)</label>
-      <label class="inline"><input type="checkbox"> They/Them/Theirs</label>
-      <label class="inline"><input type="checkbox"> She/Her/Hers</label>
-      <label class="inline"><input type="checkbox"> He/Him/His</label>
-      <label class="inline"><input type="checkbox"> Other</label>
+      <label class="inline"><input type="checkbox" name="pronouns[]" value="They/Them/Theirs"> They/Them/Theirs</label>
+      <label class="inline"><input type="checkbox" name="pronouns[]" value="She/Her/Hers"> She/Her/Hers</label>
+      <label class="inline"><input type="checkbox" name="pronouns[]" value="He/Him/His"> He/Him/His</label>
+      <label class="inline"><input type="checkbox" name="pronouns[]" value="Other"> Other</label>
     </div>
 
     <div class="form-group">
       <label>Other Pronouns</label>
-      <input type="text" class="form-control">
+      <input type="text" name="pronouns_other" class="form-control">
     </div>
 
     <div class="form-group">
       <label>What is your racial or ethnic identity? (Optional)</label>
-      <input type="text" class="form-control">
+      <input type="text" name="racial_identity" class="form-control">
     </div>
   </div>
 
@@ -294,35 +291,35 @@
 
     <div class="form-group">
       <label>Time Zone (required)</label>
-      <input type="text" class="form-control" required>
+      <input type="text" name="timezone" class="form-control" required>
     </div>
 
     <div class="form-group">
       <label>Preferred coaching time</label>
-      <input type="text" class="form-control">
+      <input type="text" name="preferred_time" class="form-control">
     </div>
 
     <div class="form-group">
       <label>Areas you seek coaching in</label>
-      <label class="inline"><input type="checkbox"> Professional</label>
-      <label class="inline"><input type="checkbox"> Personal</label>
-      <label class="inline"><input type="checkbox"> Spiritual</label>
-      <label class="inline"><input type="checkbox"> Other</label>
+      <label class="inline"><input type="checkbox" name="coaching_areas[]" value="Professional"> Professional</label>
+      <label class="inline"><input type="checkbox" name="coaching_areas[]" value="Personal"> Personal</label>
+      <label class="inline"><input type="checkbox" name="coaching_areas[]" value="Spiritual"> Spiritual</label>
+      <label class="inline"><input type="checkbox" name="coaching_areas[]" value="Other"> Other</label>
     </div>
 
     <div class="form-group">
       <label>Industry / Role</label>
-      <input type="text" class="form-control">
+      <input type="text" name="industry" class="form-control">
     </div>
 
     <div class="form-group">
       <label>Previous coaching experience</label>
-      <textarea class="form-control"></textarea>
+      <textarea name="previous_experience" class="form-control"></textarea>
     </div>
 
     <div class="form-group">
       <label>What are your goals? (required)</label>
-      <textarea class="form-control" required></textarea>
+      <textarea name="goals" class="form-control" required></textarea>
     </div>
   </div>
 
@@ -332,15 +329,15 @@
 
     <div class="form-group">
       <label>My ideal coach would...</label>
-      <label class="inline"><input type="checkbox"> Share my gender identity</label>
-      <label class="inline"><input type="checkbox"> Share my racial identity</label>
-      <label class="inline"><input type="checkbox"> Be of similar age</label>
-      <label class="inline"><input type="checkbox"> Have industry expertise</label>
-      <label class="inline"><input type="checkbox"> Religious background</label>
-      <label class="inline"><input type="checkbox"> Offer reading</label>
-      <label class="inline"><input type="checkbox"> Offer podcasts/videos</label>
-      <label class="inline"><input type="checkbox"> Physical practices</label>
-      <label class="inline"><input type="checkbox"> None</label>
+      <label class="inline"><input type="checkbox" name="coach_prefs[]" value="Share my gender identity"> Share my gender identity</label>
+      <label class="inline"><input type="checkbox" name="coach_prefs[]" value="Share my racial identity"> Share my racial identity</label>
+      <label class="inline"><input type="checkbox" name="coach_prefs[]" value="Be of similar age"> Be of similar age</label>
+      <label class="inline"><input type="checkbox" name="coach_prefs[]" value="Have industry expertise"> Have industry expertise</label>
+      <label class="inline"><input type="checkbox" name="coach_prefs[]" value="Religious background"> Religious background</label>
+      <label class="inline"><input type="checkbox" name="coach_prefs[]" value="Offer reading"> Offer reading</label>
+      <label class="inline"><input type="checkbox" name="coach_prefs[]" value="Offer podcasts/videos"> Offer podcasts/videos</label>
+      <label class="inline"><input type="checkbox" name="coach_prefs[]" value="Physical practices"> Physical practices</label>
+      <label class="inline"><input type="checkbox" name="coach_prefs[]" value="None"> None</label>
     </div>
   </div>
 
@@ -350,23 +347,23 @@
 
     <div class="form-group">
       <label>Anything else we should know?</label>
-      <textarea class="form-control"></textarea>
+      <textarea name="additional_info" class="form-control"></textarea>
     </div>
 
     <div class="form-group">
       <label>Referral</label>
-      <input type="text" class="form-control">
+      <input type="text" name="referral" class="form-control">
     </div>
 
     <div class="form-group">
       <label>Discount Code</label>
-      <input type="text" class="form-control">
+      <input type="text" name="discount_code" class="form-control">
     </div>
   </div>
 
   <!-- SUBMIT -->
   <div class="text-center mt-4">
-    <button class="btn px-5">Submit Form</button>
+    <button class="btn px-5" type="submit">Submit Form</button>
   </div>
 
     </form>
