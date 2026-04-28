@@ -1444,17 +1444,23 @@
       </div>
 
       <div class="col-md-6 col-lg-8 col-xl-6 pl-lg-0 px-xl-3">
-        <form data-zanim-xs='{"from":{"opacity":1,"x":30},"to":{"opacity":1,"x":0},"duration":1.5,"delay":0.1}'>
+        <form action="https://api.web3forms.com/submit" method="POST"
+              data-zanim-xs='{"from":{"opacity":1,"x":30},"to":{"opacity":1,"x":0},"duration":1.5,"delay":0.1}'>
+          <input type="hidden" name="access_key" value="34ef2f77-896b-4212-abe4-92c92c4b8213">
+          <input type="hidden" name="subject" value="Newsletter Signup — The Coaching Collective">
+          <input type="hidden" name="redirect" value="https://www.thecoachingcollectiveonline.com/thank-you.html">
+          <input type="checkbox" name="botcheck" style="display:none;">
 
           <div class="floating-label-group floating-label-group-lg mb-0">
             <input class="floating-label-input border-0 form-control form-control-lg"
-                   id="email"
+                   id="newsletter_email"
+                   name="email"
                    type="email"
                    placeholder="Your Email"
-                   required="required" />
+                   required />
 
-            <label class="floating-label" for="email">
-              
+            <label class="floating-label" for="newsletter_email">
+
             </label>
 
             <button class="btn btn-input-icon" type="submit">
@@ -1592,10 +1598,7 @@
           <a class="text-900 hover-color-white pr-2" href="https://www.instagram.com/thecoachingcollectiveonline" target="_blank"><span class="fab fa-instagram"></span></a>
         </li>
         <li class="list-inline-item mr-0">
-          <a class="text-900 hover-color-white px-2" href="#"><span class="fab fa-linkedin-in"></span></a>
-        </li>
-        <li class="list-inline-item mr-0">
-          <a class="text-900 hover-color-white px-2" href="#"><span class="fab fa-facebook-f"></span></a>
+          <a class="text-900 hover-color-white px-2" href="https://www.linkedin.com/company/116124102/" target="_blank"><span class="fab fa-linkedin-in"></span></a>
         </li>
       </ul>
     </div>
