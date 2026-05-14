@@ -1,0 +1,293 @@
+/*
+ * ================================================================
+ *  The Coaching Collective — Layout Fixes & Finishing Polish
+ *  tcc-fixes.css  (load AFTER theme.css and tcc-brand.css)
+ * ================================================================
+ */
+
+/* ----------------------------------------------------------------
+   1. GLOBAL: isolate every section so bg-holders can't bleed out
+   ---------------------------------------------------------------- */
+section {
+  position: relative;        /* establishes stacking context       */
+  overflow: hidden;          /* clips any overflow from bg-holder   */
+  isolation: isolate;        /* further stacking-context guard      */
+}
+
+/* bg-holder sits behind everything in its own section */
+.bg-holder {
+  position: absolute;
+  inset: 0;                  /* top/right/bottom/left: 0            */
+  width: 100%;
+  height: 100%;
+  z-index: -1;               /* below section content, not global   */
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* overlay pseudo-element correction — keep them fully contained */
+.bg-holder.overlay::before,
+.bg-holder.overlay::after {
+  position: absolute;
+  inset: 0;
+}
+
+
+/* ----------------------------------------------------------------
+   2. HERO SECTION — full-viewport bleed fix
+   ---------------------------------------------------------------- */
+#top {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+/* Parallax holder must stay clipped inside hero */
+#top .bg-holder.parallax {
+  transform: translateZ(0); /* GPU-composite the layer             */
+  will-change: transform;
+}
+
+
+/* ----------------------------------------------------------------
+   3. STATS / FUN-FACT SECTION — dark bg bleeds into neighbours
+   ---------------------------------------------------------------- */
+section.py-7 {     /* the "our impact" counter section            */
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* Prevent the dark overlay from spilling 1–2 px over the border  */
+section.py-7 .bg-holder {
+  top: 0;
+  bottom: 0;
+  margin: 0;
+}
+
+
+/* ----------------------------------------------------------------
+   4. PERFORMANCE / PROGRESS-BAR SECTION
+   ---------------------------------------------------------------- */
+section.py-6 {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Guard rail: ensure the bg-holder doesn't extend beyond padding  */
+section.py-6 > .bg-holder {
+  inset: 0;
+}
+
+
+/* ----------------------------------------------------------------
+   5. TESTIMONIAL SECTION — bg bleeds over the bottom rule
+   ---------------------------------------------------------------- */
+section.testimonial {
+  position: relative;
+  overflow: hidden;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+section.testimonial .bg-holder {
+  inset: 0;
+}
+
+
+/* ----------------------------------------------------------------
+   6. CTA STRIP (dark call-to-action bands)
+   ---------------------------------------------------------------- */
+section.py-6[data-zanim-trigger] {  /* the "Ready to Begin" strip  */
+  position: relative;
+  overflow: hidden;
+}
+
+
+/* ----------------------------------------------------------------
+   7. FOOTER DARK SECTION (.bg-1100) — unclosed tag guard
+   ---------------------------------------------------------------- */
+section.bg-1100 {
+  position: relative;
+  overflow: hidden;
+  padding-top: 3.5rem;
+  padding-bottom: 3.5rem;
+  /* Ensure bg-1100 colour fully covers — no bleed from above      */
+  background-clip: padding-box;
+}
+
+/* Hard bottom boundary so copyright bar sits flush beneath        */
+section.bg-1100 + section.bg-black {
+  margin-top: 0;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+
+/* ----------------------------------------------------------------
+   8. PROCESS / JOURNEY SECTION — dashed borders & icons
+   ---------------------------------------------------------------- */
+.process-item {
+  position: relative;
+  z-index: 1;            /* sit above any bg bleed                 */
+}
+
+/* Make sure white bg spans on headings fully mask the dashed line */
+.process-item .bg-white {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+}
+
+
+/* ----------------------------------------------------------------
+   9. SORTABLE PORTFOLIO GRID — bottom edge clipping fix
+   ---------------------------------------------------------------- */
+.sortable-container {
+  overflow: visible;    /* allow packery to calc full height       */
+}
+
+/* Last row items must not be clipped by parent overflow:hidden    */
+section.text-center.pb-0 {
+  overflow: visible;    /* pb-0 sections often clip bottom items   */
+  padding-bottom: 2rem !important;
+}
+
+
+/* ----------------------------------------------------------------
+   10. MEMBERSHIP / PRICING CARDS — border bleeds on hover
+   ---------------------------------------------------------------- */
+[class*="col-lg-3"] .border {
+  box-sizing: border-box;   /* border included in width calc       */
+  position: relative;
+  z-index: 1;
+}
+
+/* Highlighted card (Expansion) — shadow lift, no bleed           */
+[class*="col-lg-3"] .border.border-black {
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+  z-index: 2;
+}
+
+
+/* ----------------------------------------------------------------
+   11. NEWSLETTER SECTION — bg-holder bottom bleed
+   ---------------------------------------------------------------- */
+section.py-6 > .bg-holder[style*="newsletter"] {
+  bottom: 0;
+  top: 0;
+}
+
+
+/* ----------------------------------------------------------------
+   12. TEAM / PROFESSIONALS — hoverbox circle overflow
+   ---------------------------------------------------------------- */
+.hoverbox.rounded-circle {
+  overflow: hidden;       /* clip avatar images to circle          */
+  will-change: transform;
+}
+
+.hoverbox-content {
+  position: absolute;
+  inset: 0;              /* ensure overlay fills circle exactly    */
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+
+/* ----------------------------------------------------------------
+   13. GLOBAL SECTION SEPARATOR — 1 px seam between sections
+   ---------------------------------------------------------------- */
+/* Some browsers render a sub-pixel gap between adjacent sections.
+   A negative margin of 1 px on sections with solid backgrounds
+   collapses that seam cleanly.                                     */
+section.bg-black,
+section.bg-1100,
+section.clients {
+  margin-top: -1px;
+}
+
+
+/* ----------------------------------------------------------------
+   14. MOBILE OVERFLOW GUARD
+   ---------------------------------------------------------------- */
+body {
+  overflow-x: hidden;   /* prevents horizontal scroll from bleeds  */
+}
+
+/* Navbar stays above all bg-holders */
+.navbar-theme.fixed-top {
+  z-index: 1050;
+}
+
+
+/* ----------------------------------------------------------------
+   15. ABOUT IMAGE SECTION — bottom padding collapse fix
+   ---------------------------------------------------------------- */
+#about-us {
+  position: relative;
+  overflow: hidden;      /* clips the rounded image on small vp    */
+}
+
+
+/* ----------------------------------------------------------------
+   16. WHY CHOOSE US — feature-item line-indicator overflow
+   ---------------------------------------------------------------- */
+.feature-item {
+  position: relative;
+  overflow: visible;    /* allow lines to extend to grid midpoint  */
+}
+
+/* Ensure the checked-indicator dots sit above the lines          */
+.checked-indicator {
+  position: relative;
+  z-index: 2;
+}
+
+
+/* ----------------------------------------------------------------
+   17. BLOG CARDS — img bottom margin collapse
+   ---------------------------------------------------------------- */
+.col-md-6.col-lg-4.h-100.mb-4 img.img-fluid.rounded-top {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+  height: 220px;
+}
+
+.col-md-6.col-lg-4.h-100.mb-4 .border.rounded-bottom {
+  border-top: none !important;
+  margin-top: -1px;          /* collapse the seam between img & card */
+}
+
+
+/* ----------------------------------------------------------------
+   18. CONTACT SECTION — map min-height fix on desktop
+   ---------------------------------------------------------------- */
+.googlemap.theme-map {
+  min-height: 14.63rem;
+  overflow: hidden;
+  border-radius: 0.375rem;
+  position: relative;
+}
+
+
+/* ================================================================
+   END OF tcc-fixes.css
+   ================================================================ */
+
+   /* ── Hero: soften the green tint overlay ── */
+.overlay-2::before,
+.overlay-2::after {
+  opacity: 0.45 !important;  /* was likely 0.7–0.8 — adjust 0.35–0.55 to taste */
+}
+
+/* Also reduce any background-color set directly on the holder */
+#top .bg-holder.overlay-2 {
+  background-blend-mode: multiply;
+}

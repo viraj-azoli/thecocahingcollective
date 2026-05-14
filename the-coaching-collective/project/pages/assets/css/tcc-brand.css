@@ -1,0 +1,2410 @@
+/* ================================================================
+   THE COACHING COLLECTIVE — OFFICIAL BRAND CSS
+   Based on Brand Guidelines Book, February 2026
+   
+   COLORS (from brand guidelines CMYK values):
+   - Primary Green:       #1F5F4A  (CMYK 82/44/76/42) — logos, headers, CTA
+   - Primary Dark Green:  #1A5843  (CMYK 83/44/78/45) — darker variant
+   - Secondary Green:     #3D7560  (CMYK 73/38/64/20) — secondary accents
+   - Secondary Light:     #6FA898  (CMYK 57/29/50/4)  — light green tint
+   - Warm Cream:          #F5EFDC  (CMYK 3/4/11/0)    — page background, light areas
+   - Tan/Sand:            #DDD5BE  (CMYK 13/14/26/0)  — borders, dividers
+   - Tan Light:           #E8E3D5  (CMYK 11/11/20/0)  — subtle bg tint
+   - Tan Pale:            #EEE9DF  (CMYK 7/8/13/0)    — very soft bg
+   - Dark/Black:          #181817  — body text, dark elements
+   - Orange Accent:       #CD512F  — CTAs, hover states, buttons (accent)
+
+   FONT: Montserrat (Light 300, Regular 400, Italic 400i, Bold 700)
+   Source: https://fonts.google.com/specimen/Montserrat
+================================================================ */
+
+/* ================================================================
+   1. GOOGLE FONTS IMPORT — MONTSERRAT
+================================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&1,300;1,400;1,500;1,600&display=swap');
+
+/* ================================================================
+   2. CSS CUSTOM PROPERTIES (BRAND TOKENS)
+================================================================ */
+:root {
+  /* === PRIMARY BRAND COLORS === */
+  --tcc-primary:          #1F5F4A;   /* Main green — logos, headings, CTA bg */
+  --tcc-primary-dark:     #1A5843;   /* Darker green — hover states, footer */
+  --tcc-secondary:        #3D7560;   /* Secondary green — accents */
+  --tcc-secondary-light:  #6FA898;   /* Light green — subtle accents */
+
+  /* === ACCENT COLOR === */
+  --tcc-accent:           #4A7F69 ;   /* Orange — CTA buttons, hover, highlights */
+  --tcc-accent-dark:      #B0431F;   /* Darker orange — accent hover */
+
+  /* === NEUTRALS / CREAM PALETTE === */
+  --tcc-cream:            #F5EFDC;   /* Primary cream — page bg, light sections */
+  --tcc-cream-mid:        #EEE9DF;   /* Mid cream — subtle backgrounds */
+  --tcc-cream-dark:       #E8E3D5;   /* Darker cream — card borders, dividers */
+  --tcc-tan:              #DDD5BE;   /* Tan — borders, separators */
+  --tcc-tan-dark:         #C9BFA6;   /* Deeper tan — stronger borders */
+
+  /* === DARK / TEXT === */
+  --tcc-dark:             #181817;   /* Near-black — body text, dark sections */
+  --tcc-dark-secondary:   #3A3A39;   /* Dark grey — secondary text */
+  --tcc-gray:             #6B6B69;   /* Medium grey — muted text */
+  --tcc-gray-light:       #9E9E9C;   /* Light grey — placeholders, captions */
+
+  /* === WHITE === */
+  --tcc-white:            #FFFFFF;
+  --tcc-off-white:        #FAF8F4;   /* Slightly warm white */
+
+  /* === BRAND FONT === */
+  --tcc-font-primary: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* === SPACING & RADIUS === */
+  --tcc-radius-sm:        3px;
+  --tcc-radius:           6px;
+  --tcc-radius-lg:        12px;
+
+  /* === TRANSITIONS === */
+  --tcc-transition:       all 0.3s ease-in-out;
+  --tcc-transition-slow:  all 0.5s ease-in-out;
+}
+
+/* ================================================================
+   3. BASE / RESET
+================================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--tcc-font-primary);
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--tcc-font-primary);
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--tcc-dark-secondary);
+  text-align: left;
+  background-color: var(--tcc-white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ================================================================
+   4. TYPOGRAPHY — MONTSERRAT HEADINGS
+================================================================ */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  margin-top: 0;
+  margin-bottom: 0.625rem;
+  font-family: var(--tcc-font-primary);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--tcc-primary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+h1, .h1 { font-size: 2.488rem; font-weight: 300; }
+h2, .h2 { font-size: 2rem;     font-weight: 300; letter-spacing: 0.08em; }
+h3, .h3 { font-size: 1.728rem; font-weight: 400; }
+h4, .h4 { font-size: 1.44rem;  font-weight: 500; }
+h5, .h5 { font-size: 1.2rem;   font-weight: 600; letter-spacing: 0.06em; }
+h6, .h6 { font-size: 0.73rem;  font-weight: 700; letter-spacing: 0.1em; }
+
+h2, h3, .h2, .h3 { line-height: 1.25; }
+h4, h5, .h4, .h5 { line-height: 1.4; }
+
+.display-1 { font-size: 5.16rem;  font-weight: 100; line-height: 1; }
+.display-2 { font-size: 4.3rem;   font-weight: 100; line-height: 1; }
+.display-3 { font-size: 3.583rem; font-weight: 300; line-height: 1; letter-spacing: 0.15em; }
+.display-4 { font-size: 2.986rem; font-weight: 300; line-height: 1; }
+
+p { margin-top: 0; margin-bottom: 1.25rem; }
+.lead { font-size: 1.1rem; font-weight: 300; line-height: 1.7; }
+
+small, .small { font-size: 80%; font-weight: 400; }
+
+/* ================================================================
+   5. LINKS
+================================================================ */
+a {
+  color: var(--tcc-primary);
+  text-decoration: none;
+  background-color: transparent;
+  transition: var(--tcc-transition);
+}
+a:hover {
+  color: var(--tcc-accent);
+  text-decoration: none;
+}
+
+/* ================================================================
+   6. HORIZONTAL RULES
+================================================================ */
+hr {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+  border: 0;
+  border-top: 1px solid var(--tcc-tan);
+}
+
+.hr-short {
+  width: 4rem;
+  border-top: 2px solid var(--tcc-accent);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ================================================================
+   7. NAVBAR
+================================================================ */
+.navbar {
+  font-family: var(--tcc-font-primary);
+  font-weight: 600;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  min-height: 4rem;
+  transition: var(--tcc-transition);
+}
+
+.navbar-theme {
+  background-color: var(--tcc-primary) !important;
+}
+
+.navbar-brand {
+  font-family: var(--tcc-font-primary);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  color: var(--tcc-cream) !important;
+  text-transform: uppercase;
+  transition: var(--tcc-transition);
+}
+.navbar-brand:hover,
+.navbar-brand:focus { color: var(--tcc-accent) !important; text-decoration: none; }
+
+.navbar-dark .navbar-nav .nav-link {
+  color: rgba(245, 239, 220, 0.75) !important;
+  font-family: var(--tcc-font-primary);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  padding: 1.375rem 1rem;
+  transition: var(--tcc-transition);
+}
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link:focus {
+  color: var(--tcc-cream) !important;
+}
+
+.navbar-theme .navbar-nav > .nav-item .nav-link-text {
+  padding: 0.0625rem 0.25rem;
+  transition: var(--tcc-transition);
+}
+.navbar-theme .navbar-nav > .nav-item > .nav-link:hover > .nav-link-text,
+.navbar-theme .navbar-nav > .nav-item > .nav-link:active > .nav-link-text,
+.navbar-theme .navbar-nav > .nav-item > .nav-link.active > .nav-link-text {
+  background-color: var(--tcc-accent);
+  color: var(--tcc-cream) !important;
+  border-radius: 2px;
+}
+
+.navbar-toggler { border-color: rgba(245,239,220,0.3); }
+.navbar-toggler:hover { border-color: var(--tcc-accent); }
+
+/* Dropdown */
+.dropdown-menu {
+  background-color: rgba(15, 40, 30, 0.96);
+  border: none;
+  border-radius: var(--tcc-radius-sm);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  font-size: 0.68rem;
+}
+.dropdown-item {
+  color: rgba(245, 239, 220, 0.7);
+  font-family: var(--tcc-font-primary);
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding: 0.7rem 1.2rem;
+  transition: var(--tcc-transition);
+}
+.dropdown-item:hover, .dropdown-item:focus,
+.dropdown-item.active, .dropdown-item:active {
+  color: var(--tcc-cream);
+  background-color: var(--tcc-accent);
+}
+
+/* ================================================================
+   8. BUTTONS
+================================================================ */
+.btn {
+  font-family: var(--tcc-font-primary);
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border-radius: var(--tcc-radius-sm);
+  transition: var(--tcc-transition);
+  padding: 0.5rem 2rem;
+}
+
+/* Primary Button — Orange accent (CTA) */
+.btn-primary {
+  background-color: var(--tcc-accent);
+  border-color: var(--tcc-accent);
+  color: var(--tcc-white);
+}
+.btn-primary:hover, .btn-primary:focus {
+  background-color: var(--tcc-accent-dark);
+  border-color: var(--tcc-accent-dark);
+  color: var(--tcc-white);
+}
+
+/* Dark Button — Primary green */
+.btn-dark {
+  background-color: var(--tcc-primary);
+  border-color: var(--tcc-primary);
+  color: var(--tcc-cream);
+}
+.btn-dark:hover, .btn-dark:focus {
+  background-color: var(--tcc-primary-dark);
+  border-color: var(--tcc-primary-dark);
+  color: var(--tcc-cream);
+}
+
+/* Outline Light — on dark green backgrounds */
+.btn-outline-light {
+  color: var(--tcc-cream);
+  border-color: rgba(245, 239, 220, 0.6);
+  background-color: transparent;
+}
+.btn-outline-light:hover, .btn-outline-light:focus {
+  background-color: var(--tcc-accent);
+  border-color: var(--tcc-accent);
+  color: var(--tcc-white);
+}
+
+/* Outline Dark — on light backgrounds */
+.btn-outline-dark {
+  color: var(--tcc-primary);
+  border-color: var(--tcc-primary);
+}
+.btn-outline-dark:hover, .btn-outline-dark:focus {
+  background-color: var(--tcc-primary);
+  color: var(--tcc-cream);
+}
+
+/* Outline Secondary */
+.btn-outline-secondary {
+  color: var(--tcc-primary);
+  border-color: var(--tcc-tan);
+}
+.btn-outline-secondary:hover, .btn-outline-secondary:focus {
+  background-color: var(--tcc-primary);
+  border-color: var(--tcc-primary);
+  color: var(--tcc-cream);
+}
+
+/* Outline White (on image backgrounds) */
+.btn-outline-white {
+  color: var(--tcc-white);
+  border-color: rgba(255,255,255,0.6);
+}
+.btn-outline-white:hover, .btn-outline-white:focus {
+  background-color: var(--tcc-accent);
+  border-color: var(--tcc-accent);
+  color: var(--tcc-white);
+}
+
+/* hvr-sweep-top sweep color */
+.btn.hvr-sweep-top:after,
+.btn-outline-light.hvr-sweep-top:after { background-color: var(--tcc-accent); }
+.btn-outline-dark.hvr-sweep-top:after  { background-color: var(--tcc-primary); }
+.btn-dark:after                         { background-color: var(--tcc-primary-dark); }
+
+/* Size variants */
+.btn-sm { padding: 0.3rem 1.2rem; font-size: 0.65rem; }
+.btn-lg { padding: 0.875rem 3rem; font-size: 0.82rem; }
+
+/* Play button (circle) */
+.btn-play {
+  color: var(--tcc-cream);
+  border: 1px solid rgba(245, 239, 220, 0.5);
+  width: 3.75rem;
+  height: 3.75rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--tcc-transition);
+}
+.btn-play:hover { background-color: var(--tcc-accent); border-color: var(--tcc-accent); color: var(--tcc-white); }
+
+/* Back to top */
+.btn-back-to-top {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 999;
+  background: var(--tcc-primary);
+  color: var(--tcc-cream);
+  height: 2rem;
+  width: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  opacity: 0.8;
+  transition: var(--tcc-transition);
+}
+.btn-back-to-top:hover { background: var(--tcc-accent); color: var(--tcc-white); opacity: 1; }
+
+/* ================================================================
+   9. HERO / HEADER SECTION
+================================================================ */
+#top {
+  background-color: var(--tcc-primary-dark);
+}
+#top .bg-holder.overlay::before {
+  background: linear-gradient(
+    135deg,
+    rgba(26, 88, 67, 0.88) 0%,
+    rgba(31, 95, 74, 0.72) 100%
+  );
+}
+#top .header-text h1 {
+  font-family: var(--tcc-font-primary);
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  color: var(--tcc-cream) !important;
+  line-height: 1.15;
+}
+#top .header-text p {
+  color: var(--tcc-tan) !important;
+  letter-spacing: 0.25em;
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+.indicator-arrow { border-color: var(--tcc-tan) !important; }
+
+/* Hero CTA Bar */
+.hero-cta-bar {
+  background-color: var(--tcc-accent);
+  text-align: center;
+  padding: 16px 0;
+}
+.hero-cta-bar a {
+  font-family: var(--tcc-font-primary);
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--tcc-white);
+  text-decoration: none;
+  display: inline-block;
+  padding: 0 20px;
+  transition: var(--tcc-transition);
+}
+.hero-cta-bar a:hover { color: var(--tcc-cream); letter-spacing: 0.25em; }
+
+/* ================================================================
+   10. SECTION STRUCTURE
+================================================================ */
+section {
+  position: relative;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+@media (min-width: 992px) {
+  section { padding-top: 7.5rem; padding-bottom: 7.5rem; }
+}
+
+/* Section heading style */
+h2.fs-sm-5,
+h2.fs-md-5 {
+  font-family: var(--tcc-font-primary);
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  color: var(--tcc-primary) !important;
+  text-transform: uppercase;
+}
+
+p.text-uppercase.text-black,
+p.fs--1.text-uppercase.text-black {
+  color: var(--tcc-gray) !important;
+  font-family: var(--tcc-font-primary);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem !important;
+}
+
+/* ================================================================
+   11. ABOUT SECTION
+================================================================ */
+#about-us {
+  background-color: var(--tcc-cream);
+}
+#about-us h2 { color: var(--tcc-primary) !important; }
+#about-us h5 {
+  font-family: var(--tcc-font-primary);
+  font-weight: 600;
+  color: var(--tcc-primary);
+  letter-spacing: 0.12em;
+  font-size: 1rem;
+}
+#about-us p { color: var(--tcc-dark-secondary); line-height: 1.75; }
+
+/* ================================================================
+   12. FEATURE / WHY CHOOSE US SECTION
+================================================================ */
+.feature-item h5 {
+  font-family: var(--tcc-font-primary);
+  font-weight: 600;
+  color: var(--tcc-primary);
+  letter-spacing: 0.1em;
+  font-size: 0.85rem;
+}
+.checked-indicator {
+  background-color: var(--tcc-accent) !important;
+  border-color: var(--tcc-accent) !important;
+  color: var(--tcc-white) !important;
+}
+.border-lg-top,
+.border-lg-bottom,
+.border-lg-right { border-color: var(--tcc-tan) !important; }
+
+/* ================================================================
+   13. STATS / FUN FACTS SECTION (dark green)
+================================================================ */
+.py-7 {
+  background-color: var(--tcc-primary) !important;
+}
+.py-7 .bg-holder { display: none; }
+.py-7 h2,
+.py-7 h2.fs-sm-5 { color: var(--tcc-cream) !important; font-weight: 300; }
+.py-7 p { color: rgba(245, 239, 220, 0.75) !important; }
+.py-7 h3.text-base { color: var(--tcc-cream) !important; font-family: var(--tcc-font-primary); font-weight: 300; font-size: 3rem; }
+.py-7 p.text-uppercase { color: var(--tcc-tan) !important; letter-spacing: 0.1em; font-size: 0.7rem; }
+.fun-fact-icon { filter: brightness(0) invert(1) opacity(0.65); }
+.hr-short.border-white { border-color: var(--tcc-accent) !important; }
+
+/* ================================================================
+   14. SERVICES SECTION
+================================================================ */
+.service-item {
+  border: 1px solid var(--tcc-cream-dark);
+  border-radius: var(--tcc-radius);
+  background-color: var(--tcc-white);
+  overflow: hidden;
+  transition: var(--tcc-transition);
+}
+.service-item:hover {
+  border-color: var(--tcc-primary);
+  box-shadow: 0 8px 40px rgba(31, 95, 74, 0.10);
+  transform: translateY(-3px);
+}
+.service-item h5 {
+  font-family: var(--tcc-font-primary);
+  font-weight: 700;
+  color: var(--tcc-primary);
+  letter-spacing: 0.1em;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+.service-item p { color: var(--tcc-dark-secondary); font-size: 0.875rem; line-height: 1.7; }
+.service-icon { width: 3.5rem; margin-bottom: 1.25rem; opacity: 0.75; filter: hue-rotate(0deg) saturate(0.5); }
+
+/* ================================================================
+   15. FOUNDER / PERFORMANCE SECTION (overlaid on bg image)
+================================================================ */
+.py-6 {
+  background-color: var(--tcc-primary) !important;
+}
+.py-6 .bg-holder { /* Keep image if present */ }
+.py-6 h2 { color: var(--tcc-cream) !important; font-family: var(--tcc-font-primary); font-weight: 300; }
+.py-6 p { color: rgba(245, 239, 220, 0.85); line-height: 1.8; }
+
+/* Founder photo frame */
+.founder-img-wrap {
+  position: relative;
+  display: inline-block;
+}
+.founder-img-wrap::before {
+  content: '';
+  position: absolute;
+  top: -10px; left: -10px;
+  right: 10px; bottom: 10px;
+  border: 2px solid var(--tcc-accent);
+  border-radius: var(--tcc-radius);
+  z-index: 0;
+}
+.founder-img-wrap img {
+  position: relative;
+  z-index: 1;
+  border-radius: var(--tcc-radius);
+  width: 100%;
+  max-width: 340px;
+  object-fit: cover;
+  height: 420px;
+}
+
+/* Progress lines (inside py-6 sections) */
+.progress-line { font-family: var(--tcc-font-primary); font-weight: 400; }
+
+/* Tab nav */
+.fancy-tab .nav-bar .nav-bar-item { font-family: var(--tcc-font-primary); }
+.fancy-tab .nav-bar .tab-indicator { background-color: var(--tcc-accent) !important; }
+.fancy-tab .nav-bar .tab-indicator-trail { background-color: rgba(245,239,220,0.2) !important; }
+.fancy-tab .nav-bar .nav-bar-item.active { color: var(--tcc-accent) !important; }
+
+/* ================================================================
+   16. PROCESS / GROWTH JOURNEY SECTION
+================================================================ */
+.process-icon-circle {
+  background-color: var(--tcc-cream) !important;
+  border: 2px dashed var(--tcc-tan) !important;
+}
+.process-icon { width: 1.563rem; opacity: 0.8; }
+.process-item h5 {
+  font-family: var(--tcc-font-primary);
+  font-weight: 700;
+  color: var(--tcc-primary);
+  letter-spacing: 0.05em;
+  font-size: 1rem;
+}
+.border-dashed-left,
+.border-600 { border-color: var(--tcc-tan) !important; }
+.process-devider { border-color: var(--tcc-tan) !important; }
+
+/* ================================================================
+   17. CTA BANDS (dark overlay sections)
+================================================================ */
+section.py-6.text-center[data-zanim-trigger] {
+  background-color: var(--tcc-primary-dark) !important;
+}
+section.py-6.text-center[data-zanim-trigger] .bg-holder { display: none; }
+section.py-6.text-center[data-zanim-trigger] h3 {
+  font-family: var(--tcc-font-primary);
+  font-weight: 300;
+  color: var(--tcc-cream) !important;
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+}
+section.py-6.text-center[data-zanim-trigger] p { color: var(--tcc-tan) !important; }
+
+/* Excited CTA band */
+.py-5.text-center.bg-black,
+section.py-5.text-center.bg-black {
+  background-color: var(--tcc-primary-dark) !important;
+}
+.py-5.text-center.bg-black h4,
+section.py-5.text-center.bg-black h4 {
+  font-family: var(--tcc-font-primary);
+  font-weight: 300;
+  color: var(--tcc-cream) !important;
+  letter-spacing: 0.05em;
+}
+.py-5.text-center.bg-black p,
+section.py-5.text-center.bg-black p { color: var(--tcc-tan) !important; }
+.py-5.text-center.bg-black .btn-outline-light { border-color: rgba(245,239,220,0.5); color: var(--tcc-cream); }
+.py-5.text-center.bg-black .btn-outline-light:hover { background-color: var(--tcc-accent); border-color: var(--tcc-accent); color: var(--tcc-white); }
+
+/* ================================================================
+   18. TEAM SECTION
+================================================================ */
+.team-item .hoverbox {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto;
+  border: 3px solid var(--tcc-tan);
+  transition: var(--tcc-transition);
+}
+.team-item .hoverbox:hover { border-color: var(--tcc-accent); }
+.team-item .hoverbox img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.team-item {
+  margin-bottom: 30px;
+  text-align: center;
+}
+.team-item h6:first-of-type {
+  font-family: var(--tcc-font-primary);
+  font-weight: 700;
+  color: var(--tcc-primary) !important;
+  margin-top: 14px;
+  margin-bottom: 4px;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.team-item h6:last-of-type {
+  font-family: var(--tcc-font-primary);
+  font-weight: 400;
+  color: var(--tcc-gray) !important;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.hoverbox-content {
+  position: absolute;
+  inset: 0;
+  background: rgba(31, 95, 74, 0.88) !important;
+  opacity: 0;
+  transition: var(--tcc-transition);
+  border-radius: 50%;
+}
+.hoverbox:hover .hoverbox-content { opacity: 1; }
+.team-item-social-icons a {
+  color: var(--tcc-cream) !important;
+  transition: var(--tcc-transition);
+}
+.team-item-social-icons a:hover { color: var(--tcc-accent) !important; }
+
+/* ================================================================
+   19. TESTIMONIALS SECTION
+================================================================ */
+.testimonial {
+  background-color: var(--tcc-primary-dark) !important;
+  padding: 7.5rem 0;
+}
+.testimonial .bg-holder { display: none; }
+.testimonial h2,
+.testimonial h2.fs-md-5 { color: var(--tcc-cream) !important; font-weight: 300; }
+.testimonial p.fs--1.text-uppercase { color: rgba(245,239,220,0.6) !important; }
+.testimonial .border {
+  border-color: rgba(245, 239, 220, 0.15) !important;
+  background: rgba(255,255,255,0.03);
+  border-radius: var(--tcc-radius);
+}
+.testimonial-quote::before { color: var(--tcc-accent) !important; opacity: 0.6; }
+.testimonial-avatar {
+  border: 3px solid var(--tcc-accent);
+}
+/* Owl nav inside testimonial */
+.testimonial .owl-theme.owl-nav-outer .owl-nav [class*=owl-] { color: var(--tcc-tan) !important; }
+.testimonial .owl-theme.owl-nav-outer .owl-nav [class*=owl-]:hover { color: var(--tcc-accent) !important; }
+.testimonial .owl-dots .owl-dot span { border: 1px solid var(--tcc-tan) !important; }
+.testimonial .owl-dots .owl-dot.active span { background-color: var(--tcc-accent) !important; border-color: var(--tcc-accent) !important; }
+
+/* Review text */
+.testimonial p.text-white.text-base { color: rgba(245, 239, 220, 0.85) !important; font-size: 1rem; line-height: 1.8; }
+.testimonial h4.text-white { color: var(--tcc-cream) !important; font-family: var(--tcc-font-primary); font-weight: 600; }
+.testimonial p.text-uppercase.text-500 { color: var(--tcc-tan) !important; letter-spacing: 0.12em; }
+
+/* ================================================================
+   20. MEMBERSHIP / PRICING SECTION
+================================================================ */
+/* Tier card base */
+.tier-card {
+  border: 1px solid var(--tcc-cream-dark);
+  border-radius: var(--tcc-radius);
+  padding: 36px 28px;
+  text-align: center;
+  background: var(--tcc-white);
+  transition: var(--tcc-transition-slow);
+  height: 100%;
+}
+.tier-card:hover {
+  box-shadow: 0 12px 48px rgba(31, 95, 74, 0.12);
+  border-color: var(--tcc-primary);
+  transform: translateY(-5px);
+}
+.tier-card.featured {
+  border-color: var(--tcc-primary);
+  background: var(--tcc-primary);
+}
+.tier-card h5 {
+  font-family: var(--tcc-font-primary);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--tcc-primary);
+  font-size: 0.78rem;
+  margin-bottom: 8px;
+}
+.tier-card.featured h5,
+.tier-card.featured h2,
+.tier-card.featured li { color: var(--tcc-cream) !important; }
+.tier-card.featured li { border-color: rgba(245,239,220,0.15) !important; }
+.tier-card h2 {
+  font-family: var(--tcc-font-primary);
+  font-weight: 300;
+  color: var(--tcc-primary);
+  font-size: 2rem;
+}
+.tier-card ul { list-style: none; padding: 0; margin-bottom: 28px; }
+.tier-card li {
+  padding: 9px 0;
+  border-bottom: 1px solid var(--tcc-cream-dark);
+  font-size: 0.875rem;
+  color: var(--tcc-dark-secondary);
+  font-family: var(--tcc-font-primary);
+  font-weight: 400;
+}
+.tier-btn {
+  display: inline-block;
+  font-family: var(--tcc-font-primary);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  padding: 10px 28px;
+  border: 2px solid var(--tcc-primary);
+  color: var(--tcc-primary);
+  border-radius: var(--tcc-radius-sm);
+  text-decoration: none;
+  transition: var(--tcc-transition);
+  background: transparent;
+}
+.tier-btn:hover {
+  background: var(--tcc-accent);
+  border-color: var(--tcc-accent);
+  color: var(--tcc-white);
+  text-decoration: none;
+}
+.tier-card.featured .tier-btn {
+  background: var(--tcc-cream);
+  border-color: var(--tcc-cream);
+  color: var(--tcc-primary);
+}
+.tier-card.featured .tier-btn:hover {
+  background: var(--tcc-accent);
+  border-color: var(--tcc-accent);
+  color: var(--tcc-white);
+}
+
+/* Reign template pricing cards */
+.border.border-black { border-color: var(--tcc-primary) !important; }
+.border.border-200 { border-color: var(--tcc-cream-dark) !important; }
+.text-base { color: var(--tcc-primary) !important; }
+
+/* ================================================================
+   21. BLOG / FROM THE BLOG SECTION
+================================================================ */
+.blog-card h5 a, h5.text-base a.text-black { color: var(--tcc-dark) !important; transition: var(--tcc-transition); }
+.blog-card h5 a:hover, h5.text-base a.text-black:hover { color: var(--tcc-accent) !important; }
+a.text-dark.font-weight-semi-bold { color: var(--tcc-primary) !important; font-weight: 700; }
+a.text-dark.font-weight-semi-bold:hover { color: var(--tcc-accent) !important; }
+.mil-date, .text-600 { color: var(--tcc-gray) !important; font-size: 0.72rem; }
+
+/* Blog slider / cards borders */
+.p-3.border.rounded-bottom { border-color: var(--tcc-cream-dark) !important; }
+
+/* Blog section view all btn */
+.btn-outline-dark.hvr-sweep-top {
+  color: var(--tcc-primary);
+  border-color: var(--tcc-primary);
+}
+.btn-outline-dark.hvr-sweep-top:hover { color: var(--tcc-cream); }
+
+/* ================================================================
+   22. NEWSLETTER SECTION
+================================================================ */
+.newsletter-bg-section {
+  background-color: var(--tcc-primary) !important;
+}
+.newsletter-bg-section .bg-holder { display: none; }
+.newsletter-bg-section h3 {
+  font-family: var(--tcc-font-primary);
+  font-weight: 300;
+  color: var(--tcc-cream) !important;
+  letter-spacing: 0.1em;
+}
+.newsletter-bg-section p.text-white { color: rgba(245, 239, 220, 0.8) !important; }
+
+.floating-label-group { position: relative; }
+.floating-label-input {
+  font-family: var(--tcc-font-primary);
+  border-color: transparent !important;
+  background: rgba(255,255,255,0.1) !important;
+  color: var(--tcc-cream) !important;
+  border-radius: var(--tcc-radius-sm) !important;
+}
+.floating-label-input::placeholder { color: rgba(245,239,220,0.5) !important; }
+.floating-label-input:focus {
+  background: rgba(255,255,255,0.15) !important;
+  box-shadow: 0 0 0 2px var(--tcc-accent) !important;
+}
+.floating-label { color: rgba(245,239,220,0.5) !important; font-family: var(--tcc-font-primary); }
+
+.btn-input-icon {
+  background-color: var(--tcc-accent) !important;
+  color: var(--tcc-white) !important;
+  border-radius: 0 var(--tcc-radius-sm) var(--tcc-radius-sm) 0 !important;
+  padding: 6px 14px;
+  transition: var(--tcc-transition);
+}
+.btn-input-icon:hover { background-color: var(--tcc-accent-dark) !important; }
+
+/* ================================================================
+   23. CONTACT SECTION
+================================================================ */
+.contact-section h2,
+.contact-section h5 {
+  font-family: var(--tcc-font-primary);
+  color: var(--tcc-primary);
+}
+.contact-section h5 { font-weight: 700; letter-spacing: 0.08em; font-size: 1rem; }
+
+.form-control {
+  font-family: var(--tcc-font-primary);
+  font-size: 0.875rem;
+  border-color: var(--tcc-tan);
+  border-radius: var(--tcc-radius-sm);
+  color: var(--tcc-dark-secondary);
+  transition: var(--tcc-transition);
+}
+.form-control:focus {
+  border-color: var(--tcc-primary);
+  box-shadow: 0 0 0 2px rgba(31, 95, 74, 0.15);
+}
+.form-control::placeholder { color: var(--tcc-gray-light); }
+
+.contact-message { height: 182px !important; }
+
+.btn-block.btn-dark,
+button.btn-block.btn-dark {
+  background-color: var(--tcc-primary) !important;
+  border-color: var(--tcc-primary) !important;
+  color: var(--tcc-cream) !important;
+  font-family: var(--tcc-font-primary);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+.btn-block.btn-dark:hover { background-color: var(--tcc-accent) !important; border-color: var(--tcc-accent) !important; }
+
+label {
+  font-family: var(--tcc-font-primary);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tcc-gray);
+}
+
+/* ================================================================
+   24. FOOTER DARK AREA (bg-1100)
+================================================================ */
+.bg-1100 {
+  background-color: var(--tcc-primary-dark) !important;
+}
+.bg-1100 h5 {
+  font-family: var(--tcc-font-primary);
+  font-weight: 700;
+  color: var(--tcc-cream) !important;
+  letter-spacing: 0.1em;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+.bg-1100 p.text-700 {
+  color: rgba(245, 239, 220, 0.7) !important;
+  font-family: var(--tcc-font-primary);
+  font-weight: 400;
+  font-size: 0.875rem;
+  line-height: 1.8;
+}
+.bg-1100 a.text-700 { color: rgba(245, 239, 220, 0.65) !important; transition: var(--tcc-transition); font-size: 0.875rem; }
+.bg-1100 a.text-700:hover { color: var(--tcc-accent) !important; text-decoration: none; }
+.bg-1100 .text-900 { color: rgba(245, 239, 220, 0.45) !important; font-size: 0.72rem; }
+.bg-1100 .fab, .bg-1100 .fas { color: var(--tcc-tan); transition: var(--tcc-transition); }
+.bg-1100 .fab:hover, .bg-1100 .fas:hover { color: var(--tcc-accent); }
+
+/* ================================================================
+   25. FOOTER BOTTOM BAR
+================================================================ */
+section.bg-black.py-3,
+.bg-black.py-3 {
+  background-color: #0E2D21 !important;
+}
+section.bg-black.py-3 p,
+.bg-black.py-3 p {
+  font-family: var(--tcc-font-primary);
+  font-size: 0.72rem;
+  color: rgba(245, 239, 220, 0.5) !important;
+  letter-spacing: 0.05em;
+}
+section.bg-black.py-3 a,
+.bg-black.py-3 a { color: rgba(245, 239, 220, 0.65) !important; transition: var(--tcc-transition); }
+section.bg-black.py-3 a:hover,
+.bg-black.py-3 a:hover { color: var(--tcc-accent) !important; }
+
+/* ================================================================
+   26. PRELOADER
+================================================================ */
+.preloader {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 10001;
+  background-color: var(--tcc-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.8s cubic-bezier(0.77, 0, 0.18, 1);
+}
+.preloader.loaded { opacity: 0; }
+.spinner-layer { border-color: var(--tcc-cream) !important; }
+
+/* ================================================================
+   27. BACKGROUNDS
+================================================================ */
+.bg-holder {
+  position: absolute;
+  width: 100%;
+  min-height: 100%;
+  top: 0; left: 0;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  background-repeat: no-repeat;
+}
+.bg-holder.overlay::before {
+  position: absolute;
+  content: '';
+  background: rgba(0,0,0,0.3);
+  top: 0; bottom: 0; left: 0; right: 0;
+}
+.bg-holder.overlay-0::before  { background: rgba(0,0,0,0.70); }
+.bg-holder.overlay-1::before  { background: rgba(0,0,0,0.55); }
+.bg-holder.overlay-2::before  { background: rgba(0,0,0,0.40); }
+
+/* ================================================================
+   28. BACKGROUND COLOR UTILITIES (brand-aligned)
+================================================================ */
+.bg-primary { background-color: var(--tcc-primary) !important; }
+.bg-dark     { background-color: var(--tcc-dark) !important; }
+.bg-light    { background-color: var(--tcc-cream) !important; }
+.bg-cream    { background-color: var(--tcc-cream); }
+.bg-tan      { background-color: var(--tcc-tan); }
+
+.bg-1100 { background-color: var(--tcc-primary-dark) !important; }
+.bg-1000 { background-color: #113A2A !important; }
+.bg-black { background-color: #0E2D21 !important; }
+
+/* ================================================================
+   29. TEXT COLORS (brand-aligned)
+================================================================ */
+.text-primary    { color: var(--tcc-primary) !important; }
+.text-accent     { color: var(--tcc-accent) !important; }
+.text-cream      { color: var(--tcc-cream) !important; }
+.text-base       { color: var(--tcc-primary) !important; }
+.text-black      { color: var(--tcc-dark) !important; }
+.text-700        { color: var(--tcc-gray) !important; }
+.text-800        { color: var(--tcc-dark-secondary) !important; }
+.text-900        { color: var(--tcc-dark-secondary) !important; }
+
+/* ================================================================
+   30. BORDERS (brand-aligned)
+================================================================ */
+.border          { border: 1px solid var(--tcc-tan) !important; }
+.border-top      { border-top: 1px solid var(--tcc-tan) !important; }
+.border-bottom   { border-bottom: 1px solid var(--tcc-tan) !important; }
+.border-black    { border-color: var(--tcc-primary) !important; }
+.border-200      { border-color: var(--tcc-cream-dark) !important; }
+.border-dashed-left { border-left: 1px dashed var(--tcc-tan) !important; }
+.border-600      { border-color: var(--tcc-tan-dark) !important; }
+
+/* hr-short override */
+.hr-short.border-black { border-color: var(--tcc-accent) !important; border-width: 2px; width: 4rem; }
+
+/* ================================================================
+   31. SORTABLE / PORTFOLIO FILTER
+================================================================ */
+.sortable .menu { font-family: var(--tcc-font-primary); color: var(--tcc-dark); font-size: 0.68rem; letter-spacing: 0.12em; }
+.sortable .menu .item.active { border-color: var(--tcc-primary); color: var(--tcc-primary); }
+.sortable .menu .item:hover { color: var(--tcc-accent); }
+
+/* Hoverdir portfolio items */
+.hoverdir-item-content {
+  background: rgba(31, 95, 74, 0.92);
+  border-radius: var(--tcc-radius-sm);
+}
+
+/* ================================================================
+   32. OWL CAROUSEL
+================================================================ */
+.owl-theme .owl-dots .owl-dot span { background-color: rgba(245,239,220,0.3) !important; }
+.owl-theme .owl-dots .owl-dot.active span { background-color: var(--tcc-accent) !important; }
+.owl-theme .owl-nav [class*=owl-] { background-color: rgba(255,255,255,0.85) !important; color: var(--tcc-primary) !important; }
+.owl-theme .owl-nav [class*=owl-]:hover { background-color: var(--tcc-accent) !important; color: var(--tcc-white) !important; }
+
+/* ================================================================
+   33. PROGRESS / PERFORMANCE BARS
+================================================================ */
+.progress-bar { background-color: var(--tcc-accent); }
+
+/* ================================================================
+   34. SELECTION COLOR
+================================================================ */
+::selection { color: var(--tcc-white); background-color: var(--tcc-accent); }
+::-moz-selection { color: var(--tcc-white); background-color: var(--tcc-accent); }
+
+/* ================================================================
+   35. SCROLL INDICATOR
+================================================================ */
+.indicator-arrow {
+  border-left: 2px solid var(--tcc-tan);
+  border-top: 2px solid var(--tcc-tan);
+}
+
+/* ================================================================
+   36. HOVER UTILITIES
+================================================================ */
+.hover-color-white {
+  transition: var(--tcc-transition);
+}
+.hover-color-white:hover { color: var(--tcc-accent) !important; }
+
+/* ================================================================
+   37. HOVERBOX (for hoverdir grid)
+================================================================ */
+.hoverbox {
+  position: relative;
+  overflow: hidden;
+}
+.hoverbox .hoverbox-content {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  opacity: 0;
+  transition: var(--tcc-transition);
+  margin: 0 !important;
+}
+.hoverbox:hover .hoverbox-content,
+.hoverbox:focus .hoverbox-content { opacity: 1; }
+
+/* ================================================================
+   38. PAGINATION
+================================================================ */
+.page-link { color: var(--tcc-primary); border-color: var(--tcc-tan); }
+.page-link:hover { background-color: var(--tcc-primary); border-color: var(--tcc-primary); color: var(--tcc-cream); }
+.page-item.active .page-link { background-color: var(--tcc-primary); border-color: var(--tcc-primary); }
+
+/* ================================================================
+   39. BREADCRUMBS
+================================================================ */
+.breadcrumb-item + .breadcrumb-item::before { color: var(--tcc-tan); }
+.breadcrumb-item.active { color: var(--tcc-primary); }
+
+/* ================================================================
+   40. BADGES
+================================================================ */
+.badge { font-family: var(--tcc-font-primary); font-weight: 700; letter-spacing: 0.08em; }
+.badge-primary { background-color: var(--tcc-primary); }
+.badge-soft-primary { color: var(--tcc-primary); background-color: rgba(31,95,74,0.1); }
+
+/* ================================================================
+   41. ALERTS
+================================================================ */
+.alert { font-family: var(--tcc-font-primary); font-size: 0.875rem; }
+.alert-success { border-color: var(--tcc-primary); background-color: rgba(31,95,74,0.08); color: var(--tcc-primary); }
+.alert-danger  { border-color: var(--tcc-accent); }
+
+/* ================================================================
+   42. CUSTOM CONTROL (checkboxes, radios)
+================================================================ */
+.custom-control-input:checked ~ .custom-control-label::before {
+  background-color: var(--tcc-primary);
+  border-color: var(--tcc-primary);
+}
+
+/* ================================================================
+   43. GOOGLE MAP THEME
+================================================================ */
+.theme-map { border: 1px solid var(--tcc-tan); border-radius: var(--tcc-radius); }
+
+/* ================================================================
+   44. PROCESS ICONS (SVG filter for brand color)
+================================================================ */
+.process-icon {
+  filter: invert(25%) sepia(56%) saturate(400%) hue-rotate(120deg) brightness(80%);
+}
+
+/* ================================================================
+   45. FLUID CONTAINER
+================================================================ */
+.container, .container-fluid {
+  position: relative;
+}
+
+/* ================================================================
+   46. TYPED TEXT CURSOR
+================================================================ */
+.typed-cursor { background: var(--tcc-accent); }
+
+/* ================================================================
+   47. REMODAL (video lightbox)
+================================================================ */
+.remodal-overlay { background-color: rgba(14, 45, 33, 0.92); }
+.remodal-close:hover { color: var(--tcc-accent); }
+
+/* ================================================================
+   48. HEADER SLIDER NAV
+================================================================ */
+.header-slider.owl-theme .owl-nav [class*=owl-] { color: var(--tcc-cream) !important; }
+.header-slider.owl-theme .owl-nav [class*=owl-]:hover { color: var(--tcc-accent) !important; }
+
+/* ================================================================
+   49. FUN FACT / COUNTUP NUMBERS
+================================================================ */
+[data-countup] { font-family: var(--tcc-font-primary) !important; font-weight: 300 !important; }
+
+/* ================================================================
+   50. MISCELLANEOUS UTILITIES
+================================================================ */
+.opacity-75 { opacity: 0.75; }
+.opacity-50 { opacity: 0.50; }
+
+*[data-zanim-trigger] { opacity: 0; }
+
+/* Override Reign's default link hover (blue) */
+a:not(.btn):not(.nav-link):not(.dropdown-item):not(.dropdown-toggle) {
+  color: var(--tcc-primary);
+}
+a:not(.btn):not(.nav-link):not(.dropdown-item):not(.dropdown-toggle):hover {
+  color: var(--tcc-accent);
+}
+
+/* Override any stray blue focus rings */
+.form-control:focus,
+.btn:focus,
+.btn.focus {
+  box-shadow: 0 0 0 0.2rem rgba(31, 95, 74, 0.2) !important;
+}
+
+/* Highlighted text in CTA sections */
+.mil-highlight,
+.highlight {
+  color: var(--tcc-accent);
+  font-weight: 700;
+}
+
+/* ================================================================
+   51. CONTACT INFO BLOCK
+================================================================ */
+.contact-info-block {
+  background-color: var(--tcc-cream);
+  border: 1px solid var(--tcc-tan);
+  border-radius: var(--tcc-radius);
+  padding: 1.5rem;
+}
+.contact-info-block p { color: var(--tcc-dark-secondary); font-size: 0.9rem; line-height: 1.7; }
+.contact-info-block strong { color: var(--tcc-primary); }
+
+/* ================================================================
+   52. SECTION LABELS (stylized small text above headings)
+================================================================ */
+.mil-stylized,
+.tcc-label {
+  font-family: var(--tcc-font-primary);
+  font-weight: 400;
+  font-size: 0.68rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--tcc-accent);
+}
+
+/* ================================================================
+   53. ABOUT / VISION BLOCK
+================================================================ */
+.about-vision-block {
+  background-color: var(--tcc-cream);
+  border-left: 4px solid var(--tcc-primary);
+  padding: 1.5rem 2rem;
+  border-radius: 0 var(--tcc-radius) var(--tcc-radius) 0;
+}
+
+/* ================================================================
+   54. SOCIAL ICONS (footer / team)
+================================================================ */
+.mil-social a,
+ul.mil-social li a,
+.list-inline.mil-social li a {
+  color: var(--tcc-tan) !important;
+  transition: var(--tcc-transition);
+  font-size: 1rem;
+}
+.mil-social a:hover,
+ul.mil-social li a:hover { color: var(--tcc-accent) !important; }
+
+/* ================================================================
+   55. RESPONSIVE ADJUSTMENTS
+================================================================ */
+@media (max-width: 768px) {
+  .navbar-brand { font-size: 0.85rem; }
+  h2.fs-md-5, h2.fs-sm-5 { font-size: 1.8rem !important; }
+  .display-3 { font-size: 2.5rem; }
+  .tier-card { margin-bottom: 1.5rem; }
+  .team-item .hoverbox { width: 150px; height: 150px; }
+}
+
+@media (max-width: 576px) {
+  .display-3 { font-size: 2rem; letter-spacing: 0.1em; }
+  section { padding-top: 4rem; padding-bottom: 4rem; }
+}
+
+/* ================================================================
+   56. PRINT
+================================================================ */
+@media print {
+  .navbar, .preloader, .btn-back-to-top { display: none !important; }
+  body { font-family: var(--tcc-font-primary); color: var(--tcc-dark); }
+  a { color: var(--tcc-primary); }
+}
+.breadcrumb-item a {
+  color: rgba(255, 255, 255, 0.7); /* softer white for links */
+}
+
+.breadcrumb-item.active {
+  color: #ffffff; /* bright white for current page */
+  font-weight: 600;
+}
+
+.breadcrumb {
+  background: transparent;
+}
+
+
+
+
+
+
+
+
+
+/* ================= TEAM CARD ================= */
+.team-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+/* IMAGE */
+.team-img img {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+/* OVERLAY */
+.team-overlay {
+  position: absolute;
+  inset: 0; /* cleaner than top/left/width/height */
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.75),
+    rgba(0,0,0,0.3),
+    rgba(0,0,0,0.1)
+  );
+  color: #fff;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+
+  padding: 25px;
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+/* HOVER EFFECT */
+.team-card:hover img {
+  transform: scale(1.08);
+}
+
+.team-card:hover .team-overlay {
+  opacity: 1;
+}
+
+/* TEXT */
+.team-overlay h5 {
+  color: #fff;
+  margin-bottom: 4px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.team-overlay p {
+  color: rgba(255,255,255,0.85);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+/* SOCIAL ICONS */
+.social-icons {
+  margin-bottom: 10px;
+}
+
+.social-icons a {
+  color: #fff;
+  margin: 0 6px;
+  font-size: 14px;
+  transition: 0.3s ease;
+}
+
+.social-icons a:hover {
+  color: #fbfffe; /* your theme green */
+}
+.team-overlay {
+  transform: translateY(20px);
+}
+
+.team-card:hover .team-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+.social-icons a {
+  color: #fff;
+  margin: 0 8px;
+  font-size: 18px;
+  transition: 0.3s;
+}
+
+.social-icons a:hover {
+  color: #ccc; /* subtle hover */
+}
+.team-overlay .social-icons a,
+.team-overlay .social-icons a i {
+  color: #fff !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.service-hero {
+  background: #1f5c44; /* DARK GREEN */
+  padding: 180px 20px 9px;
+}
+
+.service-hero h1 {
+  font-weight: 700;
+  letter-spacing: -1px;
+}
+
+.hero-subtext {
+  margin-top: 15px;
+  opacity: 0.85;
+}
+.service-features {
+  background: #e9e4cf;
+  padding: 100px 20px;
+}
+
+.service-subtext {
+  max-width: 600px;
+  margin: 0 auto;
+  font-size: 18px;
+  color: #2f5d4a;
+}
+
+.highlight {
+  color: #7aa89e;
+}
+
+.service-feature {
+  padding: 20px;
+}
+
+.service-feature i {
+  font-size: 28px;
+  color: #1f5c44;
+  margin-bottom: 15px;
+}
+
+.service-feature h6 {
+  color: #1f5c44;
+  font-weight: 600;
+}
+
+.service-feature p {
+  color: #444;
+  font-size: 14px;
+}
+/* SECTION BACKGROUND */
+.coaching-details {
+  background: #e9e4cf;
+  padding: 1px 20px;
+}
+
+/* LEFT TEXT */
+.intro-text {
+  color: #333;
+  line-height: 1.7;
+  margin-bottom: 30px;
+}
+
+/* QUOTE */
+.quote-box {
+  margin-bottom: 40px;
+}
+
+.quote-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.quote-text {
+  font-style: italic;
+  color: #1f5c44;
+  margin-bottom: 5px;
+}
+
+.quote-author {
+  font-size: 14px;
+  color: #1f5c44;
+  font-weight: 500;
+}
+
+/* EXPERIENCE BOX */
+.experience-box {
+  background: #1f5c44;
+  color: #e9e4cf;
+  padding: 40px;
+  width: 280px;
+  margin-top: 20px;
+}
+
+.experience-box h1 {
+  font-size: 70px;
+  margin: 0;
+  font-weight: 700;
+}
+
+.experience-box p {
+  margin: 0;
+  opacity: 0.85;
+}
+.experience-box h1 {
+  font-size: 70px;
+  margin: 0;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* RIGHT SIDE LIST */
+.service-list {
+  padding-left: 30px;
+}
+.service-item {
+  box-shadow: none;
+  outline: none;
+}
+.service-item {
+  margin-bottom: 25px;
+}
+
+.service-item h5 {
+  color: #1f5c44;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.service-item p {
+  color: #555;
+  line-height: 1.6;
+  max-width: 500px;
+}
+.service-item:not(:last-child) {
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  padding-bottom: 15px;
+}
+.service-item {
+  background: #e9e4cf; /* match section */
+  border: 1px solid rgba(31, 92, 68, 0.2);
+  border-radius: 8px;
+  padding: 25px;
+  margin-bottom: 20px;
+}
+
+
+
+
+
+
+
+
+
+
+
+.blog-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.blog-card:hover {
+  transform: translateY(-5px);
+}
+
+/* IMAGE */
+.blog-img {
+  position: relative;
+  flex: 1;
+  min-height: 280px;
+}
+
+.blog-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* BADGE */
+.blog-badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+}
+
+.blog-badge span {
+  display: inline-block;
+  background: #000;
+  color: #fff;
+  padding: 5px 10px;
+  margin-right: 5px;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+/* CONTENT */
+.blog-content {
+  flex: 1;
+  padding: 30px;
+}
+
+.blog-content h4 {
+  font-weight: 500;
+  margin-bottom: 15px;
+}
+
+.blog-content p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* BUTTON */
+.blog-btn {
+  text-decoration: none;
+  color: #000;
+  font-weight: 500;
+  position: relative;
+}
+
+.blog-btn::after {
+  content: " →";
+  transition: 0.3s;
+}
+
+.blog-btn:hover::after {
+  margin-left: 5px;
+}
+
+/* MOBILE FIX */
+@media (max-width: 992px) {
+  .blog-card {
+    display: block !important;
+  }
+
+  .blog-img {
+    height: 220px;
+  }
+}
+.blog-content p {
+  line-height: 1.8;
+  color: #555;
+}
+
+.blog-content h2 {
+  font-weight: 500;
+}
+#top .position-relative {
+  padding: 100px 0 60px;
+}
+
+.force-white,
+.force-white * {
+  color: #fff !important;
+}
+
+
+
+
+
+
+
+
+
+.contact-modern {
+  background: #cfc9a8; /* soft beige */
+  padding: 120px 0;
+}
+
+/* BIG TITLE */
+.contact-title {
+  font-size: 90px;
+  font-weight: 700;
+  color: #1f5c45;
+}
+
+.contact-title span {
+  color: #7da69a;
+}
+
+/* SUBTEXT */
+.contact-subtext {
+  font-size: 22px;
+  color: #1f5c45;
+  margin-top: 20px;
+}
+
+/* EMAIL */
+.contact-email {
+  display: block;
+  margin-top: 10px;
+  color: #1f5c45;
+  letter-spacing: 2px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+/* FORM */
+.contact-form input,
+.contact-form textarea {
+  border: none;
+  border-bottom: 1px solid #1f5c45;
+  background: transparent;
+  border-radius: 0;
+  padding: 10px 0;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  box-shadow: none;
+  border-color: #000;
+}
+
+/* BUTTON */
+.contact-btn {
+  margin-top: 20px;
+  background: #1f5c45;
+  color: #fff;
+  padding: 12px 40px;
+  border-radius: 30px;
+  border: none;
+  transition: 0.3s;
+}
+
+.contact-btn:hover {
+  background: #000;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .contact-title {
+    font-size: 50px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+.footer-main {
+  background: linear-gradient(
+    120deg,
+    #0f2f25,
+    #1f5c45,
+    #3e6f60,
+    #7da69a
+  );
+  background-size: 200% 200%;
+  animation: gradientFlow 10s ease infinite;
+
+  padding: 80px 0 30px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+/* subtle glow overlay */
+.footer-main::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(255,255,255,0.08), transparent 60%);
+  pointer-events: none;
+}
+
+/* animation */
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* TITLE */
+.footer-title {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 15px;
+}
+
+/* TEXT */
+.footer-text {
+  color: rgba(255, 255, 255, 0.75);
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+/* LINKS */
+.footer-links {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-links li {
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.footer-links a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.footer-links a:hover {
+  color: #fff;
+}
+
+/* DIVIDER */
+.footer-divider {
+  border-color: rgba(255,255,255,0.15);
+  margin: 40px 0;
+}
+
+/* COPY */
+.footer-copy {
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
+}
+
+/* LINK */
+.footer-link {
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: #fff;
+}
+.footer-main,
+.footer-main * {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+.footer-main a {
+  color: rgba(255,255,255,0.9) !important;
+}
+
+.footer-main a:hover {
+  color: #ffffff !important;
+}
+
+
+
+
+
+
+
+/* CONTAINER */
+.premium-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+}
+
+/* PAGE BUTTONS */
+.page-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #ffffff;              /* PURE WHITE (contrast fix) */
+  color: #000000;
+  font-weight: 600;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  border: 2px solid #e0e0e0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+
+/* HOVER */
+.page-btn:hover {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* ACTIVE BUTTON */
+.page-btn.active {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+/* NEXT BUTTON */
+.page-next {
+  padding: 14px 26px;
+  border-radius: 40px;
+  background: #ffffff;             /* FIXED */
+  color: #000;
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 2px solid #e0e0e0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+
+/* NEXT HOVER */
+.page-next:hover {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+  transform: translateX(5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* ARROW */
+.page-next span {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.page-next:hover span {
+  transform: translateX(5px);
+}
+
+
+
+
+/* ======CSS chnages for seeker side..about us=*/
+  
+.col-md-4 img {
+  transition: 0.4s ease;
+}
+
+.col-md-4:hover img {
+  transform: scale(1.03);
+}
+
+/* ======CSS chnages for seeker side..instagram icon=*/
+a[href="#find-coach"] {
+  position: relative;
+  transition: 0.3s ease;
+}
+
+a[href="#find-coach"]:hover {
+  letter-spacing: 1px;
+  opacity: 0.85;
+}
+
+
+
+
+/* ======CSS chnages for seeker side..about us=*/
+/* FEATURE CARDS */
+.feature-card {
+  background: #fff;
+  padding: 30px 25px;
+  border-radius: 16px;
+  transition: 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.feature-card i {
+  font-size: 28px;
+  margin-bottom: 15px;
+  color: #000;
+}
+
+.feature-card h6 {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.feature-card p {
+  color: #666;
+  font-size: 14px;
+}
+
+/* HOVER EFFECT */
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+}
+
+/* QUOTE BOX */
+.quote-box {
+  background: #f8f8f8;
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 20px;
+}
+
+.quote-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+/* EXPERIENCE BOX */
+.experience-box {
+  margin-top: 30px;
+  padding: 20px;
+  border-radius: 12px;
+  background: #000;
+  color: #fff;
+  text-align: center;
+}
+
+/* SERVICE LIST */
+.service-item {
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  transition: 0.3s ease;
+  background: #fff;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.04);
+}
+
+.service-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.service-item h5 {
+  font-weight: 600;
+}
+
+.service-item p {
+  color: #666;
+  font-size: 14px;
+}
+
+/* BACKGROUND CONTRAST */
+.coaching-details {
+  background: #fafafa;
+}
+.service-features,
+.coaching-details {
+  padding: 40px 0 !important;
+  margin: 0 !important;
+}
+.previous-section {
+  margin-bottom: 0;
+}
+
+.service-features {
+  margin-top: -40px; /* pulls it up slightly */
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+
+/* ======CSS chnages for seeker side...why TCCO =*/
+/* =========================
+   SECTION
+========================= */
+.process-section {
+  padding: 110px 0;
+  background: #f9f9f9;
+}
+
+.process-section.alt {
+  background: #ffffff;
+}
+
+/* =========================
+   IMAGE
+========================= */
+.process-image {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.08);
+  transition: 0.4s ease;
+}
+
+.process-image img {
+  width: 100%;
+  height: 520px;              /* FINAL HEIGHT */
+  object-fit: contain;        /* IMPORTANT for readability */
+  transition: 0.4s ease;
+}
+
+/* HOVER */
+.process-image:hover img {
+  transform: scale(1.2);
+}
+
+/* =========================
+   TEXT
+========================= */
+.process-text {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 10px 0;
+  text-align: center;
+}
+
+.process-text h3 {
+  font-size: 26px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  color: #1f5c4d;
+  letter-spacing: 0.5px;
+}
+
+.process-text p {
+  font-size: 14px;
+  color: #777;
+  line-height: 1.7;
+}
+
+/* =========================
+   SPACING FIX
+========================= */
+.process-section .mb-4 {
+  margin-bottom: 35px !important;
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media (max-width: 768px) {
+  .process-section {
+    padding: 70px 0;
+  }
+
+  .process-image img {
+    height: auto;   /* let image scale naturally */
+  }
+
+  .process-text h3 {
+    font-size: 22px;
+  }
+}
+
+
+
+
+/* ======CSS chnages for seeker side...contact us =*/
+/* =========================
+   CONTACT FORM SECTION
+========================= */
+.contact-form-section {
+  background: linear-gradient(180deg, #1f5c4d 0%, #17463a 100%);
+  padding: 110px 20px;
+}
+
+/* =========================
+   FORM CARD
+========================= */
+.contact-form {
+  max-width: 900px;
+  margin: auto;
+  background: #fff;
+  padding: 60px 50px;
+  border-radius: 24px;
+  overflow: hidden;
+
+  box-shadow:
+    0 40px 100px rgba(0,0,0,0.15),
+    0 10px 30px rgba(0,0,0,0.08);
+
+  transition: 0.3s ease;
+}
+
+/* =========================
+   SECTION BLOCKS
+========================= */
+.form-section {
+  margin-bottom: 50px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.form-section:last-child {
+  border-bottom: none;
+}
+
+/* =========================
+   SECTION TITLE
+========================= */
+.form-section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f5c4d;
+  margin-bottom: 25px;
+  letter-spacing: 0.5px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-section-title::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: #1f5c4d;
+  border-radius: 50%;
+}
+
+/* =========================
+   LABELS
+========================= */
+.contact-form label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #777;
+  margin-bottom: 6px;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+/* =========================
+   INPUTS
+========================= */
+.form-control {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #e6e6e6;
+  padding: 12px 5px;
+  font-size: 15px;
+  background: transparent;
+  color: #111;
+  transition: 0.3s ease;
+}
+
+.form-control:hover {
+  border-bottom-color: #ccc;
+}
+
+.form-control:focus {
+  outline: none;
+  border-bottom-color: #1f5c4d;
+}
+
+.form-control::placeholder {
+  color: #bbb;
+}
+
+/* =========================
+   TEXTAREA
+========================= */
+textarea.form-control {
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 14px;
+  min-height: 120px;
+}
+
+textarea.form-control:focus {
+  border-color: #1f5c4d;
+}
+
+/* =========================
+   SELECT DROPDOWN
+========================= */
+select.form-control {
+  height: 45px;
+  line-height: 45px;
+  padding: 0 12px;
+  color: #000;
+  cursor: pointer;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%231f5c4d' height='20' viewBox='0 0 24 24' width='20'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
+select.form-control option {
+  color: #000;
+  background: #fff;
+}
+
+/* =========================
+   CHECKBOX / RADIO
+========================= */
+.form-group input[type="checkbox"],
+.form-group input[type="radio"] {
+  margin-right: 10px;
+  transform: scale(1.1);
+  accent-color: #1f5c4d;
+}
+
+.form-group label.inline {
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+  text-transform: none;
+  color: #333;
+  margin-bottom: 10px;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.form-group label.inline:hover {
+  color: #1f5c4d;
+}
+
+/* =========================
+   OPTION CARDS (MODERN UI)
+========================= */
+.option-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.option-card {
+  border: 1px solid #ddd;
+  padding: 10px 16px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  transition: all 0.25s ease;
+}
+
+.option-card input {
+  display: none;
+}
+
+.option-card:hover {
+  border-color: #1f5c4d;
+  color: #1f5c4d;
+}
+
+.option-card:has(input:checked) {
+  background: #1f5c4d;
+  color: #fff;
+  border-color: #1f5c4d;
+}
+
+/* =========================
+   SPACING
+========================= */
+.form-group {
+  margin-bottom: 28px;
+}
+
+.row > div {
+  margin-bottom: 20px;
+}
+
+/* =========================
+   BUTTON
+========================= */
+button.btn {
+  background: linear-gradient(135deg, #1f5c4d, #2f7a66);
+  color: #fff;
+  padding: 13px 40px;
+  border-radius: 40px;
+  border: none;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+
+  box-shadow: 0 10px 25px rgba(31,92,77,0.25);
+  transition: all 0.3s ease;
+}
+
+button.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(31,92,77,0.35);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .contact-form {
+    padding: 40px 25px;
+  }
+}
+
+
+
+
+
+
+
+
+
