@@ -168,8 +168,8 @@
 <!-- Top Navigation -->
 <header class="fixed top-0 w-full z-50 bg-mint-glass backdrop-blur-md border-b border-white/10 shadow-sm transition-all duration-300">
   <nav class="flex justify-between items-center px-margin-mobile md:px-gutter py-4 w-full max-w-container-max mx-auto">
-    <a href="index.html" class="font-headline-md text-headline-md font-semibold text-forest-deep hover:opacity-80 transition-opacity">
-      The Coaching Collective
+    <a href="index.html" class="hover:opacity-75 transition-opacity flex items-center">
+      <img src="pages/pages/logo.svg" alt="The Coaching Collective" class="h-16 w-auto">
     </a>
     <div class="hidden md:flex items-center space-x-8">
       <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300" href="#about">Our Purpose</a>
@@ -185,8 +185,9 @@
 
 <main>
   <!-- Hero Section -->
-  <section class="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
-    <div class="relative z-10 text-center max-w-4xl px-margin-mobile fade-in-up bg-white/20 backdrop-blur-md p-10 rounded-3xl shadow-2xl border border-white/30">
+  <section class="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden" style="background-image:url('pages/assets/img/headers/landing7-new.jpg');background-size:cover;background-position:center;">
+    <div class="absolute inset-0 bg-background/75"></div>
+    <div class="relative z-10 text-center max-w-4xl px-margin-mobile fade-in-up bg-white/30 backdrop-blur-md p-10 rounded-3xl shadow-2xl border border-white/40">
       <span class="font-label-caps text-label-caps text-forest-deep mb-4 block tracking-[0.3em] uppercase drop-shadow-sm">The Collective Experience</span>
       <h1 class="font-display-hero text-display-hero-mobile md:text-display-hero text-forest-deep mb-6 leading-tight drop-shadow-sm">
         Where Growth Begins with the <br class="hidden md:block"/> Right Connection
@@ -343,7 +344,7 @@
       });
     }, { threshold: 0.1 });
 
-    document.querySelectorAll('section > div').forEach(el => {
+    document.querySelectorAll('section[id] > div, section[id] > div > div').forEach(el => {
       el.style.opacity = '0';
       observer.observe(el);
     });
