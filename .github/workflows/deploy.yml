@@ -5,7 +5,38 @@ on:
     branches: [main]
 
 jobs:
-  build-and-deploy:
+  deploy-static:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy static site to Hostinger root
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: public_html/
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/tcco-app/**
+            **/the-coaching-collective/**
+            **/docs/**
+            **/.claude/**
+            **/.github/**
+            **/scss/**
+            **/gulpfile.js
+            **/package*.json
+            **/_redirects
+            **/QUICK_TEST_CHECKLIST.md
+            **/TESTING_GUIDE.md
+
+  build-and-deploy-app:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -34,7 +65,7 @@ jobs:
           VITE_POSTHOG_HOST: ${{ secrets.VITE_POSTHOG_HOST }}
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
 
-      - name: Deploy to Hostinger via FTP
+      - name: Deploy app to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
