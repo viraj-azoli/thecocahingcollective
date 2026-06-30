@@ -6,6 +6,13 @@
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "3000"],
       "port": 3000
+    },
+    {
+      "name": "tcco-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "/Users/viraj/Desktop/public_html/tcco-app",
+      "port": 5173
     }
   ]
 }
