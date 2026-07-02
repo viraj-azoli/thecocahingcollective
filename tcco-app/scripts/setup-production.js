@@ -50,24 +50,30 @@ async function setupDatabase() {
   console.log('📦 Setting up Supabase database...\n');
 
   try {
-    const schemaPath = path.join(__dirname, '../supabase/migrations/001_initial_schema.sql');
-    const schema = fs.readFileSync(schemaPath, 'utf-8');
+    const migrationsDir = path.join(__dirname, '../supabase/migrations');
+    const files = fs.readdirSync(migrationsDir)
+      .filter(f => f.endsWith('.sql'))
+      .sort();
 
-    console.log('🔨 Executing schema migration...');
+    for (const file of files) {
+      console.log(`🔨 Executing migration: ${file}...`);
+      const schemaPath = path.join(migrationsDir, file);
+      const schema = fs.readFileSync(schemaPath, 'utf-8');
 
-    // Execute the entire schema
-    const result = await executeSQL(schema);
+      const result = await executeSQL(schema);
 
-    if (result.error) {
-      console.log('⚠️  Note: Schema may already be set up');
-      console.log('   Error:', result.error?.message || result.error);
-    } else {
-      console.log('✅ Schema migration completed\n');
+      if (result && result.error) {
+        console.log(`⚠️  Note: Migration ${file} may already be set up or had warning`);
+        console.log('   Error:', result.error?.message || result.error);
+      } else {
+        console.log(`✅ Migration ${file} completed\n`);
+      }
     }
   } catch (err) {
+    console.log('❌ Error setting up database:', err.message);
     console.log('📝 Note: Using Supabase dashboard for schema execution');
     console.log('   Navigate to: Supabase Dashboard → SQL Editor');
-    console.log('   Copy/paste: supabase/migrations/001_initial_schema.sql\n');
+    console.log('   Copy/paste: supabase/migrations/*.sql files\n');
   }
 }
 
