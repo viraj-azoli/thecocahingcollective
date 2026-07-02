@@ -1,0 +1,8 @@
+#root {
+  min-height: 100vh;
+}
+
+/* Ensure Router and its content fills the screen */
+main {
+  min-height: 100vh;
+}
