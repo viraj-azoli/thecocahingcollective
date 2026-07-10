@@ -79,6 +79,8 @@ export function AuthProvider({ children }) {
 
   const signup = async (email, password, userType) => {
     setError(null);
+    localStorage.removeItem('TCCO_DEV_BYPASS');
+    localStorage.removeItem('TCCO_DEV_BYPASS_COACH');
     const { data: { user }, error } = await supabase.auth.signUp({
       email,
       password,
@@ -111,6 +113,8 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     setError(null);
+    localStorage.removeItem('TCCO_DEV_BYPASS');
+    localStorage.removeItem('TCCO_DEV_BYPASS_COACH');
     const { data: { user }, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) { setError(error.message); throw error; }
     const profile = await fetchUserProfile(user.id);
@@ -120,6 +124,8 @@ export function AuthProvider({ children }) {
   };
 
   const loginWithGoogle = async () => {
+    localStorage.removeItem('TCCO_DEV_BYPASS');
+    localStorage.removeItem('TCCO_DEV_BYPASS_COACH');
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: `${window.location.origin}/auth/callback` },
@@ -129,6 +135,8 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     track('user_logged_out');
+    localStorage.removeItem('TCCO_DEV_BYPASS');
+    localStorage.removeItem('TCCO_DEV_BYPASS_COACH');
     await supabase.auth.signOut();
     reset();
     setUser(null);
