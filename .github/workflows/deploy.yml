@@ -14,10 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Clear FTP Sync State
-        run: |
-          curl -s -k --ftp-ssl --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" -Q "DELE app/.ftp-deploy-sync-state.json" "ftp://${{ secrets.FTP_SERVER }}/" || curl -s --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" -Q "DELE app/.ftp-deploy-sync-state.json" "ftp://${{ secrets.FTP_SERVER }}/" || echo "No app sync state file found to delete"
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -46,4 +42,4 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: tcco-app/dist/
           server-dir: app/
-          dangerous-clean-slate: false
+          dangerous-clean-slate: true
