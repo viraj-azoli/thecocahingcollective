@@ -120,7 +120,7 @@ function AppRoutes() {
 
 function App() {
   return (
-    <Router>
+    <Router basename="/app">
       <AuthProvider>
         <AppRoutes />
       </AuthProvider>
