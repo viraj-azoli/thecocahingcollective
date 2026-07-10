@@ -11,6 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Clear FTP Sync State
+        run: |
+          curl -s -k --ftp-ssl --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" -Q "DELE public_html/.ftp-deploy-sync-state.json" "ftp://${{ secrets.FTP_SERVER }}/" || curl -s --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" -Q "DELE public_html/.ftp-deploy-sync-state.json" "ftp://${{ secrets.FTP_SERVER }}/" || echo "No static sync state file found to delete"
+
       - name: Deploy static site to Hostinger root
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
@@ -44,6 +48,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Clear FTP Sync State
+        run: |
+          curl -s -k --ftp-ssl --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" -Q "DELE public_html/app/.ftp-deploy-sync-state.json" "ftp://${{ secrets.FTP_SERVER }}/" || curl -s --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" -Q "DELE public_html/app/.ftp-deploy-sync-state.json" "ftp://${{ secrets.FTP_SERVER }}/" || echo "No app sync state file found to delete"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
