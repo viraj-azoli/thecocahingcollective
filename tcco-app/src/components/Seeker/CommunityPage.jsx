@@ -3,13 +3,13 @@ import AppLayout from '../Layout/AppLayout';
 import { showToast } from '../shared/Toast';
 import '../Layout/AppLayout.css';
 
-const STATIC_POSTS = [
+const INITIAL_COMMUNITY_POSTS = [
   {
     id: 'p1',
     author: 'Sarah Chen',
     role: 'Coach',
     time: '2h ago',
-    content: "Reminder: growth happens in the uncomfortable moments. What's one uncomfortable thing you did this week that made you proud?",
+    content: "Growth occurs when we push outside our comfort zones. What is one step you took this week?",
     likes: 24,
     replies: 8,
     tag: '#mindset',
@@ -20,7 +20,7 @@ const STATIC_POSTS = [
     author: 'Test Seeker',
     role: 'Member',
     time: '5h ago',
-    content: "Just completed my 7th session and I honestly feel like a different person. The work is slow but it compounds. 🌱",
+    content: "Just completed my 7th session. Progress is slow but it really compounds over time! 🌱",
     likes: 31,
     replies: 12,
     tag: '#progress',
@@ -31,7 +31,7 @@ const STATIC_POSTS = [
     author: 'Marcus Williams',
     role: 'Coach',
     time: '1d ago',
-    content: "This week's journal prompt: What would you do if you knew you couldn't fail? Write for 10 minutes without stopping.",
+    content: "Journal prompt of the week: What action would you take if failure wasn't an option?",
     likes: 47,
     replies: 19,
     tag: '#journal',
@@ -39,20 +39,22 @@ const STATIC_POSTS = [
   },
 ];
 
-const EVENTS = [
+const UPCOMING_COMMUNITY_EVENTS = [
   { title: 'Group Coaching: Navigating Change', date: 'Tue 20 May, 6pm', attending: 18 },
   { title: 'Mindfulness Drop-in',               date: 'Thu 22 May, 12pm', attending: 34 },
   { title: 'Career Clarity Workshop',            date: 'Sat 24 May, 2pm',  attending: 9 },
 ];
 
-const TRENDING = ['#mindset', '#burnout', '#career', '#confidence', '#boundaries', '#gratitude'];
+const POPULAR_TRENDS = ['#mindset', '#burnout', '#career', '#confidence', '#boundaries', '#gratitude'];
 
-function initials(name) {
-  return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+function getInitialsOfUser(fullName) {
+  if (!fullName) return '';
+  const parts = fullName.split(' ');
+  return parts.map(part => part.charAt(0)).join('').slice(0, 2).toUpperCase();
 }
 
 export default function CommunityPage() {
-  const [posts, setPosts]         = useState(STATIC_POSTS);
+  const [posts, setPosts]         = useState(INITIAL_COMMUNITY_POSTS);
   const [postText, setPostText]   = useState('');
   const [selectedTag, setSelectedTag] = useState('');
 
@@ -136,7 +138,7 @@ export default function CommunityPage() {
                 {/* Author row */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div className="avatar avatar-sm" style={{ fontSize: '12px', fontWeight: 700 }}>
-                    {initials(post.author)}
+                    {getInitialsOfUser(post.author)}
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -180,8 +182,8 @@ export default function CommunityPage() {
             <div className="card">
               <p className="section-label" style={{ marginBottom: '14px' }}>UPCOMING EVENTS</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                {EVENTS.map((ev, i) => (
-                  <div key={i} style={{ paddingBottom: '14px', borderBottom: i < EVENTS.length - 1 ? '1px solid var(--border-card)' : 'none' }}>
+                {UPCOMING_COMMUNITY_EVENTS.map((ev, i) => (
+                  <div key={i} style={{ paddingBottom: '14px', borderBottom: i < UPCOMING_COMMUNITY_EVENTS.length - 1 ? '1px solid var(--border-card)' : 'none' }}>
                     <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-h)', marginBottom: '4px' }}>{ev.title}</p>
                     <p style={{ fontSize: '12px', color: 'var(--text-soft)', marginBottom: '2px' }}>📅 {ev.date}</p>
                     <p style={{ fontSize: '12px', color: 'var(--text-soft)', marginBottom: '8px' }}>{ev.attending} attending</p>
@@ -219,7 +221,7 @@ export default function CommunityPage() {
             <div className="card">
               <p className="section-label" style={{ marginBottom: '12px' }}>TRENDING TOPICS</p>
               <div className="chips-row" style={{ flexWrap: 'wrap' }}>
-                {TRENDING.map(tag => (
+                {POPULAR_TRENDS.map(tag => (
                   <span key={tag} className="chip" style={{ fontSize: '12px' }}>{tag}</span>
                 ))}
               </div>
