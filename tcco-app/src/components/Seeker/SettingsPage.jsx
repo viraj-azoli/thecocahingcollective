@@ -84,21 +84,20 @@ export default function SettingsPage() {
 
   const loadProfile = async () => {
     try {
-      const { data: profileRow } = await supabase
-        .from('seeker_profiles').select('id').eq('user_id', user?.id).single();
-      const pid = profileRow?.id;
-      if (!pid) { setLoading(false); return; }
-      setProfileId(pid);
+      const { data, error } = await supabase
+        .from('seeker_profiles').select('*').eq('user_id', user?.id).single();
 
-      const { data } = await supabase.from('seeker_profiles').select('*').eq('id', pid).single();
-      setProfile(data || {});
-      setName(data?.name || '');
-      setBio(data?.bio || '');
-      setGoals(data?.onboarding_quiz?.goals || []);
-      setFormats(data?.preferences?.preferred_format ? [data.preferences.preferred_format] : []);
-      setExperience(data?.onboarding_quiz?.experience_level || '');
-    } catch (err) {
-      console.error(err);
+      if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows
+
+      if (data) {
+        setProfileId(data.id);
+        setProfile(data);
+        setName(data.name || '');
+        setBio(data.bio || '');
+        setGoals(data.onboarding_quiz?.goals || []);
+        setFormats(data.preferences?.preferred_format ? [data.preferences.preferred_format] : []);
+        setExperience(data.onboarding_quiz?.experience_level || '');
+      }
     } finally {
       setLoading(false);
     }
@@ -128,17 +127,28 @@ export default function SettingsPage() {
     setSaving(true);
     try {
       const patch = {
+        user_id: user.id,
         name,
         bio,
         onboarding_quiz: { ...(profile?.onboarding_quiz || {}), goals, experience_level: experience },
         preferences: { ...(profile?.preferences || {}), preferred_format: formats[0] || null },
         updated_at: new Date().toISOString(),
       };
-      await supabase.from('seeker_profiles').update(patch).eq('id', profileId);
+
+      if (profileId) {
+        // Update existing profile
+        const { error } = await supabase.from('seeker_profiles').update(patch).eq('id', profileId);
+        if (error) throw error;
+      } else {
+        // Create new profile (first save or missing row)
+        const { data, error } = await supabase.from('seeker_profiles').insert(patch).select('id').single();
+        if (error) throw error;
+        setProfileId(data.id);
+      }
+
       setProfile(prev => ({ ...prev, ...patch }));
       showToast('Profile saved!');
     } catch (err) {
-      console.error(err);
       showToast('Failed to save profile.', 'error');
     } finally {
       setSaving(false);

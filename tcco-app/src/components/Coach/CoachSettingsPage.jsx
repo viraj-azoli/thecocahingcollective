@@ -73,24 +73,26 @@ export default function CoachSettingsPage() {
 
   const loadProfile = async () => {
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('coach_profiles').select('*').eq('user_id', user.id).single();
-      if (!data) { setLoading(false); return; }
-      setProfile(data);
-      setCoachId(data.id);
-      setName(data.name || '');
-      setTitle(data.title || '');
-      setBio(data.bio || '');
-      setApproach(data.approach || '');
-      setSpecialties(data.specialties || []);
-      setLanguages(data.languages || []);
-      setPricePerSession(data.price_per_session?.toString() || '');
-      setZoomLink(data.zoom_link || '');
-      setTimezone(data.timezone || 'UTC');
-      setCancellationPolicy(data.cancellation_policy || '');
-      setMaxClients(data.max_clients?.toString() || '');
-    } catch (err) {
-      console.error(err);
+
+      if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows
+
+      if (data) {
+        setProfile(data);
+        setCoachId(data.id);
+        setName(data.name || '');
+        setTitle(data.title || '');
+        setBio(data.bio || '');
+        setApproach(data.approach || '');
+        setSpecialties(data.specialties || []);
+        setLanguages(data.languages || []);
+        setPricePerSession(data.price_per_session?.toString() || '');
+        setZoomLink(data.zoom_link || '');
+        setTimezone(data.timezone || 'UTC');
+        setCancellationPolicy(data.cancellation_policy || '');
+        setMaxClients(data.max_clients?.toString() || '');
+      }
     } finally {
       setLoading(false);
     }
@@ -106,6 +108,7 @@ export default function CoachSettingsPage() {
     setSaving(true);
     try {
       const patch = {
+        user_id: user.id,
         name, title, bio, approach,
         specialties, languages,
         price_per_session: pricePerSession ? parseFloat(pricePerSession) : null,
@@ -115,12 +118,21 @@ export default function CoachSettingsPage() {
         max_clients: maxClients ? parseInt(maxClients, 10) : null,
         updated_at: new Date().toISOString(),
       };
-      const { error } = await supabase.from('coach_profiles').update(patch).eq('id', coachId);
-      if (error) throw error;
+
+      if (coachId) {
+        // Update existing profile
+        const { error } = await supabase.from('coach_profiles').update(patch).eq('id', coachId);
+        if (error) throw error;
+      } else {
+        // Create new profile (first save or missing row)
+        const { data, error } = await supabase.from('coach_profiles').insert(patch).select('id').single();
+        if (error) throw error;
+        setCoachId(data.id);
+      }
+
       setProfile(prev => ({ ...prev, ...patch }));
       showToast('Profile saved!');
     } catch (err) {
-      console.error(err);
       showToast('Failed to save profile.', 'error');
     } finally {
       setSaving(false);

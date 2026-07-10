@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { useCoachOnboarding } from '../../hooks/useCoachOnboarding';
+import { showToast } from '../shared/Toast';
 import './CoachOnboarding.css';
 
 export default function CoachOnboarding() {
@@ -26,7 +27,7 @@ export default function CoachOnboarding() {
     if (validateStep(currentStep)) {
       setCurrentStep(currentStep + 1);
     } else {
-      alert('Please fill in all required fields');
+      showToast('Please fill in all required fields', 'error');
     }
   };
 
@@ -42,7 +43,7 @@ export default function CoachOnboarding() {
       setCurrentStep(4); // Success step
       setTimeout(() => navigate('/dashboard'), 2000);
     } catch (err) {
-      console.error('Failed to save profile:', err);
+      showToast('Failed to save profile. Please try again.', 'error');
     }
   };
 

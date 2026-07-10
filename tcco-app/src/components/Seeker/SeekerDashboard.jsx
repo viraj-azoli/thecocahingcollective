@@ -210,25 +210,25 @@ export default function SeekerDashboard() {
             <span className="db-stat-icon">💧</span>
             <div className="db-stat-value">{seekerProfile?.day_streak ?? 0}</div>
             <div className="db-stat-label">DAY STREAK</div>
-            <div className="db-stat-delta positive">+3 this week</div>
+            <div className="db-stat-delta positive">Keep it up!</div>
           </div>
           <div className="db-stat-card">
             <span className="db-stat-icon">⏱️</span>
-            <div className="db-stat-value">4h 28m</div>
-            <div className="db-stat-label">PRACTICE THIS WEEK</div>
-            <div className="db-stat-delta positive">+12% vs last week</div>
+            <div className="db-stat-value">{seekerProfile?.total_sessions ?? 0}</div>
+            <div className="db-stat-label">TOTAL SESSIONS</div>
+            <div className="db-stat-delta neutral">All time</div>
           </div>
           <div className="db-stat-card">
             <span className="db-stat-icon">🎯</span>
             <div className="db-stat-value">{seekerProfile?.sessions_completed ?? 0}</div>
             <div className="db-stat-label">SESSIONS COMPLETED</div>
-            <div className="db-stat-delta neutral">Next milestone: 10</div>
+            <div className="db-stat-delta neutral">Great progress</div>
           </div>
           <div className="db-stat-card">
             <span className="db-stat-icon">❤️</span>
             <div className="db-stat-value">{Number(seekerProfile?.mood_average ?? 0).toFixed(1)}</div>
             <div className="db-stat-label">AVG MOOD · 14 DAYS</div>
-            <div className="db-stat-delta positive">Trending up</div>
+            <div className="db-stat-delta positive">Stay mindful</div>
           </div>
         </div>
 

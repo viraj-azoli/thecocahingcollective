@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { track, identify, reset } from '../lib/analytics';
 
+// TCCO production build v2 — all dev bypass removed
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
@@ -11,45 +12,6 @@ export function AuthProvider({ children }) {
   const [error, setError]             = useState(null);
 
   useEffect(() => {
-    // Dev bypass: check for localStorage dev flags
-    const devBypass = localStorage.getItem('TCCO_DEV_BYPASS') === 'true';
-    const coachBypass = localStorage.getItem('TCCO_DEV_BYPASS_COACH') === 'true';
-
-    if (devBypass) {
-      // Mock a test seeker for dev browsing
-      const mockUserId = '00000000-0000-0000-0000-000000000001';
-      setUser({
-        id: mockUserId,
-        email: 'dev@test.local',
-      });
-      setUserProfile({
-        id: '00000000-0000-0000-0000-000000000001',
-        user_id: mockUserId,
-        user_type: 'seeker',
-        name: 'Dev User',
-        tier: 'Growth',
-      });
-      setLoading(false);
-      return;
-    }
-
-    if (coachBypass) {
-      // Mock a test coach for dev browsing
-      const mockCoachId = '00000000-0000-0000-0000-000000000002';
-      setUser({
-        id: mockCoachId,
-        email: 'coach@test.local',
-      });
-      setUserProfile({
-        id: '00000000-0000-0000-0000-000000000002',
-        user_id: mockCoachId,
-        user_type: 'coach',
-        name: 'Dev Coach',
-      });
-      setLoading(false);
-      return;
-    }
-
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setUser(session.user);
@@ -72,15 +34,20 @@ export function AuthProvider({ children }) {
   }, []);
 
   const fetchUserProfile = async (userId) => {
-    const { data } = await supabase.from('users').select('*').eq('id', userId).single();
-    setUserProfile(data || null);
-    return data;
+    try {
+      const { data, error } = await supabase.from('users').select('*').eq('id', userId).single();
+      if (error) throw error;
+      setUserProfile(data || null);
+      return data;
+    } catch (err) {
+      console.error('Failed to fetch user profile:', err.message);
+      setUserProfile(null);
+      return null;
+    }
   };
 
   const signup = async (email, password, userType) => {
     setError(null);
-    localStorage.removeItem('TCCO_DEV_BYPASS');
-    localStorage.removeItem('TCCO_DEV_BYPASS_COACH');
     const { data: { user }, error } = await supabase.auth.signUp({
       email,
       password,
@@ -113,8 +80,6 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     setError(null);
-    localStorage.removeItem('TCCO_DEV_BYPASS');
-    localStorage.removeItem('TCCO_DEV_BYPASS_COACH');
     const { data: { user }, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) { setError(error.message); throw error; }
     const profile = await fetchUserProfile(user.id);
@@ -124,8 +89,6 @@ export function AuthProvider({ children }) {
   };
 
   const loginWithGoogle = async () => {
-    localStorage.removeItem('TCCO_DEV_BYPASS');
-    localStorage.removeItem('TCCO_DEV_BYPASS_COACH');
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: `${window.location.origin}/auth/callback` },
@@ -135,8 +98,6 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     track('user_logged_out');
-    localStorage.removeItem('TCCO_DEV_BYPASS');
-    localStorage.removeItem('TCCO_DEV_BYPASS_COACH');
     await supabase.auth.signOut();
     reset();
     setUser(null);

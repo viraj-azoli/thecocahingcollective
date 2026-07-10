@@ -126,67 +126,6 @@ export default function Login() {
           </p>
         </div>
 
-        {/* Dev mode buttons */}
-        <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid #e5e7eb', display: 'flex', gap: '8px', justifyContent: 'center' }}>
-          <button
-            type="button"
-            onClick={() => {
-              localStorage.setItem('TCCO_DEV_BYPASS', 'true');
-              localStorage.removeItem('TCCO_DEV_BYPASS_COACH');
-              window.location.href = '/dashboard';
-            }}
-            style={{
-              background: '#f3f4f6',
-              color: '#6b7280',
-              border: 'none',
-              padding: '8px 16px',
-              borderRadius: '6px',
-              fontSize: '12px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              transition: 'all 0.2s'
-            }}
-            onMouseOver={(e) => {
-              e.target.style.background = '#e5e7eb';
-              e.target.style.color = '#4b5563';
-            }}
-            onMouseOut={(e) => {
-              e.target.style.background = '#f3f4f6';
-              e.target.style.color = '#6b7280';
-            }}
-          >
-            🧑‍💼 Seeker Demo
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              localStorage.setItem('TCCO_DEV_BYPASS_COACH', 'true');
-              localStorage.removeItem('TCCO_DEV_BYPASS');
-              window.location.href = '/coach/dashboard';
-            }}
-            style={{
-              background: '#f3f4f6',
-              color: '#6b7280',
-              border: 'none',
-              padding: '8px 16px',
-              borderRadius: '6px',
-              fontSize: '12px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              transition: 'all 0.2s'
-            }}
-            onMouseOver={(e) => {
-              e.target.style.background = '#e5e7eb';
-              e.target.style.color = '#4b5563';
-            }}
-            onMouseOut={(e) => {
-              e.target.style.background = '#f3f4f6';
-              e.target.style.color = '#6b7280';
-            }}
-          >
-            🚀 Coach Demo
-          </button>
-        </div>
       </div>
     </div>
   );
