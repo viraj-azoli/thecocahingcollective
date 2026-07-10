@@ -41,6 +41,7 @@ jobs:
             **/TESTING_GUIDE.md
 
   build-and-deploy-app:
+    needs: deploy-static
     runs-on: ubuntu-latest
     defaults:
       run:
