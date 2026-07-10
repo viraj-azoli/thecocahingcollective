@@ -412,7 +412,7 @@ export default function SettingsPage() {
             <div className="card" style={{ borderLeft: '4px solid var(--error)' }}>
               <p className="section-label" style={{ marginBottom: '8px', color: 'var(--error)' }}>DANGER ZONE</p>
               <p style={{ fontSize: '13px', color: 'var(--text-soft)', marginBottom: '12px' }}>
-                To delete your account, please contact support at support@thecoachingcollective.com
+                To delete your account, please contact support at info@thecoachingcollectiveonline.com
               </p>
             </div>
           </div>
