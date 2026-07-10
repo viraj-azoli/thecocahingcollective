@@ -3,7 +3,7 @@ import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
 import { showToast } from '../shared/Toast';
-import AvatarUpload from '../Shared/AvatarUpload';
+import AvatarUpload from '../shared/AvatarUpload';
 import '../Layout/AppLayout.css';
 
 const SPECIALTY_OPTIONS = [

@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
-import SEO from '../Shared/SEO';
+import SEO from '../shared/SEO';
 import { showToast } from '../shared/Toast';
-import { SkeletonDashboard } from '../Shared/Skeleton';
-import { SectionErrorBoundary } from '../Shared/ErrorBoundary';
-import ProfileCompleteness from '../Shared/ProfileCompleteness';
+import { SkeletonDashboard } from '../shared/Skeleton';
+import { SectionErrorBoundary } from '../shared/ErrorBoundary';
+import ProfileCompleteness from '../shared/ProfileCompleteness';
 import '../Layout/AppLayout.css';
 import './Dashboard.css';
 

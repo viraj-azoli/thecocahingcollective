@@ -4,7 +4,7 @@ import { supabase } from '../../lib/supabase';
 import { track } from '../../lib/analytics';
 import AppLayout from '../Layout/AppLayout';
 import { showToast } from '../shared/Toast';
-import AvatarUpload from '../Shared/AvatarUpload';
+import AvatarUpload from '../shared/AvatarUpload';
 import '../Layout/AppLayout.css';
 
 const GOALS_OPTIONS = [

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
-import VideoRoom from '../Shared/VideoRoom';
+import VideoRoom from '../shared/VideoRoom';
 import { showToast } from '../shared/Toast';
 import '../Layout/AppLayout.css';
 

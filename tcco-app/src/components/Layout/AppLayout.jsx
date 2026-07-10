@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { ToastContainer } from '../shared/Toast';
-import NotificationsDropdown from '../Shared/NotificationsDropdown';
+import NotificationsDropdown from '../shared/NotificationsDropdown';
 import './AppLayout.css';
 
 const SEEKER_NAV = [

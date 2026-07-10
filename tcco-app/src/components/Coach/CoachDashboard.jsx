@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
-import ProfileCompleteness from '../Shared/ProfileCompleteness';
+import ProfileCompleteness from '../shared/ProfileCompleteness';
 import '../Layout/AppLayout.css';
 
 export default function CoachDashboard() {

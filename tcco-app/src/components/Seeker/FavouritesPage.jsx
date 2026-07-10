@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
-import SEO from '../Shared/SEO';
+import SEO from '../shared/SEO';
 import '../Layout/AppLayout.css';
 
 const AVATAR_COLORS = [

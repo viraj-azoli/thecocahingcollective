@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
-import SEO from '../Shared/SEO';
-import { SkeletonCoachesGrid } from '../Shared/Skeleton';
+import SEO from '../shared/SEO';
+import { SkeletonCoachesGrid } from '../shared/Skeleton';
 import '../Layout/AppLayout.css';
 
 const SPECIALTIES = ['All', 'Leadership', 'Career', 'Life', 'Executive', 'Wellness', 'Mindfulness', 'Relationships'];
