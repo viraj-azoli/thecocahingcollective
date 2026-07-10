@@ -46,7 +46,7 @@ const AdminSessionsPage   = lazy(() => import('./components/Admin/AdminSessionsP
 const AdminContentPage    = lazy(() => import('./components/Admin/AdminContentPage'));
 
 // Shared pages (lazy)
-const MessagesPage = lazy(() => import('./components/Shared/MessagesPage'));
+const MessagesPage = lazy(() => import('./components/shared/MessagesPage'));
 
 import './App.css';
 

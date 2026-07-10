@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { HelmetProvider } from 'react-helmet-async'
 import * as Sentry from '@sentry/react'
 import App from './App.jsx'
-import { PageErrorBoundary } from './components/Shared/ErrorBoundary.jsx'
+import { PageErrorBoundary } from './components/shared/ErrorBoundary.jsx'
 import { initAnalytics } from './lib/analytics.js'
 import './index.css'
 
