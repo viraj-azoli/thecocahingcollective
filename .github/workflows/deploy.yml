@@ -16,7 +16,7 @@ jobs:
 
       - name: Clear FTP Sync State
         run: |
-          curl -s -k --ftp-ssl --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" -Q "DELE public_html/app/.ftp-deploy-sync-state.json" "ftp://${{ secrets.FTP_SERVER }}/" || curl -s --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" -Q "DELE public_html/app/.ftp-deploy-sync-state.json" "ftp://${{ secrets.FTP_SERVER }}/" || echo "No app sync state file found to delete"
+          curl -s -k --ftp-ssl --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" -Q "DELE app/.ftp-deploy-sync-state.json" "ftp://${{ secrets.FTP_SERVER }}/" || curl -s --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" -Q "DELE app/.ftp-deploy-sync-state.json" "ftp://${{ secrets.FTP_SERVER }}/" || echo "No app sync state file found to delete"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
