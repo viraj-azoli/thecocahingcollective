@@ -1,7 +1,7 @@
 Options -MultiViews
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^ index.html [QL]
+RewriteRule ^ index.html [L]
 
 # Security headers
 Header always set X-Frame-Options "SAMEORIGIN"
