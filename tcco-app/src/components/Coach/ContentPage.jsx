@@ -5,23 +5,23 @@ import AppLayout from '../Layout/AppLayout';
 import { showToast } from '../shared/Toast';
 import '../Layout/AppLayout.css';
 
-const ACCEPT_BY_TYPE = {
+const ALLOWED_FILE_TYPES = {
   audio:      'audio/*,.mp3,.m4a,.wav',
   article:    '.pdf,.doc,.docx',
   live_event: 'video/*,.mp4,.mov',
   program:    '.pdf,.zip,.mp4,.mov,audio/*',
 };
 
-const TYPE_META = {
+const CONTENT_TYPE_METADATA = {
   audio:      { label: 'Audio',      icon: '🎧' },
   article:    { label: 'Article',    icon: '📄' },
   live_event: { label: 'Live Event', icon: '🎥' },
   program:    { label: 'Program',    icon: '📋' },
 };
 
-const CONTENT_TYPES = ['audio', 'article', 'live_event', 'program'];
+const VALID_CONTENT_TYPES = ['audio', 'article', 'live_event', 'program'];
 
-const emptyForm = {
+const defaultContentForm = {
   title: '',
   type: 'article',
   description: '',
@@ -31,8 +31,8 @@ const emptyForm = {
   featured: false,
 };
 
-function ContentModal({ mode, initial, coachId, onClose, onSaved }) {
-  const [form, setForm] = useState(initial || emptyForm);
+function ContentDetailsModal({ mode, initial, coachId, onClose, onSaved }) {
+  const [form, setForm] = useState(initial || defaultContentForm);
   const [saving, setSaving] = useState(false);
   const [contentFile, setContentFile] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -84,11 +84,11 @@ function ContentModal({ mode, initial, coachId, onClose, onSaved }) {
       if (mode === 'create') {
         const { error } = await supabase.from('content').insert(payload);
         if (error) throw error;
-        showToast('Content created!');
+        showToast('Content created successfully!');
       } else {
         const { error } = await supabase.from('content').update(payload).eq('id', initial.id);
         if (error) throw error;
-        showToast('Content updated!');
+        showToast('Content updated successfully!');
       }
       onSaved();
       onClose();
@@ -131,8 +131,8 @@ function ContentModal({ mode, initial, coachId, onClose, onSaved }) {
                 value={form.type}
                 onChange={e => set('type', e.target.value)}
               >
-                {CONTENT_TYPES.map(t => (
-                  <option key={t} value={t}>{TYPE_META[t]?.label || t}</option>
+                {VALID_CONTENT_TYPES.map(t => (
+                  <option key={t} value={t}>{CONTENT_TYPE_METADATA[t]?.label || t}</option>
                 ))}
               </select>
             </div>
@@ -203,7 +203,7 @@ function ContentModal({ mode, initial, coachId, onClose, onSaved }) {
             <input
               ref={fileRef}
               type="file"
-              accept={ACCEPT_BY_TYPE[form.type] || '*/*'}
+              accept={ALLOWED_FILE_TYPES[form.type] || '*/*'}
               style={{ display: 'none' }}
               onChange={e => {
                 const f = e.target.files?.[0];
@@ -215,7 +215,7 @@ function ContentModal({ mode, initial, coachId, onClose, onSaved }) {
               }}
             />
             <p style={{ fontSize: '11px', color: 'var(--text-soft)', marginTop: '4px' }}>
-              Accepted: {ACCEPT_BY_TYPE[form.type] || 'any file'} · Max 500 MB
+              Accepted: {ALLOWED_FILE_TYPES[form.type] || 'any file'} · Max 500 MB
             </p>
           </div>
 
@@ -290,10 +290,10 @@ export default function ContentPage() {
     setItems(prev => prev.map(i => i.id === item.id ? { ...i, published: newVal } : i));
     const { error } = await supabase.from('content').update({ published: newVal }).eq('id', item.id);
     if (error) {
-      showToast('Failed to update', 'error');
+      showToast('Failed to update status', 'error');
       setItems(prev => prev.map(i => i.id === item.id ? { ...i, published: item.published } : i));
     } else {
-      showToast(newVal ? 'Published!' : 'Unpublished');
+      showToast(newVal ? 'Content Published!' : 'Content Drafted');
     }
   };
 
@@ -307,7 +307,7 @@ export default function ContentPage() {
   if (loading) {
     return (
       <AppLayout role="coach">
-        <div className="page-loading"><div className="spinner" /><p>Loading content…</p></div>
+        <div className="page-loading"><div className="spinner" /><p>Loading content items…</p></div>
       </AppLayout>
     );
   }
@@ -336,7 +336,7 @@ export default function ContentPage() {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
             {items.map(item => {
-              const meta = TYPE_META[item.type] || { icon: '📄', label: item.type };
+              const meta = CONTENT_TYPE_METADATA[item.type] || { icon: '📄', label: item.type };
               const tagsArr = Array.isArray(item.tags) ? item.tags : [];
               return (
                 <div
@@ -459,7 +459,7 @@ export default function ContentPage() {
 
       {/* Create / Edit modal */}
       {modal && (
-        <ContentModal
+        <ContentDetailsModal
           mode={modal.mode}
           initial={modal.item}
           coachId={coachId}
