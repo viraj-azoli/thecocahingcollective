@@ -3,7 +3,7 @@ import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
 import '../Layout/AppLayout.css';
 
-function StatCard({ icon, label, value, delta, color = 'var(--primary)' }) {
+function KPIStatsCard({ icon, label, value, delta, color = 'var(--primary)' }) {
   return (
     <div style={{
       background: 'var(--card-bg)', border: '1px solid var(--border-card)',
@@ -19,7 +19,7 @@ function StatCard({ icon, label, value, delta, color = 'var(--primary)' }) {
   );
 }
 
-function BarChart({ data, label }) {
+function AnalyticsBarChart({ data, label }) {
   if (!data?.length) return null;
   const max = Math.max(...data.map(d => d.value), 1);
   return (
@@ -47,21 +47,21 @@ function BarChart({ data, label }) {
 
 export default function AdminAnalyticsPage() {
   const [stats, setStats]     = useState(null);
-  const [monthlyRevenue, setMonthlyRevenue] = useState([]);
+  const [revenueByMonth, setRevenueByMonth] = useState([]);
   const [recentSessions, setRecentSessions] = useState([]);
-  const [topCoaches, setTopCoaches]         = useState([]);
+  const [leadingCoaches, setLeadingCoaches] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { loadAnalyticsData(); }, []);
 
-  const load = async () => {
+  const loadAnalyticsData = async () => {
     try {
       const [
         { count: totalSeekers },
         { count: totalCoaches },
         { count: totalSessions },
         { count: totalCompleted },
-        { data: revenueData },
+        { data: rawRevenueData },
         { data: recent },
         { data: top },
       ] = await Promise.all([
@@ -76,30 +76,30 @@ export default function AdminAnalyticsPage() {
 
       setStats({ totalSeekers, totalCoaches, totalSessions, totalCompleted });
       setRecentSessions(recent || []);
-      setTopCoaches(top || []);
+      setLeadingCoaches(top || []);
 
       // Group revenue by month
       const byMonth = {};
-      const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      (revenueData || []).forEach(s => {
+      const MONTHS_LIST = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      (rawRevenueData || []).forEach(s => {
         if (!s.scheduled_date || !s.amount_paid) return;
         const d = new Date(s.scheduled_date + 'T00:00');
-        const key = `${MONTHS[d.getMonth()]} '${String(d.getFullYear()).slice(2)}`;
+        const key = `${MONTHS_LIST[d.getMonth()]} '${String(d.getFullYear()).slice(2)}`;
         byMonth[key] = (byMonth[key] || 0) + Number(s.amount_paid);
       });
-      setMonthlyRevenue(Object.entries(byMonth).slice(-6).map(([label, value]) => ({ label, value })));
+      setRevenueByMonth(Object.entries(byMonth).slice(-6).map(([label, value]) => ({ label, value })));
     } catch (err) {
-      console.error(err);
+      console.error('Error loading analytics', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const totalRevenue = monthlyRevenue.reduce((sum, d) => sum + d.value, 0);
+  const combinedRevenue = revenueByMonth.reduce((sum, d) => sum + d.value, 0);
 
   if (loading) return (
     <AppLayout role="admin">
-      <div className="page-loading"><div className="spinner" /><p>Loading analytics…</p></div>
+      <div className="page-loading"><div className="spinner" /><p>Loading platform metrics data…</p></div>
     </AppLayout>
   );
 
@@ -115,10 +115,10 @@ export default function AdminAnalyticsPage() {
 
         {/* KPI cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
-          <StatCard icon="🧭" label="TOTAL SEEKERS" value={stats?.totalSeekers ?? 0} />
-          <StatCard icon="🎓" label="VERIFIED COACHES" value={stats?.totalCoaches ?? 0} />
-          <StatCard icon="📅" label="SESSIONS COMPLETED" value={stats?.totalCompleted ?? 0} />
-          <StatCard icon="💰" label="TOTAL REVENUE" value={`$${totalRevenue.toLocaleString()}`} color="var(--accent)" />
+          <KPIStatsCard icon="🧭" label="TOTAL SEEKERS" value={stats?.totalSeekers ?? 0} />
+          <KPIStatsCard icon="🎓" label="VERIFIED COACHES" value={stats?.totalCoaches ?? 0} />
+          <KPIStatsCard icon="📅" label="SESSIONS COMPLETED" value={stats?.totalCompleted ?? 0} />
+          <KPIStatsCard icon="💰" label="TOTAL REVENUE" value={`$${combinedRevenue.toLocaleString()}`} color="var(--accent)" />
         </div>
 
         {/* Revenue chart */}
@@ -126,8 +126,8 @@ export default function AdminAnalyticsPage() {
           background: 'var(--card-bg)', border: '1px solid var(--border-card)',
           borderRadius: 'var(--r-md)', padding: '24px',
         }}>
-          {monthlyRevenue.length > 0
-            ? <BarChart data={monthlyRevenue} label="REVENUE BY MONTH (LAST 6 MONTHS)" />
+          {revenueByMonth.length > 0
+            ? <AnalyticsBarChart data={revenueByMonth} label="REVENUE BY MONTH (LAST 6 MONTHS)" />
             : <p style={{ color: 'var(--text-soft)', fontSize: '14px' }}>No revenue data yet.</p>
           }
         </div>
@@ -137,10 +137,10 @@ export default function AdminAnalyticsPage() {
           {/* Top coaches */}
           <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border-card)', borderRadius: 'var(--r-md)', padding: '20px' }}>
             <p style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-soft)', marginBottom: '16px', letterSpacing: '0.05em' }}>TOP COACHES BY RATING</p>
-            {topCoaches.length === 0
+            {leadingCoaches.length === 0
               ? <p style={{ color: 'var(--text-soft)', fontSize: '14px' }}>No coaches yet.</p>
-              : topCoaches.map((c, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: i < topCoaches.length - 1 ? '1px solid var(--border-card)' : 'none' }}>
+              : leadingCoaches.map((c, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: i < leadingCoaches.length - 1 ? '1px solid var(--border-card)' : 'none' }}>
                   <div>
                     <p style={{ fontWeight: 600, fontSize: '14px', color: 'var(--text-h)' }}>{c.name}</p>
                     <p style={{ fontSize: '12px', color: 'var(--text-soft)' }}>{c.sessions_completed || 0} sessions · {c.review_count || 0} reviews</p>
