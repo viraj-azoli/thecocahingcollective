@@ -5,43 +5,7 @@ on:
     branches: [main]
 
 jobs:
-  deploy-static:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Clear FTP Sync State
-        run: |
-          curl -s -k --ftp-ssl --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" -Q "DELE public_html/.ftp-deploy-sync-state.json" "ftp://${{ secrets.FTP_SERVER }}/" || curl -s --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" -Q "DELE public_html/.ftp-deploy-sync-state.json" "ftp://${{ secrets.FTP_SERVER }}/" || echo "No static sync state file found to delete"
-
-      - name: Deploy static site to Hostinger root
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./
-          server-dir: ./
-          dangerous-clean-slate: false
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/tcco-app/**
-            **/the-coaching-collective/**
-            **/docs/**
-            **/.claude/**
-            **/.github/**
-            **/scss/**
-            **/gulpfile.js
-            **/package*.json
-            **/_redirects
-            **/QUICK_TEST_CHECKLIST.md
-            **/TESTING_GUIDE.md
-
   build-and-deploy-app:
-    needs: deploy-static
     runs-on: ubuntu-latest
     defaults:
       run:
