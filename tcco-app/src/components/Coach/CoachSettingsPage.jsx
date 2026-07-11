@@ -107,6 +107,10 @@ export default function CoachSettingsPage() {
   const handleSaveProfile = async () => {
     setSaving(true);
     try {
+      // Step 1: Ensure public.users row exists (FK prerequisite)
+      await supabase.from('users').upsert({ id: user.id, user_type: 'coach' }, { onConflict: 'id' });
+
+      // Step 2: Build patch
       const patch = {
         user_id: user.id,
         name, title, bio, approach,
@@ -119,12 +123,11 @@ export default function CoachSettingsPage() {
         updated_at: new Date().toISOString(),
       };
 
+      // Step 3: Save coach profile
       if (coachId) {
-        // Update existing profile
         const { error } = await supabase.from('coach_profiles').update(patch).eq('id', coachId);
         if (error) throw error;
       } else {
-        // Create new profile (first save or missing row)
         const { data, error } = await supabase.from('coach_profiles').insert(patch).select('id').single();
         if (error) throw error;
         setCoachId(data.id);

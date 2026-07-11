@@ -126,6 +126,10 @@ export default function SettingsPage() {
   const handleSaveProfile = async () => {
     setSaving(true);
     try {
+      // Step 1: Ensure public.users row exists (FK prerequisite)
+      await supabase.from('users').upsert({ id: user.id, user_type: 'seeker' }, { onConflict: 'id' });
+
+      // Step 2: Build patch
       const patch = {
         user_id: user.id,
         name,
@@ -135,12 +139,11 @@ export default function SettingsPage() {
         updated_at: new Date().toISOString(),
       };
 
+      // Step 3: Save seeker profile
       if (profileId) {
-        // Update existing profile
         const { error } = await supabase.from('seeker_profiles').update(patch).eq('id', profileId);
         if (error) throw error;
       } else {
-        // Create new profile (first save or missing row) — include required tier
         const insertPayload = { ...patch, tier: profile?.tier || 'Discovery' };
         const { data, error } = await supabase.from('seeker_profiles').insert(insertPayload).select('id').single();
         if (error) throw error;
