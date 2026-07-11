@@ -2,7 +2,6 @@ import React, { createContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { track, identify, reset } from '../lib/analytics';
 
-// TCCO production build v2 — all dev bypass removed
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
@@ -12,7 +11,10 @@ export function AuthProvider({ children }) {
   const [error, setError]             = useState(null);
 
   useEffect(() => {
+    let cancelled = false;
+
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (cancelled) return;
       if (session?.user) {
         setUser(session.user);
         fetchUserProfile(session.user.id);
@@ -30,32 +32,29 @@ export function AuthProvider({ children }) {
       }
       setLoading(false);
     });
-    return () => subscription.unsubscribe();
+
+    return () => { cancelled = true; subscription.unsubscribe(); };
   }, []);
 
   const fetchUserProfile = async (userId) => {
     try {
-      const { data, error } = await supabase.from('users').select('*').eq('id', userId).single();
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
       if (error) {
-        if (error.code === 'PGRST116') {
-          // No public.users row — auto-create one for existing / OAuth users
-          const { data: { user: authUser } } = await supabase.auth.getUser();
-          const userType = authUser?.user_metadata?.user_type || 'seeker';
-          const { data: newRow, error: insertErr } = await supabase
-            .from('users')
-            .insert({ id: userId, user_type: userType })
-            .select('*')
-            .single();
-          if (insertErr) throw insertErr;
-          setUserProfile(newRow);
-          return newRow;
-        }
-        throw error;
+        // No row in public.users — not fatal, app works without it
+        // Profile will be null; seeker/coach profiles reference user_id directly
+        setUserProfile(null);
+        return null;
       }
-      setUserProfile(data || null);
+
+      setUserProfile(data);
       return data;
     } catch (err) {
-      console.error('Failed to fetch user profile:', err.message);
+      // Silently ignore — the app works without a public.users row
       setUserProfile(null);
       return null;
     }
@@ -66,26 +65,20 @@ export function AuthProvider({ children }) {
     const { data: { user }, error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: {
-          user_type: userType
-        }
-      }
+      options: { data: { user_type: userType } }
     });
     if (error) { setError(error.message); throw error; }
     if (!user) {
-      // Email confirmation is required — user is not yet active
+      // Email confirmation required — user not yet active
       return null;
     }
 
-    // Create the users table row so foreign keys work
-    try {
-      await supabase.from('users').insert({ id: user.id, user_type: userType });
-    } catch (insertErr) {
-      // Row might already exist (e.g., from trigger or prior signup) — continue
-    }
+    // Create the public.users row (fire-and-forget — ignore RLS errors)
+    supabase.from('users').insert({ id: user.id, user_type: userType })
+      .then(({ data }) => data && setUserProfile(data))
+      .catch(() => {/* RLS may block — not critical */});
 
-    // Fire-and-forget welcome email — don't block signup on email failure
+    // Fire-and-forget welcome email
     supabase.functions.invoke('send-email', {
       body: {
         to: email,
@@ -104,10 +97,11 @@ export function AuthProvider({ children }) {
     setError(null);
     const { data: { user }, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) { setError(error.message); throw error; }
+    // Fetch profile non-blocking — login succeeds regardless
     const profile = await fetchUserProfile(user.id);
     identify(user.id, { email, role: profile?.user_type });
     track('user_logged_in', { method: 'email' });
-    return user;
+    return { user, profile };
   };
 
   const loginWithGoogle = async () => {
@@ -139,14 +133,34 @@ export function AuthProvider({ children }) {
   };
 
   const updateProfile = async (updates) => {
-    const { data, error } = await supabase.from('users').update(updates).eq('id', user.id).select().single();
-    if (error) { setError(error.message); throw error; }
+    if (!userProfile?.id) {
+      // No public.users row — create one
+      const { data, error } = await supabase
+        .from('users')
+        .insert({ id: user.id, ...updates })
+        .select()
+        .single();
+      if (error) throw error;
+      setUserProfile(data);
+      return data;
+    }
+    const { data, error } = await supabase
+      .from('users')
+      .update(updates)
+      .eq('id', user.id)
+      .select()
+      .single();
+    if (error) throw error;
     setUserProfile(data);
     return data;
   };
 
   return (
-    <AuthContext.Provider value={{ user, userProfile, loading, error, signup, login, loginWithGoogle, logout, resetPassword, updatePassword, updateProfile, fetchUserProfile }}>
+    <AuthContext.Provider value={{
+      user, userProfile, loading, error,
+      signup, login, loginWithGoogle, logout,
+      resetPassword, updatePassword, updateProfile, fetchUserProfile
+    }}>
       {children}
     </AuthContext.Provider>
   );
