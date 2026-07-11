@@ -111,7 +111,8 @@ export default function CoachesPage() {
 
       q = q.order('rating', { ascending: false });
 
-      const { data } = await q;
+      const { data, error } = await q;
+      if (error) throw error;
       let result = data || [];
 
       // Client-side specialty filter (array contains)
