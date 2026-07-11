@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthContext';
 import { ProtectedRoute } from './auth/ProtectedRoute';
+import { useAuth } from './auth/useAuth';
 
 // Auth pages (small, load eagerly)
 import Login        from './components/Auth/Login';
@@ -51,7 +52,11 @@ import MessagesPage from './components/shared/MessagesPage';
 import './App.css';
 
 function RootRedirect() {
-  return <Navigate to="/dashboard" replace />;
+  const { user, userProfile, loading } = useAuth();
+  if (loading) return <div className="spinner" style={{ margin: '40vh auto' }} />;
+  if (!user || !userProfile) return <Navigate to="/login" replace />;
+  const dashboards = { seeker: '/dashboard', coach: '/coach/dashboard', admin: '/admin/dashboard' };
+  return <Navigate to={dashboards[userProfile.user_type] || '/login'} replace />;
 }
 
 function AppRoutes() {

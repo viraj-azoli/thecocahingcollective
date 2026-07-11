@@ -11,15 +11,30 @@ export default function SignUp() {
   const [userType, setUserType] = useState('seeker');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signup } = useAuth();
+  const { signup, user, userProfile } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Store referral code in sessionStorage on page load
+  // Handle OAuth callback flow — if user is authenticated via Google but no profile yet
   useEffect(() => {
+    const isOAuth = new URLSearchParams(location.search).get('oauth') === 'true';
+    if (isOAuth && user && !userProfile) {
+      // User came from Google OAuth — create public.users row and redirect to onboarding
+      const userType = user.user_metadata?.user_type || 'seeker';
+      setUserType(userType);
+      supabase.from('users').insert({ id: user.id, user_type: userType })
+        .then(() => navigate(userType === 'seeker' ? '/onboarding-seeker' : '/onboarding-coach'))
+        .catch(() => setError('Could not set up account. Please try again.'));
+      return;
+    }
+    if (!isOAuth && user && userProfile) {
+      // Already authenticated — redirect to dashboard
+      navigate(userProfile.user_type === 'seeker' ? '/dashboard' : '/coach/dashboard');
+    }
+
     const ref = new URLSearchParams(location.search).get('ref');
     if (ref) sessionStorage.setItem('tcco_ref', ref);
-  }, [location.search]);
+  }, [location.search, user, userProfile, navigate]);
 
   const handleSignup = async (e) => {
     e.preventDefault();

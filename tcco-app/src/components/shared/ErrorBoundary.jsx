@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import * as Sentry from '@sentry/react';
 
 /* ── Generic fallback UI ─────────────────────────────────────────────── */
@@ -27,16 +28,16 @@ function DefaultFallback({ error, resetError }) {
             Try again
           </button>
         )}
-        <button
-          onClick={() => window.location.href = '/dashboard'}
+        <Link
+          to="/"
           style={{
             padding: '10px 20px', background: 'transparent', color: 'var(--primary, #1B9B7D)',
             border: '1.5px solid var(--primary, #1B9B7D)', borderRadius: '8px',
-            fontWeight: 600, cursor: 'pointer', fontSize: '14px',
+            fontWeight: 600, cursor: 'pointer', fontSize: '14px', textDecoration: 'none',
           }}
         >
           Go to dashboard
-        </button>
+        </Link>
       </div>
     </div>
   );

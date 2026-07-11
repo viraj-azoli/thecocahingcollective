@@ -41,7 +41,7 @@ export default function CoachOnboarding() {
     try {
       await saveProfile();
       setCurrentStep(4); // Success step
-      setTimeout(() => navigate('/dashboard'), 2000);
+      setTimeout(() => navigate('/coach/dashboard'), 2000);
     } catch (err) {
       showToast('Failed to save profile. Please try again.', 'error');
     }
