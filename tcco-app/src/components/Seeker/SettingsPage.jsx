@@ -140,8 +140,9 @@ export default function SettingsPage() {
         const { error } = await supabase.from('seeker_profiles').update(patch).eq('id', profileId);
         if (error) throw error;
       } else {
-        // Create new profile (first save or missing row)
-        const { data, error } = await supabase.from('seeker_profiles').insert(patch).select('id').single();
+        // Create new profile (first save or missing row) — include required tier
+        const insertPayload = { ...patch, tier: profile?.tier || 'Discovery' };
+        const { data, error } = await supabase.from('seeker_profiles').insert(insertPayload).select('id').single();
         if (error) throw error;
         setProfileId(data.id);
       }

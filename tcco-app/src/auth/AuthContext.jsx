@@ -63,6 +63,13 @@ export function AuthProvider({ children }) {
       return null;
     }
 
+    // Create the users table row so foreign keys work
+    try {
+      await supabase.from('users').insert({ id: user.id, user_type: userType });
+    } catch (insertErr) {
+      // Row might already exist (e.g., from trigger or prior signup) — continue
+    }
+
     // Fire-and-forget welcome email — don't block signup on email failure
     supabase.functions.invoke('send-email', {
       body: {
