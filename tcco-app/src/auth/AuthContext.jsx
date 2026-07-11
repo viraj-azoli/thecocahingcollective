@@ -36,7 +36,22 @@ export function AuthProvider({ children }) {
   const fetchUserProfile = async (userId) => {
     try {
       const { data, error } = await supabase.from('users').select('*').eq('id', userId).single();
-      if (error) throw error;
+      if (error) {
+        if (error.code === 'PGRST116') {
+          // No public.users row — auto-create one for existing / OAuth users
+          const { data: { user: authUser } } = await supabase.auth.getUser();
+          const userType = authUser?.user_metadata?.user_type || 'seeker';
+          const { data: newRow, error: insertErr } = await supabase
+            .from('users')
+            .insert({ id: userId, user_type: userType })
+            .select('*')
+            .single();
+          if (insertErr) throw insertErr;
+          setUserProfile(newRow);
+          return newRow;
+        }
+        throw error;
+      }
       setUserProfile(data || null);
       return data;
     } catch (err) {
