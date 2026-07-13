@@ -131,10 +131,11 @@ export default function SettingsPage() {
       // Step 1: Ensure public.users row exists (FK prerequisite)
       await supabase.from('users').upsert({ id: user.id, user_type: 'seeker' }, { onConflict: 'id' });
 
-      // Step 2: Build patch (store bio inside onboarding_quiz to bypass missing column error)
+      // Step 2: Build patch (include bio column now that it is created in database)
       const patch = {
         user_id: user.id,
         name,
+        bio,
         onboarding_quiz: { ...(profile?.onboarding_quiz || {}), goals, experience_level: experience, bio },
         preferences: { ...(profile?.preferences || {}), preferred_format: formats[0] || null },
         updated_at: new Date().toISOString(),
