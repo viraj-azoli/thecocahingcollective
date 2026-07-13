@@ -129,11 +129,12 @@ export default function SettingsPage() {
       // Step 1: Ensure public.users row exists (FK prerequisite)
       await supabase.from('users').upsert({ id: user.id, user_type: 'seeker' }, { onConflict: 'id' });
 
-      // Step 2: Build patch
+      // Step 2: Build patch (include avatar_url so photo is saved even on first create)
       const patch = {
         user_id: user.id,
         name,
         bio,
+        avatar_url: profile?.avatar_url || null,
         onboarding_quiz: { ...(profile?.onboarding_quiz || {}), goals, experience_level: experience },
         preferences: { ...(profile?.preferences || {}), preferred_format: formats[0] || null },
         updated_at: new Date().toISOString(),
