@@ -200,6 +200,7 @@ export default function CoachSettingsPage() {
               <AvatarUpload
                 currentUrl={profile?.avatar_url}
                 userId={user?.id}
+                bucket="coach-avatars"
                 onUpload={(url) => {
                   setProfile(prev => ({ ...prev, avatar_url: url }));
                   supabase.from('coach_profiles').update({ avatar_url: url }).eq('id', coachId);

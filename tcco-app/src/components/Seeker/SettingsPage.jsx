@@ -221,6 +221,7 @@ export default function SettingsPage() {
                 <AvatarUpload
                   currentUrl={profile?.avatar_url}
                   userId={user?.id}
+                  bucket="seeker-avatars"
                   onUpload={(url) => {
                     setProfile(prev => ({ ...prev, avatar_url: url }));
                     supabase.from('seeker_profiles').update({ avatar_url: url }).eq('id', profileId);
