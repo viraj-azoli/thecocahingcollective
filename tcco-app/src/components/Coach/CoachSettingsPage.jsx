@@ -115,6 +115,7 @@ export default function CoachSettingsPage() {
         user_id: user.id,
         name, title, bio, approach,
         specialties, languages,
+        avatar_url: profile?.avatar_url || null,
         price_per_session: pricePerSession ? parseFloat(pricePerSession) : null,
         zoom_link: zoomLink,
         timezone,
@@ -203,7 +204,12 @@ export default function CoachSettingsPage() {
                 bucket="coach-avatars"
                 onUpload={(url) => {
                   setProfile(prev => ({ ...prev, avatar_url: url }));
-                  supabase.from('coach_profiles').update({ avatar_url: url }).eq('id', coachId);
+                  const targetId = coachId || profile?.id;
+                  if (targetId) {
+                    supabase.from('coach_profiles').update({ avatar_url: url }).eq('id', targetId);
+                  } else {
+                    supabase.from('coach_profiles').update({ avatar_url: url }).eq('user_id', user?.id);
+                  }
                 }}
               />
             </div>

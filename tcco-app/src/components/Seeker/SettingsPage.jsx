@@ -225,7 +225,12 @@ export default function SettingsPage() {
                   bucket="seeker-avatars"
                   onUpload={(url) => {
                     setProfile(prev => ({ ...prev, avatar_url: url }));
-                    supabase.from('seeker_profiles').update({ avatar_url: url }).eq('id', profileId);
+                    const targetId = profileId || profile?.id;
+                    if (targetId) {
+                      supabase.from('seeker_profiles').update({ avatar_url: url }).eq('id', targetId);
+                    } else {
+                      supabase.from('seeker_profiles').update({ avatar_url: url }).eq('user_id', user?.id);
+                    }
                   }}
                 />
               </div>
