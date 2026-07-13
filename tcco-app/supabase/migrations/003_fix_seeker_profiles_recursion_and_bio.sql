@@ -5,8 +5,10 @@
 -- 1. Alter seeker_profiles to add the missing bio column
 ALTER TABLE seeker_profiles ADD COLUMN IF NOT EXISTS bio TEXT;
 
--- 2. Drop the recursive policy that causes infinite loop select on seeker_profiles
+-- 2. Drop the recursive policies that cause infinite loop select on seeker_profiles
 DROP POLICY IF EXISTS "Coaches can view assigned seeker profiles" ON seeker_profiles;
+DROP POLICY IF EXISTS "Coaches read seeker profiles in their sessions" ON seeker_profiles;
+DROP POLICY IF EXISTS "coach_read_client_profiles" ON seeker_profiles;
 
 -- 3. Create a clean, non-recursive SELECT policy for seeker_profiles
 -- Any authenticated user (seekers & coaches) can view seeker profiles safely
