@@ -257,13 +257,18 @@ export default function SettingsPage() {
             <div className="card">
               <p className="section-label" style={{ marginBottom: '16px' }}>COACHING PREFERENCES</p>
 
-              <div className="form-group">
+               <div className="form-group">
                 <label className="form-label">Goals (select all that apply)</label>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px', marginTop: '4px' }}>
                   {GOALS_OPTIONS.map(g => (
-                    <label key={g} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', cursor: 'pointer' }}>
-                      <input type="checkbox" checked={goals.includes(g)} onChange={() => toggleGoal(g)} />
-                      {g}
+                    <label key={g} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', cursor: 'pointer', color: 'var(--text-soft)' }}>
+                      <input 
+                        type="checkbox" 
+                        checked={goals.includes(g)} 
+                        onChange={() => toggleGoal(g)} 
+                        style={{ width: '18px', height: '18px', margin: 0, padding: 0, flexShrink: 0, cursor: 'pointer', accentColor: 'var(--primary)' }}
+                      />
+                      <span>{g}</span>
                     </label>
                   ))}
                 </div>
@@ -271,11 +276,16 @@ export default function SettingsPage() {
 
               <div className="form-group">
                 <label className="form-label">Preferred format</label>
-                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px', marginTop: '4px' }}>
                   {FORMAT_OPTIONS.map(f => (
-                    <label key={f} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', cursor: 'pointer' }}>
-                      <input type="checkbox" checked={formats.includes(f)} onChange={() => toggleFormat(f)} />
-                      {f}
+                    <label key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', cursor: 'pointer', color: 'var(--text-soft)' }}>
+                      <input 
+                        type="checkbox" 
+                        checked={formats.includes(f)} 
+                        onChange={() => toggleFormat(f)} 
+                        style={{ width: '18px', height: '18px', margin: 0, padding: 0, flexShrink: 0, cursor: 'pointer', accentColor: 'var(--primary)' }}
+                      />
+                      <span>{f}</span>
                     </label>
                   ))}
                 </div>
