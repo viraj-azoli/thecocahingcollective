@@ -93,11 +93,13 @@ export default function SettingsPage() {
         setProfileId(data.id);
         setProfile(data);
         setName(data.name || '');
-        setBio(data.bio || '');
+        setBio(data.bio || data.onboarding_quiz?.bio || '');
         setGoals(data.onboarding_quiz?.goals || []);
         setFormats(data.preferences?.preferred_format ? [data.preferences.preferred_format] : []);
         setExperience(data.onboarding_quiz?.experience_level || '');
       }
+    } catch (err) {
+      console.error('Error loading seeker profile:', err);
     } finally {
       setLoading(false);
     }
@@ -129,32 +131,36 @@ export default function SettingsPage() {
       // Step 1: Ensure public.users row exists (FK prerequisite)
       await supabase.from('users').upsert({ id: user.id, user_type: 'seeker' }, { onConflict: 'id' });
 
-      // Step 2: Build patch (include avatar_url so photo is saved even on first create)
+      // Step 2: Build patch (store bio inside onboarding_quiz to bypass missing column error)
       const patch = {
         user_id: user.id,
         name,
-        bio,
-        avatar_url: profile?.avatar_url || null,
-        onboarding_quiz: { ...(profile?.onboarding_quiz || {}), goals, experience_level: experience },
+        onboarding_quiz: { ...(profile?.onboarding_quiz || {}), goals, experience_level: experience, bio },
         preferences: { ...(profile?.preferences || {}), preferred_format: formats[0] || null },
         updated_at: new Date().toISOString(),
       };
 
+      const dbPayload = {
+        ...patch,
+        avatar_url: profile?.avatar_url || null,
+      };
+
       // Step 3: Save seeker profile
       if (profileId) {
-        const { error } = await supabase.from('seeker_profiles').update(patch).eq('id', profileId);
+        const { error } = await supabase.from('seeker_profiles').update(dbPayload).eq('id', profileId);
         if (error) throw error;
       } else {
-        const insertPayload = { ...patch, tier: profile?.tier || 'Discovery' };
+        const insertPayload = { ...dbPayload, tier: profile?.tier || 'Discovery' };
         const { data, error } = await supabase.from('seeker_profiles').insert(insertPayload).select('id').single();
         if (error) throw error;
         setProfileId(data.id);
       }
 
-      setProfile(prev => ({ ...prev, ...patch }));
+      setProfile(prev => ({ ...prev, ...patch, bio }));
       showToast('Profile saved!');
     } catch (err) {
-      showToast('Failed to save profile.', 'error');
+      console.error('Failed to save seeker profile details:', err);
+      showToast(`Failed to save profile. ${err.message || ''}`, 'error');
     } finally {
       setSaving(false);
     }

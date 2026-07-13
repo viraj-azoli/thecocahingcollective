@@ -138,7 +138,7 @@ export default function SeekerDashboard() {
           fields={[
             { label: 'Name',       done: !!seekerProfile?.name },
             { label: 'Photo',      done: !!seekerProfile?.avatar_url },
-            { label: 'Bio',        done: !!(seekerProfile?.bio?.length > 10) },
+            { label: 'Bio',        done: !!((seekerProfile?.bio || seekerProfile?.onboarding_quiz?.bio)?.length > 10) },
             { label: 'Goals',      done: !!(seekerProfile?.onboarding_quiz?.goals?.length > 0) },
           ]}
         />
