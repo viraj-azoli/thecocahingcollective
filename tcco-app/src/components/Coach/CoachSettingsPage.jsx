@@ -202,7 +202,7 @@ export default function CoachSettingsPage() {
               <AvatarUpload
                 currentUrl={profile?.avatar_url}
                 userId={user?.id}
-                bucket="coach-avatars"
+                bucket="avatars"
                 onUpload={(url) => {
                   setProfile(prev => ({ ...prev, avatar_url: url }));
                   const targetId = coachId || profile?.id;

@@ -231,7 +231,7 @@ export default function SettingsPage() {
                 <AvatarUpload
                   currentUrl={profile?.avatar_url}
                   userId={user?.id}
-                  bucket="seeker-avatars"
+                  bucket="avatars"
                   onUpload={(url) => {
                     setProfile(prev => ({ ...prev, avatar_url: url }));
                     const targetId = profileId || profile?.id;
