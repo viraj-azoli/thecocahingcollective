@@ -124,20 +124,21 @@ export default function CoachSettingsPage() {
         updated_at: new Date().toISOString(),
       };
 
-      // Step 3: Save coach profile
-      if (coachId) {
-        const { error } = await supabase.from('coach_profiles').update(patch).eq('id', coachId);
-        if (error) throw error;
-      } else {
-        const { data, error } = await supabase.from('coach_profiles').insert(patch).select('id').single();
-        if (error) throw error;
-        setCoachId(data.id);
-      }
+      // Step 3: Save coach profile using upsert to prevent unique constraint failures
+      const { data, error } = await supabase
+        .from('coach_profiles')
+        .upsert(patch, { onConflict: 'user_id' })
+        .select('id')
+        .single();
+
+      if (error) throw error;
+      if (data?.id) setCoachId(data.id);
 
       setProfile(prev => ({ ...prev, ...patch }));
       showToast('Profile saved!');
     } catch (err) {
-      showToast('Failed to save profile.', 'error');
+      console.error('Failed to save coach profile details:', err);
+      showToast(`Failed to save profile. ${err.message || ''}`, 'error');
     } finally {
       setSaving(false);
     }

@@ -145,16 +145,18 @@ export default function SettingsPage() {
         avatar_url: profile?.avatar_url || null,
       };
 
-      // Step 3: Save seeker profile
-      if (profileId) {
-        const { error } = await supabase.from('seeker_profiles').update(dbPayload).eq('id', profileId);
-        if (error) throw error;
-      } else {
-        const insertPayload = { ...dbPayload, tier: profile?.tier || 'Discovery' };
-        const { data, error } = await supabase.from('seeker_profiles').insert(insertPayload).select('id').single();
-        if (error) throw error;
-        setProfileId(data.id);
-      }
+      // Step 3: Save seeker profile using upsert to prevent unique constraint failures
+      const { data, error } = await supabase
+        .from('seeker_profiles')
+        .upsert(
+          { ...dbPayload, tier: profile?.tier || 'Discovery' },
+          { onConflict: 'user_id' }
+        )
+        .select('id')
+        .single();
+
+      if (error) throw error;
+      if (data?.id) setProfileId(data.id);
 
       setProfile(prev => ({ ...prev, ...patch, bio }));
       showToast('Profile saved!');

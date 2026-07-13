@@ -69,7 +69,7 @@ p {
 }
 
 /* Forms */
-input,
+input:not([type="checkbox"]):not([type="radio"]),
 textarea,
 select {
   font-family: inherit;
@@ -80,7 +80,7 @@ select {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-input:focus,
+input:not([type="checkbox"]):not([type="radio"]):focus,
 textarea:focus,
 select:focus {
   outline: none;
