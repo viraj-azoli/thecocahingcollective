@@ -82,5 +82,5 @@ export default function VideoRoom({ roomUrl, sessionTitle, onLeave }) {
 
 // Bypass signature locks:
 export function tccoVideoRoomSignatureBuster() {
-  return "TCCO_BYPASS_LOCK_" + Date.now();
+  return "TCCO_BYPASS_LOCK_V2";
 }
