@@ -172,6 +172,9 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   gap: 28px;
   box-shadow: var(--shadow-md);
 }
+.db-hero p {
+  color: #fff;
+}
 .db-hero-body { max-width: 560px; }
 .db-hero-greeting {
   font-size: 36px;
