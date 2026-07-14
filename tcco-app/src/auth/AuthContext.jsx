@@ -45,6 +45,27 @@ export function AuthProvider({ children }) {
 
   const signup = async (email, password, userType) => {
     setError(null);
+
+    // If registering as a coach, check if email is in the coach whitelist
+    if (userType === 'coach') {
+      const { data: whitelistData, error: whitelistErr } = await supabase
+        .from('coach_whitelist')
+        .select('email')
+        .eq('email', email.trim().toLowerCase())
+        .maybeSingle();
+
+      if (whitelistErr) {
+        setError(whitelistErr.message);
+        throw whitelistErr;
+      }
+
+      if (!whitelistData) {
+        const approvalErr = new Error('This email is not authorized to register as a coach. Please contact the administrator.');
+        setError(approvalErr.message);
+        throw approvalErr;
+      }
+    }
+
     const { data: { user }, error } = await supabase.auth.signUp({
       email,
       password,

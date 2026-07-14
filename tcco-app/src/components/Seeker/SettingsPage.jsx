@@ -214,7 +214,7 @@ export default function SettingsPage() {
 
         {/* Tabs */}
         <div className="tabs">
-          {['profile', 'membership', 'notifications', 'account'].map(t => (
+          {['profile', 'notifications', 'account'].map(t => (
             <button key={t} className={`tab${tab === t ? ' tab-active' : ''}`} onClick={() => setTab(t)}>
               {t.charAt(0).toUpperCase() + t.slice(1)}
             </button>
@@ -336,59 +336,7 @@ export default function SettingsPage() {
           </div>
         )}
 
-        {/* Tab 2: Membership */}
-        {tab === 'membership' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            {/* Current plan highlight */}
-            <div className="card" style={{ maxWidth: '420px', borderLeft: '4px solid var(--accent)' }}>
-              <p className="section-label" style={{ marginBottom: '10px' }}>CURRENT PLAN</p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span style={{ fontSize: '32px' }}>🌱</span>
-                <div>
-                  <p style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-h)' }}>{currentTier}</p>
-                  <p style={{ fontSize: '13px', color: 'var(--text-soft)' }}>Active · Renews monthly</p>
-                </div>
-              </div>
-            </div>
 
-            {/* Tier comparison */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
-              {TIERS.map(tier => {
-                const isCurrent = currentTier === tier.name;
-                return (
-                  <div
-                    key={tier.name}
-                    className="card"
-                    style={{ border: isCurrent ? '2px solid var(--accent)' : undefined, position: 'relative' }}
-                  >
-                    {isCurrent && (
-                      <span className="badge badge-green" style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap' }}>
-                        Current plan
-                      </span>
-                    )}
-                    <p style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-h)', marginBottom: '4px' }}>{tier.name}</p>
-                    <p style={{ fontSize: '22px', fontWeight: 700, color: 'var(--accent)', marginBottom: '12px' }}>{tier.price}</p>
-                    <ul style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
-                      {tier.features.map(f => (
-                        <li key={f} style={{ fontSize: '13px', color: 'var(--text-h)', display: 'flex', gap: '6px', alignItems: 'center' }}>
-                          <span style={{ color: 'var(--accent)' }}>✓</span> {f}
-                        </li>
-                      ))}
-                    </ul>
-                    <button
-                      className={`btn ${isCurrent ? 'btn-outline' : 'btn-primary'}`}
-                      style={{ width: '100%', justifyContent: 'center' }}
-                      disabled={isCurrent || upgrading || tier.price === 'Free'}
-                      onClick={() => !isCurrent && tier.price !== 'Free' && handleUpgrade(tier.name)}
-                    >
-                      {upgrading ? 'Redirecting…' : isCurrent ? 'Current plan' : tier.price === 'Free' ? 'Free' : `Upgrade to ${tier.name}`}
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
 
         {/* Tab 3: Notifications */}
         {tab === 'notifications' && (

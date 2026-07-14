@@ -7,13 +7,11 @@ import './SeekerOnboarding.css';
 export default function SeekerOnboarding() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [step, setStep] = useState('quiz'); // 'quiz', 'tier-select', 'complete'
+  const [step, setStep] = useState('quiz'); // 'quiz', 'complete'
   const [displayName, setDisplayName] = useState('');
   const {
     quizAnswers,
     updateQuizAnswer,
-    recommendTier,
-    selectedTier,
     setSelectedTier,
     saveProfile,
     loading,
@@ -21,7 +19,7 @@ export default function SeekerOnboarding() {
     QUIZ_OPTIONS,
   } = useSeekerOnboarding(user?.id);
 
-  const handleQuizComplete = () => {
+  const handleComplete = async () => {
     if (
       !quizAnswers.brings_you_here ||
       !quizAnswers.preferred_format ||
@@ -30,21 +28,16 @@ export default function SeekerOnboarding() {
       alert('Please answer all questions');
       return;
     }
-
-    const recommended = recommendTier(quizAnswers);
-    setSelectedTier(recommended);
-    setStep('tier-select');
-  };
-
-  const handleTierSelect = async () => {
-    if (!selectedTier) {
-      alert('Please select a tier');
+    if (!displayName.trim()) {
+      alert('Please enter a display name');
       return;
     }
 
     try {
+      // Default to Discovery tier (which is our free seeker plan)
+      setSelectedTier('Discovery');
       await saveProfile({
-        name: displayName || user?.email?.split('@')[0] || 'Seeker',
+        name: displayName.trim(),
       });
       setStep('complete');
       setTimeout(() => navigate('/dashboard'), 2000);
@@ -55,19 +48,10 @@ export default function SeekerOnboarding() {
 
   return (
     <div className="onboarding-container">
-      <div className="onboarding-progress">
-        <div className={`progress-step ${step !== 'quiz' ? 'completed' : 'active'}`}>
-          1. About You
-        </div>
-        <div className={`progress-step ${step === 'complete' ? 'completed' : step === 'tier-select' ? 'active' : ''}`}>
-          2. Choose Plan
-        </div>
-      </div>
-
       {step === 'quiz' && (
         <div className="onboarding-content">
           <h1>Let's find your perfect fit</h1>
-          <p className="subtitle">Just 3 quick questions to get started</p>
+          <p className="subtitle">Just a few quick questions to get started</p>
 
           <div className="quiz-section">
             <div className="quiz-question">
@@ -126,89 +110,36 @@ export default function SeekerOnboarding() {
                 ))}
               </div>
             </div>
+
+            {/* Display Name Input */}
+            <div className="quiz-question">
+              <h2>Your Name</h2>
+              <p className="question-subtitle">How should coaches address you?</p>
+              <div className="form-group" style={{ width: '100%' }}>
+                <input
+                  id="displayName"
+                  type="text"
+                  placeholder="Enter your name"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    fontSize: '15px',
+                    border: '1.5px solid var(--gray-300)',
+                    borderRadius: '8px',
+                    fontFamily: 'inherit',
+                  }}
+                />
+              </div>
+            </div>
           </div>
 
-          <button onClick={handleQuizComplete} className="onboarding-button primary">
-            Next: Choose your plan
+          <button onClick={handleComplete} disabled={loading} className="onboarding-button primary">
+            {loading ? 'Setting up...' : 'Complete setup'}
           </button>
-        </div>
-      )}
 
-      {step === 'tier-select' && (
-        <div className="onboarding-content">
-          <h1>Choose your plan</h1>
-          <p className="subtitle">
-            Based on your answers, we recommend the {selectedTier} tier
-          </p>
-
-          <div className="tier-selection">
-            <div
-              className={`tier-card ${selectedTier === 'Discovery' ? 'selected' : ''}`}
-              onClick={() => setSelectedTier('Discovery')}
-            >
-              <h3>Discovery</h3>
-              <div className="tier-price">$9.99<span>/month</span></div>
-              <ul className="tier-features">
-                <li>✓ Coaching library access</li>
-                <li>✓ Daily journal prompts</li>
-                <li>✓ Mood tracking</li>
-                <li>✓ Email support</li>
-                <li>✗ 1-on-1 coaching sessions</li>
-              </ul>
-              <button
-                className={`tier-button ${selectedTier === 'Discovery' ? 'active' : ''}`}
-              >
-                {selectedTier === 'Discovery' ? '✓ Selected' : 'Select'}
-              </button>
-            </div>
-
-            <div
-              className={`tier-card ${selectedTier === 'Connection' ? 'selected' : ''}`}
-              onClick={() => setSelectedTier('Connection')}
-            >
-              <div className="tier-badge">Recommended for experienced seekers</div>
-              <h3>Connection</h3>
-              <div className="tier-price">$197<span>/month</span></div>
-              <ul className="tier-features">
-                <li>✓ Everything in Discovery</li>
-                <li>✓ 1 monthly 1-on-1 session</li>
-                <li>✓ Priority support</li>
-                <li>✓ Personalized coaching plan</li>
-                <li>✓ Direct coach communication</li>
-              </ul>
-              <button
-                className={`tier-button ${selectedTier === 'Connection' ? 'active' : ''}`}
-              >
-                {selectedTier === 'Connection' ? '✓ Selected' : 'Select'}
-              </button>
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="displayName">Display Name</label>
-            <input
-              id="displayName"
-              type="text"
-              placeholder="How should coaches know you?"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-            />
-          </div>
-
-          <div className="button-group">
-            <button onClick={() => setStep('quiz')} className="onboarding-button secondary">
-              Back
-            </button>
-            <button
-              onClick={handleTierSelect}
-              disabled={loading}
-              className="onboarding-button primary"
-            >
-              {loading ? 'Setting up...' : 'Continue to payment'}
-            </button>
-          </div>
-
-          {error && <p className="error-message">{error}</p>}
+          {error && <p className="error-message" style={{ marginTop: '16px', color: '#EF4444' }}>{error}</p>}
         </div>
       )}
 
