@@ -234,12 +234,14 @@ export default function SettingsPage() {
                   bucket="avatars"
                   onUpload={(url) => {
                     setProfile(prev => ({ ...prev, avatar_url: url }));
-                    const targetId = profileId || profile?.id;
-                    if (targetId) {
-                      supabase.from('seeker_profiles').update({ avatar_url: url }).eq('id', targetId);
-                    } else {
-                      supabase.from('seeker_profiles').update({ avatar_url: url }).eq('user_id', user?.id);
-                    }
+                    supabase.from('seeker_profiles').upsert({
+                      user_id: user?.id,
+                      avatar_url: url,
+                      tier: profile?.tier || 'Discovery',
+                      updated_at: new Date().toISOString(),
+                    }, { onConflict: 'user_id' }).then(({ error }) => {
+                      if (error) console.error('Error upserting avatar:', error);
+                    });
                   }}
                 />
               </div>

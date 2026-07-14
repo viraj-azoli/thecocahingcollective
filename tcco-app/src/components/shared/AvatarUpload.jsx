@@ -23,6 +23,10 @@ export default function AvatarUpload({
   const [preview, setPreview] = useState(currentUrl || null);
   const inputRef = useRef(null);
 
+  React.useEffect(() => {
+    setPreview(currentUrl || null);
+  }, [currentUrl]);
+
   const SIZES = { sm: 32, md: 48, lg: 64, xl: 96 };
   const px = SIZES[size] ?? 96;
 

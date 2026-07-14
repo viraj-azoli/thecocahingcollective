@@ -205,12 +205,13 @@ export default function CoachSettingsPage() {
                 bucket="avatars"
                 onUpload={(url) => {
                   setProfile(prev => ({ ...prev, avatar_url: url }));
-                  const targetId = coachId || profile?.id;
-                  if (targetId) {
-                    supabase.from('coach_profiles').update({ avatar_url: url }).eq('id', targetId);
-                  } else {
-                    supabase.from('coach_profiles').update({ avatar_url: url }).eq('user_id', user?.id);
-                  }
+                  supabase.from('coach_profiles').upsert({
+                    user_id: user?.id,
+                    avatar_url: url,
+                    updated_at: new Date().toISOString(),
+                  }, { onConflict: 'user_id' }).then(({ error }) => {
+                    if (error) console.error('Error upserting avatar:', error);
+                  });
                 }}
               />
             </div>
