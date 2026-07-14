@@ -208,6 +208,7 @@ export default function CoachSettingsPage() {
                   supabase.from('coach_profiles').upsert({
                     user_id: user?.id,
                     avatar_url: url,
+                    name: name || user?.email?.split('@')[0] || 'Coach',
                     updated_at: new Date().toISOString(),
                   }, { onConflict: 'user_id' }).then(({ error }) => {
                     if (error) console.error('Error upserting avatar:', error);

@@ -237,6 +237,7 @@ export default function SettingsPage() {
                     supabase.from('seeker_profiles').upsert({
                       user_id: user?.id,
                       avatar_url: url,
+                      name: name || user?.email?.split('@')[0] || 'Friend',
                       tier: profile?.tier || 'Discovery',
                       updated_at: new Date().toISOString(),
                     }, { onConflict: 'user_id' }).then(({ error }) => {
