@@ -49,7 +49,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes('node_modules/@daily-co')) return 'daily';
+          if (id.includes('node_modules/@daily-co')) return 'session-stream';
           if (id.includes('node_modules/@supabase'))  return 'supabase';
           if (id.includes('node_modules/posthog-js') || id.includes('node_modules/@sentry')) return 'monitoring';
           if (id.includes('node_modules/react-dom') ||
