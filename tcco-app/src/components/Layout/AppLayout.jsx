@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
+import { supabase } from '../../lib/supabase';
 import { ToastContainer } from '../shared/Toast';
 import NotificationsDropdown from '../shared/NotificationsDropdown';
 import './AppLayout.css';
@@ -59,16 +60,50 @@ function getSettingsPath(role) {
 }
 
 export default function AppLayout({ children, role = 'seeker', seekerProfile, profileName, profileInitial, profileAvatar }) {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [localProfile, setLocalProfile] = useState(null);
   const navGroups = getNavGroups(role);
   const tier = seekerProfile?.tier || '';
+
+  React.useEffect(() => {
+    if (!user?.id) return;
+    if (profileName && profileAvatar) return;
+
+    const fetchLocalProfile = async () => {
+      try {
+        if (role === 'seeker') {
+          const { data } = await supabase
+            .from('seeker_profiles')
+            .select('name, avatar_url')
+            .eq('user_id', user.id)
+            .maybeSingle();
+          if (data) setLocalProfile(data);
+        } else if (role === 'coach') {
+          const { data } = await supabase
+            .from('coach_profiles')
+            .select('name, avatar_url')
+            .eq('user_id', user.id)
+            .maybeSingle();
+          if (data) setLocalProfile(data);
+        }
+      } catch (err) {
+        console.error('Error fetching layout profile:', err);
+      }
+    };
+
+    fetchLocalProfile();
+  }, [user?.id, role, profileName, profileAvatar]);
 
   const handleLogout = async () => {
     await logout();
     navigate('/login');
   };
+
+  const avatar = profileAvatar || localProfile?.avatar_url;
+  const displayName = profileName || localProfile?.name || user?.email?.split('@')[0] || 'User';
+  const initial = profileInitial || displayName?.[0]?.toUpperCase() || '?';
 
   return (
     <div className="al-wrapper">
@@ -144,16 +179,16 @@ export default function AppLayout({ children, role = 'seeker', seekerProfile, pr
           <div className="al-profile-pill">
             <div
               className="avatar avatar-sm"
-              style={profileAvatar ? {
-                backgroundImage: `url(${profileAvatar})`,
+              style={avatar ? {
+                backgroundImage: `url(${avatar})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               } : {}}
             >
-              {!profileAvatar && (profileInitial || '?')}
+              {!avatar && (initial || '?')}
             </div>
             <div>
-              <p style={{fontSize:'13px',fontWeight:600,color:'rgba(255,255,255,.9)'}}>{profileName || 'User'}</p>
+              <p style={{fontSize:'13px',fontWeight:600,color:'rgba(255,255,255,.9)'}}>{displayName}</p>
               <p style={{fontSize:'11px',color:'rgba(255,255,255,.5)'}}>View profile</p>
             </div>
           </div>
