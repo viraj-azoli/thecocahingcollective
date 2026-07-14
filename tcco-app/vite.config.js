@@ -21,11 +21,11 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules/@daily-co')) return 'stream-webrtc';
-          if (id.includes('node_modules/@supabase'))  return 'supabase';
-          if (id.includes('node_modules/posthog-js') || id.includes('node_modules/@sentry')) return 'monitoring';
+          if (id.includes('node_modules/@supabase'))  return 'db-connector';
+          if (id.includes('node_modules/posthog-js') || id.includes('node_modules/@sentry')) return 'app-insights';
           if (id.includes('node_modules/react-dom') ||
               id.includes('node_modules/react/') ||
-              id.includes('node_modules/react-router')) return 'vendor';
+              id.includes('node_modules/react-router')) return 'core-libs';
         },
       },
     },
