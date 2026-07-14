@@ -102,6 +102,7 @@
   margin-right: 0.75rem;
   cursor: pointer;
   accent-color: var(--primary);
+  flex-shrink: 0;
 }
 
 .option-label span {

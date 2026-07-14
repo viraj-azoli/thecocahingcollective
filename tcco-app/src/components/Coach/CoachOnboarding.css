@@ -125,6 +125,7 @@
   margin-right: 0.5rem;
   cursor: pointer;
   accent-color: var(--primary);
+  flex-shrink: 0;
 }
 
 .checkbox-label span {
