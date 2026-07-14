@@ -155,13 +155,7 @@ export default function AppLayout({ children, role = 'seeker', seekerProfile, pr
           ))}
         </nav>
 
-        {role === 'seeker' && tier && (
-          <div className="al-membership">
-            <p className="al-membership-label">MEMBERSHIP</p>
-            <p className="al-membership-tier">{tier}</p>
-            <NavLink to="/settings" className="al-upgrade-btn">⬆ Upgrade plan</NavLink>
-          </div>
-        )}
+
 
         <div className="al-sidebar-footer">
           <NavLink
