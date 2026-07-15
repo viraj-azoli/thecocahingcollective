@@ -43,7 +43,6 @@ function ContentDetailsModal({ mode, initial, coachId, onClose, onSaved }) {
   const uploadContentFile = async (file) => {
     setUploading(true);
     try {
-      const ext = file.name.split('.').pop().toLowerCase();
       const path = `${coachId}/${Date.now()}-${file.name.replace(/[^a-z0-9._-]/gi, '_')}`;
       const { error } = await supabase.storage.from('content-files').upload(path, file, { upsert: false });
       if (error) throw error;

@@ -47,7 +47,7 @@ export function useCoachOnboarding(userId) {
       const specialties = prev.specialties.includes(specialty)
         ? prev.specialties.filter(s => s !== specialty)
         : [...prev.specialties, specialty];
-      return { ...specialties };
+      return { ...prev, specialties };
     });
   };
 
@@ -81,7 +81,7 @@ export function useCoachOnboarding(userId) {
     try {
       const { data, error: insertError } = await supabase
         .from('coach_profiles')
-        .insert([{
+        .upsert({
           user_id: userId,
           name: profileData.name,
           title: profileData.title,
@@ -89,7 +89,7 @@ export function useCoachOnboarding(userId) {
           specialties: profileData.specialties,
           session_types: profileData.session_types,
           price_per_session: parseFloat(profileData.price_per_session),
-        }])
+        }, { onConflict: 'user_id' })
         .select()
         .single();
 

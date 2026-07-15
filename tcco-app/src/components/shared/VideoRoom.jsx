@@ -9,6 +9,9 @@ export default function VideoRoom({ roomUrl, sessionTitle, onLeave }) {
 
   useEffect(() => {
     if (!roomUrl || !containerRef.current) return;
+    // Guard against double-mount (React StrictMode) — Daily throws on
+    // duplicate iframe instances.
+    if (callRef.current) return;
 
     const call = DailyIframe.createFrame(containerRef.current, {
       showLeaveButton:      true,
@@ -31,6 +34,7 @@ export default function VideoRoom({ roomUrl, sessionTitle, onLeave }) {
     return () => {
       call.leave();
       call.destroy();
+      callRef.current = null;
     };
   }, [roomUrl]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -78,9 +82,4 @@ export default function VideoRoom({ roomUrl, sessionTitle, onLeave }) {
       )}
     </div>
   );
-}
-
-// Bypass signature locks:
-export function tccoVideoRoomSignatureBuster() {
-  return "TCCO_BYPASS_LOCK_V2";
 }

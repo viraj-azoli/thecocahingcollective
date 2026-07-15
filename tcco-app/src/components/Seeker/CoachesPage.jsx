@@ -58,7 +58,6 @@ export default function CoachesPage() {
   const [specialty, setSpecialty]   = useState('All');
   const [priceRange, setPriceRange] = useState('Any price');
   const [minRating, setMinRating]   = useState(0);
-  const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [searchDebounce, setSearchDebounce] = useState('');
 
   // Debounce search input
@@ -67,7 +66,7 @@ export default function CoachesPage() {
     return () => clearTimeout(t);
   }, [search]);
 
-  useEffect(() => { loadCoaches(); }, [searchDebounce, specialty, priceRange, minRating, verifiedOnly]); // eslint-disable-line
+  useEffect(() => { loadCoaches(); }, [searchDebounce, specialty, priceRange, minRating]); // eslint-disable-line
   useEffect(() => { if (user?.id) loadFavourites(); }, [user?.id]); // eslint-disable-line
 
   const loadFavourites = async () => {
@@ -135,7 +134,6 @@ export default function CoachesPage() {
     setSpecialty('All');
     setPriceRange('Any price');
     setMinRating(0);
-    setVerifiedOnly(false);
   };
 
   return (

@@ -95,7 +95,7 @@ export default function AdminContentPage() {
             }}>
               <span style={{ fontSize: '28px' }}>{TYPE_ICONS[item.type] || '📄'}</span>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontWeight: 700, fontSize: '15px', color: 'var(--text-h)', truncate: true }}>{item.title}</p>
+                <p style={{ fontWeight: 700, fontSize: '15px', color: 'var(--text-h)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.title}</p>
                 <p style={{ fontSize: '13px', color: 'var(--text-soft)' }}>
                   by {item.coach?.name || '—'}
                   {item.duration_minutes ? ` · ${item.duration_minutes} min` : ''}

@@ -129,7 +129,7 @@ export default function LibraryPage() {
         {featured.length > 0 && filter === 'All' && (
           <div>
             <p className="section-label" style={{ marginBottom: '12px' }}>FEATURED</p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px', marginBottom: '8px' }}>
+            <div className="lib-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px', marginBottom: '8px' }}>
               {featured.slice(0, 3).map(item => (
                 <ContentCard
                   key={item.id}
@@ -164,7 +164,7 @@ export default function LibraryPage() {
             <p>No content found in this category.</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
+          <div className="lib-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
             {filtered.map(item => (
               <ContentCard
                 key={item.id}

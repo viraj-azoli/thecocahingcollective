@@ -23,14 +23,17 @@ export default function SignUp() {
       // User came from Google OAuth — create public.users row and redirect to onboarding
       const userType = user.user_metadata?.user_type || 'seeker';
       setUserType(userType);
-      supabase.from('users').insert({ id: user.id, user_type: userType })
-        .then(() => navigate(userType === 'seeker' ? '/onboarding-seeker' : '/onboarding-coach'))
-        .catch(() => setError('Could not set up account. Please try again.'));
+      supabase.from('users').upsert({ id: user.id, user_type: userType }, { onConflict: 'id' })
+        .then(({ error }) => {
+          if (error) setError('Could not set up account. Please try again.');
+          else navigate(userType === 'seeker' ? '/onboarding-seeker' : '/onboarding-coach');
+        });
       return;
     }
     if (!isOAuth && user && userProfile) {
-      // Already authenticated — redirect to dashboard
-      navigate(userProfile.user_type === 'seeker' ? '/dashboard' : '/coach/dashboard');
+      // Already authenticated — redirect to the role's dashboard
+      const dashboards = { seeker: '/dashboard', coach: '/coach/dashboard', admin: '/admin/dashboard' };
+      navigate(dashboards[userProfile.user_type] || '/dashboard');
     }
 
     const ref = new URLSearchParams(location.search).get('ref');

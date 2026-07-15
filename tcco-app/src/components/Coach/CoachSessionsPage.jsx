@@ -98,8 +98,6 @@ export default function CoachSessionsPage() {
   const todayStr = new Date().toISOString().split('T')[0];
 
   const weekDates = getWeekDates(weekOffset);
-  const weekStart = weekDates[0].toISOString().split('T')[0];
-  const weekEnd   = weekDates[6].toISOString().split('T')[0];
 
   const getSessionsForDay = (date) => {
     const ds = date.toISOString().split('T')[0];

@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import * as Sentry from '@sentry/react';
 
 /* ── Generic fallback UI ─────────────────────────────────────────────── */
@@ -28,8 +27,9 @@ function DefaultFallback({ error, resetError }) {
             Try again
           </button>
         )}
-        <Link
-          to="/"
+        {/* Plain anchor — this boundary can render outside the Router, where <Link> would throw */}
+        <a
+          href={import.meta.env.BASE_URL || '/'}
           style={{
             padding: '10px 20px', background: 'transparent', color: 'var(--primary, #1B9B7D)',
             border: '1.5px solid var(--primary, #1B9B7D)', borderRadius: '8px',
@@ -37,7 +37,7 @@ function DefaultFallback({ error, resetError }) {
           }}
         >
           Go to dashboard
-        </Link>
+        </a>
       </div>
     </div>
   );

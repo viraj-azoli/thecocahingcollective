@@ -71,7 +71,7 @@ export default function Login() {
           </button>
 
           <p style={{ textAlign:'center', marginTop:'12px', fontSize:'13px', color:'#666' }}>
-            <a href="/reset-password" style={{ color:'#2D9E6B', textDecoration:'none' }}>Forgot your password?</a>
+            <Link to="/reset-password" style={{ color:'#2D9E6B', textDecoration:'none' }}>Forgot your password?</Link>
           </p>
         </form>
 

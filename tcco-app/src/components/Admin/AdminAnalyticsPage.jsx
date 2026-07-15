@@ -114,7 +114,7 @@ export default function AdminAnalyticsPage() {
         </div>
 
         {/* KPI cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+        <div className="admin-kpis" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
           <KPIStatsCard icon="🧭" label="TOTAL SEEKERS" value={stats?.totalSeekers ?? 0} />
           <KPIStatsCard icon="🎓" label="VERIFIED COACHES" value={stats?.totalCoaches ?? 0} />
           <KPIStatsCard icon="📅" label="SESSIONS COMPLETED" value={stats?.totalCompleted ?? 0} />
@@ -133,7 +133,7 @@ export default function AdminAnalyticsPage() {
         </div>
 
         {/* Two-column: top coaches + recent sessions */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+        <div className="admin-cols" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
           {/* Top coaches */}
           <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border-card)', borderRadius: 'var(--r-md)', padding: '20px' }}>
             <p style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-soft)', marginBottom: '16px', letterSpacing: '0.05em' }}>TOP COACHES BY RATING</p>

@@ -132,7 +132,7 @@ export default function CoachDashboard() {
                     <p style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-h)' }}>{s.seeker?.name || 'Client'}</p>
                     <p style={{ fontSize: '13px', color: 'var(--text-soft)' }}>⏰ {s.scheduled_time?.slice(0,5)} · {s.duration_minutes || 55} min</p>
                   </div>
-                  <button className="btn btn-primary btn-sm">🔗 Join</button>
+                  <button className="btn btn-primary btn-sm" onClick={() => navigate('/coach/sessions')}>🔗 Join</button>
                 </div>
               ))}
             </div>

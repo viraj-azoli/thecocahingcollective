@@ -1,66 +1,95 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthContext';
 import { ProtectedRoute } from './auth/ProtectedRoute';
 import { useAuth } from './auth/useAuth';
 
-// Auth pages (small, load eagerly)
+// Auth pages (small, load eagerly — they're the first thing a visitor hits)
 import Login        from './components/Auth/Login';
 import SignUp       from './components/Auth/SignUp';
 import AuthCallback from './components/Auth/AuthCallback';
 import ResetPassword from './components/Auth/ResetPassword';
 
+import './App.css';
+
+// Lazy-load a route chunk; if the chunk 404s (stale index.html after a fresh
+// deploy replaced the hashed filenames), reload once to pick up the new build.
+function lazyPage(importFn) {
+  return lazy(() =>
+    importFn().then((mod) => {
+      sessionStorage.removeItem('tcco-chunk-reload');
+      return mod;
+    }).catch((err) => {
+      if (!sessionStorage.getItem('tcco-chunk-reload')) {
+        sessionStorage.setItem('tcco-chunk-reload', '1');
+        window.location.reload();
+      }
+      throw err;
+    })
+  );
+}
+
 // Onboarding
-import SeekerOnboarding from './components/Seeker/SeekerOnboarding';
-import CoachOnboarding  from './components/Coach/CoachOnboarding';
-import AdminOnboarding  from './components/Admin/AdminOnboarding';
+const SeekerOnboarding = lazyPage(() => import('./components/Seeker/SeekerOnboarding'));
+const CoachOnboarding  = lazyPage(() => import('./components/Coach/CoachOnboarding'));
+const AdminOnboarding  = lazyPage(() => import('./components/Admin/AdminOnboarding'));
 
 // Seeker pages
-import SeekerDashboard  from './components/Seeker/SeekerDashboard';
-import CoachesPage      from './components/Seeker/CoachesPage';
-import CoachProfilePage from './components/Seeker/CoachProfilePage';
-import SessionsPage     from './components/Seeker/SessionsPage';
-import JournalPage      from './components/Seeker/JournalPage';
-import LibraryPage      from './components/Seeker/LibraryPage';
-import ProgressPage     from './components/Seeker/ProgressPage';
-import CommunityPage    from './components/Seeker/CommunityPage';
-import SettingsPage     from './components/Seeker/SettingsPage';
-import FavouritesPage   from './components/Seeker/FavouritesPage';
+const SeekerDashboard  = lazyPage(() => import('./components/Seeker/SeekerDashboard'));
+const CoachesPage      = lazyPage(() => import('./components/Seeker/CoachesPage'));
+const CoachProfilePage = lazyPage(() => import('./components/Seeker/CoachProfilePage'));
+const SessionsPage     = lazyPage(() => import('./components/Seeker/SessionsPage'));
+const JournalPage      = lazyPage(() => import('./components/Seeker/JournalPage'));
+const LibraryPage      = lazyPage(() => import('./components/Seeker/LibraryPage'));
+const ProgressPage     = lazyPage(() => import('./components/Seeker/ProgressPage'));
+const CommunityPage    = lazyPage(() => import('./components/Seeker/CommunityPage'));
+const SettingsPage     = lazyPage(() => import('./components/Seeker/SettingsPage'));
+const FavouritesPage   = lazyPage(() => import('./components/Seeker/FavouritesPage'));
 
 // Coach pages
-import CoachDashboard    from './components/Coach/CoachDashboard';
-import ClientsPage       from './components/Coach/ClientsPage';
-import CoachSessionsPage from './components/Coach/CoachSessionsPage';
-import ContentPage       from './components/Coach/ContentPage';
-import AvailabilityPage  from './components/Coach/AvailabilityPage';
-import EarningsPage      from './components/Coach/EarningsPage';
-import IntakeFormsPage   from './components/Coach/IntakeFormsPage';
-import PackagesPage      from './components/Coach/PackagesPage';
-import CoachSettingsPage from './components/Coach/CoachSettingsPage';
+const CoachDashboard    = lazyPage(() => import('./components/Coach/CoachDashboard'));
+const ClientsPage       = lazyPage(() => import('./components/Coach/ClientsPage'));
+const CoachSessionsPage = lazyPage(() => import('./components/Coach/CoachSessionsPage'));
+const ContentPage       = lazyPage(() => import('./components/Coach/ContentPage'));
+const AvailabilityPage  = lazyPage(() => import('./components/Coach/AvailabilityPage'));
+const EarningsPage      = lazyPage(() => import('./components/Coach/EarningsPage'));
+const IntakeFormsPage   = lazyPage(() => import('./components/Coach/IntakeFormsPage'));
+const PackagesPage      = lazyPage(() => import('./components/Coach/PackagesPage'));
+const CoachSettingsPage = lazyPage(() => import('./components/Coach/CoachSettingsPage'));
 
 // Admin pages
-import AdminDashboard      from './components/Admin/AdminDashboard';
-import AdminCoachesPage    from './components/Admin/AdminCoachesPage';
-import AdminSeekersPage    from './components/Admin/AdminSeekersPage';
-import AdminAnalyticsPage  from './components/Admin/AdminAnalyticsPage';
-import AdminSessionsPage   from './components/Admin/AdminSessionsPage';
-import AdminContentPage    from './components/Admin/AdminContentPage';
+const AdminDashboard      = lazyPage(() => import('./components/Admin/AdminDashboard'));
+const AdminCoachesPage    = lazyPage(() => import('./components/Admin/AdminCoachesPage'));
+const AdminSeekersPage    = lazyPage(() => import('./components/Admin/AdminSeekersPage'));
+const AdminAnalyticsPage  = lazyPage(() => import('./components/Admin/AdminAnalyticsPage'));
+const AdminSessionsPage   = lazyPage(() => import('./components/Admin/AdminSessionsPage'));
+const AdminContentPage    = lazyPage(() => import('./components/Admin/AdminContentPage'));
 
 // Shared pages
-import MessagesPage from './components/shared/MessagesPage';
+const MessagesPage = lazyPage(() => import('./components/shared/MessagesPage'));
 
-import './App.css';
+const DASHBOARDS = { seeker: '/dashboard', coach: '/coach/dashboard', admin: '/admin/dashboard' };
+
+function PageSpinner() {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: '#F4EFE6' }}>
+      <div className="spinner" />
+    </div>
+  );
+}
 
 function RootRedirect() {
   const { user, userProfile, loading } = useAuth();
-  if (loading) return <div className="spinner" style={{ margin: '40vh auto' }} />;
-  if (!user || !userProfile) return <Navigate to="/login" replace />;
-  const dashboards = { seeker: '/dashboard', coach: '/coach/dashboard', admin: '/admin/dashboard' };
-  return <Navigate to={dashboards[userProfile.user_type] || '/login'} replace />;
+  if (loading) return <PageSpinner />;
+  if (!user) return <Navigate to="/login" replace />;
+  // Authenticated but no public.users row yet — SignUp's oauth flow creates it
+  if (!userProfile) return <Navigate to="/signup?oauth=true" replace />;
+  return <Navigate to={DASHBOARDS[userProfile.user_type] || '/login'} replace />;
 }
 
 function AppRoutes() {
   return (
+    <Suspense fallback={<PageSpinner />}>
     <Routes>
       {/* Public */}
       <Route path="/login"          element={<Login />} />
@@ -108,10 +137,11 @@ function AppRoutes() {
       <Route path="/admin/sessions"   element={<ProtectedRoute requiredRole="admin"><AdminSessionsPage /></ProtectedRoute>} />
       <Route path="/admin/content"    element={<ProtectedRoute requiredRole="admin"><AdminContentPage /></ProtectedRoute>} />
 
-      {/* Root & catch-all */}
+      {/* Root & catch-all — RootRedirect sends each role to its own dashboard */}
       <Route path="/" element={<RootRedirect />} />
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </Suspense>
   );
 }
 

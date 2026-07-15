@@ -212,7 +212,9 @@ export default function EarningsPage() {
                 Payouts via Stripe Connect
               </p>
               <p style={{ fontSize: '13px', color: 'var(--text-soft)' }}>
-                Next payout: June 1, 2026 (estimated)
+                {coach?.stripe_account_id
+                  ? `Next payout: ${new Date(now.getFullYear(), now.getMonth() + 1, 1).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} (estimated) · Monthly, 1st of each month`
+                  : 'Connect your Stripe account to receive payouts.'}
               </p>
             </div>
             <button
@@ -224,20 +226,6 @@ export default function EarningsPage() {
                 ? (connecting ? 'Redirecting…' : 'Manage Payouts')
                 : (connecting ? 'Connecting…' : 'Connect Stripe')}
             </button>
-          </div>
-          <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-            <div>
-              <p className="section-label">BANK ACCOUNT</p>
-              <p style={{ fontSize: '14px', color: 'var(--text-b)', fontWeight: 600, marginTop: '4px' }}>
-                &#9679;&#9679;&#9679;&#9679; 4242
-              </p>
-            </div>
-            <div>
-              <p className="section-label">PAYOUT SCHEDULE</p>
-              <p style={{ fontSize: '14px', color: 'var(--text-b)', fontWeight: 600, marginTop: '4px' }}>
-                Monthly (1st of each month)
-              </p>
-            </div>
           </div>
         </div>
       </div>

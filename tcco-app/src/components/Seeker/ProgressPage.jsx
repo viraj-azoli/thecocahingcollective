@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
@@ -204,7 +205,7 @@ export default function ProgressPage() {
         <div className="card">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
             <p className="section-label">YOUR GOALS</p>
-            <a href="/settings" style={{ fontSize: '13px', color: 'var(--accent)' }}>Edit goals →</a>
+            <Link to="/settings" style={{ fontSize: '13px', color: 'var(--accent)' }}>Edit goals →</Link>
           </div>
           {goals.length === 0 ? (
             <p style={{ fontSize: '14px', color: 'var(--text-soft)' }}>Goals from your onboarding will appear here.</p>
@@ -239,7 +240,7 @@ export default function ProgressPage() {
                       {(entry.content || entry.mood_note || '').length > 100 ? '…' : ''}
                     </p>
                   </div>
-                  <a href="/journal" style={{ fontSize: '13px', color: 'var(--accent)', flexShrink: 0 }}>Read →</a>
+                  <Link to="/journal" style={{ fontSize: '13px', color: 'var(--accent)', flexShrink: 0 }}>Read →</Link>
                 </div>
               ))}
             </div>

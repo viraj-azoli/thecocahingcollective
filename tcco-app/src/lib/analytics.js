@@ -19,7 +19,7 @@ export function identify(userId, traits = {}) {
 export function track(event, props = {}) {
   if (import.meta.env.PROD && import.meta.env.VITE_POSTHOG_KEY) {
     posthog.capture(event, props);
-  } else {
+  } else if (import.meta.env.DEV) {
     console.log('[analytics]', event, props);
   }
 }

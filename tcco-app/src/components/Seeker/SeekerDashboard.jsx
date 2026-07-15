@@ -13,10 +13,10 @@ import './Dashboard.css';
 
 
 const QUICK_PATHS = [
-  { icon: '🧭', label: 'Find a Coach',   sub: 'Browse coaches',        to: '/coaches' },
-  { icon: '📓', label: 'Write in Journal', sub: 'Add an entry',        to: '/journal/new' },
-  { icon: '📚', label: 'Explore Library', sub: '4 new resources',      to: '/library' },
-  { icon: '📅', label: 'Book a Session',  sub: 'Next available: Mon',  to: '/coaches' },
+  { icon: '🧭', label: 'Find a Coach',    sub: 'Browse coaches',    to: '/coaches' },
+  { icon: '📓', label: 'Write in Journal', sub: 'Add an entry',     to: '/journal/new' },
+  { icon: '📚', label: 'Explore Library', sub: 'Browse resources',  to: '/library' },
+  { icon: '📅', label: 'Book a Session',  sub: 'Find a time',       to: '/coaches' },
 ];
 
 const TYPE_META = {
@@ -91,13 +91,14 @@ export default function SeekerDashboard() {
     if (!moodRating) return;
     const profileId = seekerProfile?.id;
     if (!profileId) { showToast('Profile not loaded yet', 'error'); return; }
-    await supabase.from('journal_entries').insert({
+    const { error } = await supabase.from('journal_entries').insert({
       seeker_id: profileId,
       date: new Date().toISOString().split('T')[0],
       mood: moodRating,
       mood_note: moodNote,
       content: moodNote || 'Daily check-in',
     });
+    if (error) { showToast('Could not save check-in. Please try again.', 'error'); return; }
     setMoodSaved(true);
   };
 
@@ -250,7 +251,7 @@ export default function SeekerDashboard() {
               </div>
               <div className="db-session-actions">
                 <button className="db-session-btn" onClick={() => navigate('/sessions')}>Prep notes</button>
-                <button className="db-session-btn db-session-join">🔗 Join</button>
+                <button className="db-session-btn db-session-join" onClick={() => navigate('/sessions')}>🔗 Join</button>
               </div>
             </div>
           </section>
@@ -270,7 +271,7 @@ export default function SeekerDashboard() {
           <div className="db-checkin-card">
             <div className="db-checkin-header">
               <p className="db-section-title" style={{ margin: 0 }}>DAILY CHECK-IN</p>
-              <button className="db-skip-btn">Skip</button>
+              {!moodSaved && <button className="db-skip-btn" onClick={() => setMoodSaved(true)}>Skip</button>}
             </div>
             {moodSaved ? (
               <div className="db-checkin-saved">

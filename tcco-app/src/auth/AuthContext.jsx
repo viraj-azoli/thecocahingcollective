@@ -33,18 +33,21 @@ export function AuthProvider({ children }) {
 
     initAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      try {
-        if (session?.user) {
-          setUser(session.user);
-          await fetchUserProfile(session.user.id);
-        } else {
-          setUser(null);
-          setUserProfile(null);
-        }
-      } catch (err) {
-        console.error('Auth state change error:', err);
-      } finally {
+    // NOTE: never await Supabase queries directly inside onAuthStateChange —
+    // the client holds an internal lock during the callback and awaiting a
+    // query here can deadlock (symptom: infinite loading spinner on reload).
+    // Defer the profile fetch to the next tick instead.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setUser(session.user);
+        setTimeout(() => {
+          fetchUserProfile(session.user.id).finally(() => {
+            if (active) setLoading(false);
+          });
+        }, 0);
+      } else {
+        setUser(null);
+        setUserProfile(null);
         setLoading(false);
       }
     });

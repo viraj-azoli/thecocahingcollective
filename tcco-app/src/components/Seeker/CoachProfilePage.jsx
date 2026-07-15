@@ -598,7 +598,7 @@ export default function CoachProfilePage() {
         )}
 
         {/* Two-column body */}
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px', alignItems: 'start' }}>
+        <div className="coach-profile-cols" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px', alignItems: 'start' }}>
           {/* Left */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {coach.bio && (

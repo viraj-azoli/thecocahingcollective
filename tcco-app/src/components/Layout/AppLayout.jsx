@@ -55,7 +55,7 @@ function getNavGroups(role) {
 
 function getSettingsPath(role) {
   if (role === 'coach') return '/coach/settings';
-  if (role === 'admin') return '/admin/settings';
+  if (role === 'admin') return null; // no admin settings page yet
   return '/settings';
 }
 
@@ -127,7 +127,7 @@ export default function AppLayout({ children, role = 'seeker', seekerProfile, pr
       {/* ── Sidebar ── */}
       <aside className={`al-sidebar ${mobileOpen ? 'al-sidebar-open' : ''}`}>
         <div className="al-logo">
-          <img src="/pages/pages/logo-green-crop.png" alt="The Coaching Collective" className="al-logo-img" />
+          <img src={`${import.meta.env.BASE_URL}logo-green-crop.png`} alt="The Coaching Collective" className="al-logo-img" />
         </div>
 
         <nav className="al-nav" role="navigation" aria-label="Main navigation">
@@ -158,15 +158,17 @@ export default function AppLayout({ children, role = 'seeker', seekerProfile, pr
 
 
         <div className="al-sidebar-footer">
-          <NavLink
-            to={getSettingsPath(role)}
-            className={({ isActive }) =>
-              `al-nav-link${isActive ? ' al-nav-active' : ''}`
-            }
-            onClick={() => setMobileOpen(false)}
-          >
-            <span>⚙️</span> Settings
-          </NavLink>
+          {getSettingsPath(role) && (
+            <NavLink
+              to={getSettingsPath(role)}
+              className={({ isActive }) =>
+                `al-nav-link${isActive ? ' al-nav-active' : ''}`
+              }
+              onClick={() => setMobileOpen(false)}
+            >
+              <span>⚙️</span> Settings
+            </NavLink>
+          )}
           <button className="al-logout-btn" onClick={handleLogout}>
             <span>🚪</span> Sign out
           </button>

@@ -252,31 +252,6 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        {/* Platform Health */}
-        <div>
-          <p className="section-label" style={{ marginBottom: '14px' }}>PLATFORM HEALTH</p>
-          <div className="card">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '13px', color: 'var(--text-soft)' }}>Uptime</span>
-                <span className="badge badge-green">99.9%</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '13px', color: 'var(--text-soft)' }}>Avg response time</span>
-                <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-h)' }}>142ms</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '13px', color: 'var(--text-soft)' }}>Storage used</span>
-                <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-h)' }}>2.4 GB / 50 GB</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '13px', color: 'var(--text-soft)' }}>Active subscriptions</span>
-                <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-h)' }}>{stats.seekerCount || 0}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
     </AppLayout>
   );

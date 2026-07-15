@@ -3,3 +3,8 @@ package-lock.json
 gulpfile.js
 TASKS.md
 dashboard.html
+.DS_Store
+*.zip
+.vscode/
+aider/
+tcco-app/aider

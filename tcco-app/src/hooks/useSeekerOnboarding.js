@@ -42,16 +42,16 @@ export function useSeekerOnboarding(userId) {
     try {
       const { data, error: insertError } = await supabase
         .from('seeker_profiles')
-        .insert([{
+        .upsert({
           user_id: userId,
           name: profileData.name,
-          tier: selectedTier,
+          tier: profileData.tier || selectedTier || 'Discovery',
           onboarding_quiz: quizAnswers,
           preferences: {
             specialties: [quizAnswers.brings_you_here],
             preferred_format: quizAnswers.preferred_format,
           },
-        }])
+        }, { onConflict: 'user_id' })
         .select()
         .single();
 

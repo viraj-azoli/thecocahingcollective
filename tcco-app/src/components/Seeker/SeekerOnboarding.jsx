@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { useSeekerOnboarding } from '../../hooks/useSeekerOnboarding';
+import { showToast } from '../shared/Toast';
+import { ToastContainer } from '../shared/Toast';
 import './SeekerOnboarding.css';
 
 export default function SeekerOnboarding() {
@@ -25,19 +27,22 @@ export default function SeekerOnboarding() {
       !quizAnswers.preferred_format ||
       !quizAnswers.coaching_experience
     ) {
-      alert('Please answer all questions');
+      showToast('Please answer all questions', 'error');
       return;
     }
     if (!displayName.trim()) {
-      alert('Please enter a display name');
+      showToast('Please enter a display name', 'error');
       return;
     }
 
     try {
-      // Default to Discovery tier (which is our free seeker plan)
+      // Default to Discovery tier (which is our free seeker plan).
+      // Pass the tier directly — setSelectedTier is async and wouldn't be
+      // reflected in the immediate saveProfile call.
       setSelectedTier('Discovery');
       await saveProfile({
         name: displayName.trim(),
+        tier: 'Discovery',
       });
       setStep('complete');
       setTimeout(() => navigate('/dashboard'), 2000);
@@ -48,6 +53,7 @@ export default function SeekerOnboarding() {
 
   return (
     <div className="onboarding-container">
+      <ToastContainer />
       {step === 'quiz' && (
         <div className="onboarding-content">
           <h1>Let's find your perfect fit</h1>

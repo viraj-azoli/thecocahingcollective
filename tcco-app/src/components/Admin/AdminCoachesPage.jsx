@@ -99,14 +99,13 @@ export default function AdminCoachesPage() {
 
         {/* Search */}
         <div className="search-wrap">
-          <div className="search-bar">
-            <span className="search-icon">🔍</span>
-            <input
-              placeholder="Search by name or title…"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
-          </div>
+          <span className="search-icon">🔍</span>
+          <input
+            className="search-bar"
+            placeholder="Search by name or title…"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
         </div>
 
         {/* Filter chips */}
