@@ -65,6 +65,13 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 
 /* Logo */
 .al-logo { padding: 0 8px 24px; }
+.al-logo-img {
+  max-height: 38px;
+  max-width: 100%;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
 .al-logo-mark {
   display: inline-flex;
   align-items: center;
@@ -173,8 +180,7 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   justify-content: flex-end;
   align-items: center;
   padding: 10px 24px;
-  border-bottom: 1px solid var(--border-card);
-  background: var(--card-bg);
+  background: transparent;
   flex-shrink: 0;
 }
 

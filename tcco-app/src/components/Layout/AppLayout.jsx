@@ -127,7 +127,7 @@ export default function AppLayout({ children, role = 'seeker', seekerProfile, pr
       {/* ── Sidebar ── */}
       <aside className={`al-sidebar ${mobileOpen ? 'al-sidebar-open' : ''}`}>
         <div className="al-logo">
-          <span className="al-logo-mark">TCCO</span>
+          <img src="/pages/pages/logo-green-crop.png" alt="The Coaching Collective" className="al-logo-img" />
         </div>
 
         <nav className="al-nav" role="navigation" aria-label="Main navigation">
