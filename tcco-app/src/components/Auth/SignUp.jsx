@@ -9,6 +9,7 @@ export default function SignUp() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [userType, setUserType] = useState('seeker');
+  const [agreeTerms, setAgreeTerms] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { signup, user, userProfile } = useAuth();
@@ -47,6 +48,11 @@ export default function SignUp() {
 
     if (password.length < 6) {
       setError('Password must be at least 6 characters');
+      return;
+    }
+
+    if (!agreeTerms) {
+      setError('You must agree to the Terms of Service and Privacy Policy to continue');
       return;
     }
 
@@ -154,6 +160,27 @@ export default function SignUp() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
+          </div>
+
+          <div className="form-group checkbox-group" style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginTop: '16px', marginBottom: '16px' }}>
+            <input
+              type="checkbox"
+              id="agreeTerms"
+              checked={agreeTerms}
+              onChange={(e) => setAgreeTerms(e.target.checked)}
+              required
+              style={{ marginTop: '3px', flexShrink: 0 }}
+            />
+            <label htmlFor="agreeTerms" style={{ fontSize: '13px', fontWeight: 'normal', color: '#666', lineHeight: '1.4', cursor: 'pointer' }}>
+              I agree to the{' '}
+              <a href="/terms.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent, #12372A)', textDecoration: 'underline' }}>
+                Terms of Service
+              </a>{' '}
+              and{' '}
+              <a href="/privacy.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent, #12372A)', textDecoration: 'underline' }}>
+                Privacy Policy
+              </a>
+            </label>
           </div>
 
           {error && <div className="error-message">{error}</div>}
