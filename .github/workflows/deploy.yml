@@ -24,6 +24,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Run tests
+        run: npx vitest run
+
       - name: Build
         run: npm run build
         env:
@@ -35,6 +38,8 @@ jobs:
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
 
       - name: Deploy app to Hostinger
+        id: ftp-deploy
+        continue-on-error: true
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -42,3 +47,16 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: tcco-app/dist/
           server-dir: app/
+          timeout: 60000
+
+      # Hostinger's FTP occasionally times out on connect — retry once
+      - name: Retry deploy on failure
+        if: steps.ftp-deploy.outcome == 'failure'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: tcco-app/dist/
+          server-dir: app/
+          timeout: 60000

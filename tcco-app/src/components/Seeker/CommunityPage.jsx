@@ -27,10 +27,9 @@ export default function CommunityPage() {
   const loadPosts = async () => {
     try {
       const { data, error } = await supabase
-        .from('content')
+        .from('community_posts')
         .select('*')
-        .eq('content_type', 'community_post')
-        .neq('status', 'removed')
+        .eq('status', 'published')
         .order('created_at', { ascending: false })
         .limit(50);
 
@@ -41,7 +40,7 @@ export default function CommunityPage() {
         author: p.author_name || 'Community Member',
         role: p.author_role || 'Member',
         time: formatTimeAgo(p.created_at),
-        content: p.body || p.content || '',
+        content: p.body || '',
         likes: p.likes_count || 0,
         replies: p.replies_count || 0,
         tag: p.tag || '#community',
@@ -49,7 +48,7 @@ export default function CommunityPage() {
       }));
       setPosts(mapped);
     } catch (err) {
-      // If table doesn't exist or no data, start with empty feed
+      // Table missing (migration 004 not applied yet) — start with empty feed
       setPosts([]);
     } finally {
       setLoading(false);
@@ -77,37 +76,13 @@ export default function CommunityPage() {
     const authorName = userProfile?.name || user?.email?.split('@')[0] || 'Community Member';
 
     try {
-      const { data, error } = await supabase.from('content').insert({
+      const { data, error } = await supabase.from('community_posts').insert({
         user_id: user.id,
-        content_type: 'community_post',
         body: postText.trim(),
         tag,
         author_name: authorName,
         author_role: userProfile?.user_type || 'Member',
-        status: 'published',
-        likes_count: 0,
-        replies_count: 0,
       }).select('*').single();
-
-      if (error && error.code === 'PGRST204') {
-        // Table exists but schema mismatch — save locally for now
-        const localPost = {
-          id: 'local-' + Date.now(),
-          author: authorName,
-          role: userProfile?.user_type || 'Member',
-          time: 'Just now',
-          content: postText.trim(),
-          likes: 0,
-          replies: 0,
-          tag,
-          liked: false,
-        };
-        setPosts(prev => [localPost, ...prev]);
-        setPostText('');
-        setSelectedTag('');
-        showToast('Posted to community!');
-        return;
-      }
 
       if (error) throw error;
 
