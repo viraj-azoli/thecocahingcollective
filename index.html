@@ -443,13 +443,21 @@ footer{
   <div style="max-width:1120px;margin:0 auto;display:grid;grid-template-columns:0.85fr 1fr;gap:64px;align-items:center;" class="two-col">
 
     <!-- Latest issue preview.
-         Cover image is hosted externally on azoli.in — if that goes down,
-         fall back to a text placeholder instead of a broken-image icon. -->
+         Real cover photo is hosted externally on azoli.in — if that's
+         unreachable, fall back to branded cover art instead of a broken
+         image or an apology message. -->
     <a href="newsletter.html" class="fade-up" style="display:block;text-decoration:none;border-radius:16px;overflow:hidden;border:1px solid rgba(27,83,35,0.13);box-shadow:0 8px 32px rgba(0,0,0,0.08);transition:transform 0.3s var(--ease),box-shadow 0.3s;" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 14px 44px rgba(0,0,0,0.13)';" onmouseleave="this.style.transform='none';this.style.boxShadow='0 8px 32px rgba(0,0,0,0.08)';">
       <img src="https://azoli.in/newsletter-images/page1.jpg" alt="The Coaching Collective — June 2026 newsletter cover" loading="lazy" style="width:100%;height:auto;display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/>
-      <div style="display:none;aspect-ratio:600/850;background:linear-gradient(145deg,var(--cream-2),var(--cream));align-items:center;justify-content:center;flex-direction:column;gap:10px;padding:20px;text-align:center;">
-        <span style="font-size:32px;">📰</span>
-        <span class="label-caps">June 2026 Issue</span>
+      <div class="newsletter-cover-fallback" style="display:none;aspect-ratio:600/820;background:linear-gradient(155deg,var(--cream) 0%,var(--cream-2) 100%);flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:40px;text-align:center;position:relative;">
+        <div style="position:absolute;inset:18px;border:1px solid rgba(27,83,35,0.18);border-radius:8px;pointer-events:none;"></div>
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#1b5323" stroke-width="1.3">
+          <rect x="2" y="5" width="20" height="14" rx="1.5"/>
+          <polyline points="2,6 12,13.5 22,6"/>
+        </svg>
+        <div>
+          <p style="font-family:'Playfair Display',serif;font-style:italic;font-size:1.6rem;color:var(--hi);line-height:1.25;margin-bottom:10px;">The Collective<br/>Letter</p>
+          <p class="label-caps" style="margin:0;">A Monthly Newsletter</p>
+        </div>
       </div>
     </a>
 
