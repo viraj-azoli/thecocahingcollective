@@ -68,13 +68,26 @@ footer p{font-size:0.78rem;color:rgba(26,46,28,0.45);}
     Read the full issue below, straight from our monthly email.
   </p>
 
-  <div class="issue-frame">
-    <img src="https://azoli.in/newsletter-images/page1.jpg" alt="The Coaching Collective – June 2026 Issue featuring Claire Fitzsimmons" loading="lazy">
-    <img src="https://azoli.in/newsletter-images/slices/p2_s1_bio.jpg" alt="Claire Fitzsimmons bio" loading="lazy">
-    <img src="https://azoli.in/newsletter-images/slices/p2_s2_iflost.jpg" alt="Instagram: @iflost_claire" loading="lazy">
-    <img src="https://azoli.in/newsletter-images/slices/p2_s5_book.jpg" alt="If Lost Start Here – Claire's book" loading="lazy">
-    <img src="https://azoli.in/newsletter-images/page3.jpg" alt="Welcome Claire Fitzsimmons to The Coaching Collective" loading="lazy">
+  <!-- Images are hosted externally on azoli.in — if that's down, hide
+       broken images and show a friendly fallback instead of broken icons. -->
+  <div class="issue-frame" id="issue-frame">
+    <img src="https://azoli.in/newsletter-images/page1.jpg" alt="The Coaching Collective – June 2026 Issue featuring Claire Fitzsimmons" loading="lazy" onerror="this.remove();checkIssueFrame();">
+    <img src="https://azoli.in/newsletter-images/slices/p2_s1_bio.jpg" alt="Claire Fitzsimmons bio" loading="lazy" onerror="this.remove();checkIssueFrame();">
+    <img src="https://azoli.in/newsletter-images/slices/p2_s2_iflost.jpg" alt="Instagram: @iflost_claire" loading="lazy" onerror="this.remove();checkIssueFrame();">
+    <img src="https://azoli.in/newsletter-images/slices/p2_s5_book.jpg" alt="If Lost Start Here – Claire's book" loading="lazy" onerror="this.remove();checkIssueFrame();">
+    <img src="https://azoli.in/newsletter-images/page3.jpg" alt="Welcome Claire Fitzsimmons to The Coaching Collective" loading="lazy" onerror="this.remove();checkIssueFrame();">
   </div>
+  <script>
+    function checkIssueFrame() {
+      var frame = document.getElementById('issue-frame');
+      if (frame && frame.querySelectorAll('img').length === 0 && !frame.querySelector('.frame-fallback')) {
+        frame.innerHTML = '<div class="frame-fallback" style="padding:60px 24px;text-align:center;color:var(--mid);">' +
+          '<span style="font-size:32px;display:block;margin-bottom:12px;">📰</span>' +
+          "This issue is temporarily unavailable. Check back soon, or subscribe below so you never miss one." +
+          '</div>';
+      }
+    }
+  </script>
 
   <div class="resub">
     <p class="label-caps" style="margin-bottom:12px;">Don't miss the next issue</p>
