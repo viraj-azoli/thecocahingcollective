@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Mindset Card Deck | The Coaching Collective</title>
+<meta name="description" content="54 reflection cards designed to shift your mindset, one card at a time. Created by Pamela, available as an instant digital download."/>
+<meta property="og:type" content="product"/>
+<meta property="og:title" content="The Mindset Card Deck | The Coaching Collective"/>
+<meta property="og:description" content="54 reflection cards designed to shift your mindset, one card at a time."/>
+<meta property="og:image" content="https://www.thecoachingcollectiveonline.com/pages/assets/img/products/mindset-deck/cover.png"/>
+<meta name="robots" content="index, follow"/>
+<link rel="apple-touch-icon" sizes="180x180" href="pages/assets/img/favicons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="pages/assets/img/favicons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="pages/assets/img/favicons/favicon-16x16.png">
+<link rel="shortcut icon" type="image/x-icon" href="pages/assets/img/favicons/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green-dark:#1b5323;--green-mid:#377e49;--green-light:#69ae7a;
+  --cream:#f5f0e8;--cream-2:#ede8dc;
+  --hi:#1a2e1c;--mid:#4a5e4d;--lo:#7a8f7c;
+  --gold:#b3872f;
+  --ease: cubic-bezier(0.23,1,0.32,1);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--cream);font-family:'Outfit',sans-serif;-webkit-font-smoothing:antialiased;color:var(--hi);}
+
+.nav{
+  position:sticky;top:0;z-index:50;height:72px;padding:0 32px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(27,83,35,0.10);
+  background:rgba(245,240,232,0.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+}
+.nav-logo{display:flex;align-items:center;text-decoration:none;opacity:0.88;}
+.back-link{font-size:0.78rem;letter-spacing:0.08em;color:var(--green-dark);text-decoration:none;display:flex;align-items:center;gap:6px;}
+
+.label-caps{font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;font-weight:600;color:var(--green-mid);}
+.display{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,3.4rem);font-weight:300;line-height:1.1;letter-spacing:-0.01em;color:var(--hi);}
+.display em{font-style:italic;color:var(--green-dark);}
+.body-copy{font-size:0.98rem;line-height:1.75;color:var(--mid);font-weight:300;}
+
+/* HERO */
+.product-hero{max-width:1120px;margin:0 auto;padding:64px 32px 40px;display:grid;grid-template-columns:0.85fr 1fr;gap:64px;align-items:center;}
+.hero-cover{position:relative;}
+.hero-cover img{
+  width:100%;height:auto;display:block;border-radius:14px;
+  box-shadow:0 20px 60px rgba(27,83,35,0.18),0 4px 16px rgba(0,0,0,0.08);
+  transform:rotate(-2deg);transition:transform 0.4s var(--ease);
+}
+.hero-cover:hover img{transform:rotate(0deg);}
+.price-tag{
+  position:absolute;bottom:-18px;right:-6px;
+  background:var(--hi);color:var(--cream);
+  font-family:'Playfair Display',serif;font-size:1.3rem;font-style:italic;
+  padding:10px 22px;border-radius:50px;box-shadow:0 8px 24px rgba(0,0,0,0.2);
+}
+
+.hero-copy .label-caps{margin-bottom:16px;}
+.hero-copy .display{margin-bottom:20px;}
+.hero-copy .body-copy{margin-bottom:28px;max-width:460px;}
+.hero-meta{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:32px;}
+.meta-pill{
+  font-size:0.75rem;letter-spacing:0.04em;color:var(--green-dark);
+  background:rgba(27,83,35,0.07);border:1px solid rgba(27,83,35,0.15);
+  padding:6px 14px;border-radius:30px;display:inline-flex;align-items:center;gap:6px;
+}
+
+.cta-btn{
+  display:inline-block;text-decoration:none;font-size:0.82rem;letter-spacing:0.1em;text-transform:uppercase;
+  color:#fff;padding:16px 40px;border-radius:40px;background:var(--green-dark);
+  border:1px solid rgba(27,83,35,0.20);transition:background 0.25s,transform 0.15s,box-shadow 0.25s;
+  font-weight:500;
+}
+.cta-btn:hover{background:var(--green-mid);transform:translateY(-2px);box-shadow:0 8px 28px rgba(27,83,35,0.18);}
+.cta-note{font-size:0.78rem;color:var(--lo);margin-top:14px;}
+
+/* GALLERY */
+.gallery-section{max-width:1120px;margin:0 auto;padding:60px 32px;}
+.gallery-header{text-align:center;margin-bottom:40px;}
+.gallery-header .display{font-size:clamp(1.7rem,3.2vw,2.4rem);margin-top:10px;}
+.card-grid{
+  display:grid;grid-template-columns:repeat(6,1fr);gap:16px;
+}
+.card-grid img{
+  width:100%;height:auto;border-radius:10px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.10);
+  transition:transform 0.3s var(--ease),box-shadow 0.3s;
+  cursor:default;
+}
+.card-grid img:hover{transform:translateY(-6px) scale(1.03);box-shadow:0 16px 36px rgba(0,0,0,0.16);}
+
+/* DETAILS */
+.details-section{background:var(--cream-2);padding:80px 32px;}
+.details-inner{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;}
+.details-list{display:flex;flex-direction:column;gap:22px;}
+.detail-item{display:flex;gap:16px;align-items:flex-start;}
+.detail-icon{
+  flex-shrink:0;width:40px;height:40px;border-radius:50%;
+  background:rgba(27,83,35,0.08);display:flex;align-items:center;justify-content:center;font-size:18px;
+}
+.detail-text h4{font-family:'Playfair Display',serif;font-weight:400;font-size:1.05rem;color:var(--hi);margin-bottom:4px;}
+.detail-text p{font-size:0.9rem;color:var(--mid);line-height:1.6;}
+
+.creator-card{
+  background:#fff;border:1px solid rgba(27,83,35,0.12);border-radius:16px;
+  padding:36px;display:flex;flex-direction:column;gap:14px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.06);
+}
+.creator-card .label-caps{color:var(--gold);}
+.creator-card .body-copy{margin:0;}
+
+/* FINAL CTA */
+.final-cta{padding:100px 32px;text-align:center;}
+.final-cta .display{margin-bottom:14px;}
+.final-cta .body-copy{max-width:420px;margin:0 auto 36px;}
+
+footer{border-top:1px solid rgba(27,83,35,0.10);padding:40px 32px;background:var(--cream-2);text-align:center;}
+footer p{font-size:0.78rem;color:rgba(26,46,28,0.45);}
+footer a{color:rgba(26,46,28,0.55);text-decoration:none;margin:0 10px;font-size:0.78rem;}
+
+@media(max-width:900px){
+  .product-hero{grid-template-columns:1fr;gap:40px;}
+  .details-inner{grid-template-columns:1fr;}
+  .card-grid{grid-template-columns:repeat(3,1fr);}
+}
+@media(max-width:520px){
+  .card-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <img src="pages/pages/logo-green-crop.png" alt="The Coaching Collective" style="height:48px;width:auto;"/>
+  </a>
+  <a href="index.html" class="back-link">← Back to home</a>
+</nav>
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section class="product-hero">
+  <div class="hero-cover">
+    <img src="pages/assets/img/products/mindset-deck/cover.png" alt="The Mindset Card Deck cover"/>
+    <!-- PRICE: placeholder — update to the real price -->
+    <div class="price-tag">$19</div>
+  </div>
+  <div class="hero-copy">
+    <p class="label-caps">Created by Pamela</p>
+    <h1 class="display">The Mindset<br/>Card <em>Deck</em></h1>
+    <p class="body-copy">
+      54 reflection cards designed to shift the way you think, one card at a time. Pull a card when you need clarity,
+      a nudge, or a new way to see the moment you're in. Print them at home or keep them on your phone, however you like to reflect.
+    </p>
+    <div class="hero-meta">
+      <span class="meta-pill">📥 Instant digital download</span>
+      <span class="meta-pill">🃏 54 cards</span>
+      <span class="meta-pill">🖨️ Print-ready</span>
+    </div>
+    <!-- BUY BUTTON: replace href with the Stripe Payment Link once created.
+         Placeholder routes to a pre-order email so the button is never dead. -->
+    <a href="mailto:info@thecoachingcollectiveonline.com?subject=Mindset%20Card%20Deck%20—%20I'd%20like%20to%20buy&body=Hi!%20I'd%20love%20to%20buy%20the%20Mindset%20Card%20Deck.%20Please%20send%20me%20a%20payment%20link."
+       class="cta-btn" id="buy-btn">
+      Get the Deck — $19
+    </a>
+    <p class="cta-note">Secure checkout via Stripe · Delivered instantly to your inbox</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     GALLERY
+══════════════════════════════════════ -->
+<section class="gallery-section">
+  <div class="gallery-header">
+    <p class="label-caps">A few cards from the deck</p>
+    <h2 class="display">Prompts that <em>meet you</em> where you are</h2>
+  </div>
+  <div class="card-grid">
+    <img src="pages/assets/img/products/mindset-deck/card-01.png" alt="Card: Expect new results with new actions" loading="lazy"/>
+    <img src="pages/assets/img/products/mindset-deck/card-02.png" alt="Card: Show up and push through" loading="lazy"/>
+    <img src="pages/assets/img/products/mindset-deck/card-03.png" alt="Card: Your value (external validation), your worth (internal truth)" loading="lazy"/>
+    <img src="pages/assets/img/products/mindset-deck/card-04.png" alt="Card: Inner clarity sharpens your intentions" loading="lazy"/>
+    <img src="pages/assets/img/products/mindset-deck/card-05.png" alt="Card: You are a creator" loading="lazy"/>
+    <img src="pages/assets/img/products/mindset-deck/card-06.png" alt="Card: The stars shine brightest in the dark" loading="lazy"/>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     DETAILS
+══════════════════════════════════════ -->
+<section class="details-section">
+  <div class="details-inner">
+    <div class="details-list">
+      <p class="label-caps" style="margin-bottom:8px;">What you get</p>
+      <div class="detail-item">
+        <div class="detail-icon">🃏</div>
+        <div class="detail-text">
+          <h4>54 unique reflection cards</h4>
+          <p>Each with its own prompt or mindset shift, designed to be pulled at random or worked through in order.</p>
+        </div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-icon">📥</div>
+        <div class="detail-text">
+          <h4>Instant delivery</h4>
+          <p>Your download link lands in your inbox the moment payment goes through, no waiting.</p>
+        </div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-icon">🖨️</div>
+        <div class="detail-text">
+          <h4>Print at home or go digital</h4>
+          <p>Print the deck onto card stock and cut it out, or simply flip through the PDF on your phone whenever you need it.</p>
+        </div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-icon">♾️</div>
+        <div class="detail-text">
+          <h4>Yours to keep, forever</h4>
+          <p>One-time payment. No subscription, no expiry.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="creator-card">
+      <p class="label-caps">The Creator</p>
+      <p class="display" style="font-size:1.5rem;">Pamela</p>
+      <p class="body-copy">
+        Pamela designed the Mindset Card Deck to give people a small, tangible way to reset their thinking, no session required.
+        Every card distills a coaching conversation into something you can hold in your hand and come back to any time.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     FINAL CTA
+══════════════════════════════════════ -->
+<section class="final-cta">
+  <p class="label-caps" style="margin-bottom:20px;">Ready?</p>
+  <h2 class="display">Start shifting your <em>mindset</em> today</h2>
+  <p class="body-copy">54 cards, one small reset at a time.</p>
+  <a href="mailto:info@thecoachingcollectiveonline.com?subject=Mindset%20Card%20Deck%20—%20I'd%20like%20to%20buy&body=Hi!%20I'd%20love%20to%20buy%20the%20Mindset%20Card%20Deck.%20Please%20send%20me%20a%20payment%20link."
+     class="cta-btn">
+    Get the Deck — $19
+  </a>
+</section>
+
+<footer>
+  <p>© 2026 The Coaching Collective Online. All rights reserved.</p>
+  <div style="margin-top:12px;">
+    <a href="index.html">Home</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Service</a>
+  </div>
+</footer>
+
+</body>
+</html>
