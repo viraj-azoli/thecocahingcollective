@@ -1,0 +1,63 @@
+<!--
+  Newsletter signup form — Mailchimp-ready.
+
+  BEFORE THIS GOES LIVE, swap in 3 things from your Mailchimp embed code
+  (Audience > Signup forms > Embedded forms):
+
+  1. The <form action="..."> URL below (currently a placeholder).
+  2. The hidden honeypot input's name/id (currently "b_PLACEHOLDER_PLACEHOLDER").
+     Mailchimp anti-bot field — must stay present and stay hidden, but the
+     exact name is unique to your account/list, copy it exactly.
+  3. Confirm the field names below (EMAIL, FNAME) match your audience's
+     merge tags — these are Mailchimp's defaults so they should just work.
+
+  Everything else (styling, layout, copy) is ready to use as-is.
+-->
+<div style="max-width:480px;margin:0 auto;padding:40px 32px;background:#ffffff;border:1px solid rgba(27,83,35,0.13);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.08);font-family:'Outfit',Helvetica,Arial,sans-serif;">
+
+  <p style="margin:0 0 8px;font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;font-weight:600;color:#377e49;text-align:center;">
+    The Collective Letter
+  </p>
+  <p style="margin:0 0 12px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:1.6rem;line-height:1.25;color:#1a2e1c;text-align:center;">
+    Join the newsletter
+  </p>
+  <p style="margin:0 0 28px;font-size:0.9rem;line-height:1.6;color:#4a5e4d;text-align:center;">
+    Featured coaches, reflections, and resources for your growth, once a month. No spam, just the good stuff.
+  </p>
+
+  <div id="mc_embed_signup">
+    <form action="https://YOUR-MAILCHIMP-ACTION-URL-HERE" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+      <div id="mc_embed_signup_scroll">
+
+        <div style="margin-bottom:16px;">
+          <label for="mce-FNAME" style="display:block;margin-bottom:6px;font-size:0.78rem;font-weight:600;color:#1a2e1c;">Name</label>
+          <input type="text" name="FNAME" id="mce-FNAME" placeholder="Your name" required
+            style="width:100%;padding:12px 14px;font-size:0.95rem;font-family:inherit;border:1.5px solid rgba(27,83,35,0.20);border-radius:8px;color:#1a2e1c;box-sizing:border-box;">
+        </div>
+
+        <div style="margin-bottom:24px;">
+          <label for="mce-EMAIL" style="display:block;margin-bottom:6px;font-size:0.78rem;font-weight:600;color:#1a2e1c;">Email</label>
+          <input type="email" name="EMAIL" id="mce-EMAIL" placeholder="you@email.com" required
+            style="width:100%;padding:12px 14px;font-size:0.95rem;font-family:inherit;border:1.5px solid rgba(27,83,35,0.20);border-radius:8px;color:#1a2e1c;box-sizing:border-box;">
+        </div>
+
+        <!-- Mailchimp anti-bot honeypot field — keep hidden, do not remove -->
+        <div aria-hidden="true" style="position:absolute;left:-5000px;">
+          <input type="text" name="b_PLACEHOLDER_PLACEHOLDER" tabindex="-1" value="">
+        </div>
+
+        <div id="mce-responses" style="margin-bottom:16px;">
+          <div id="mce-error-response" style="display:none;padding:10px 14px;border-radius:8px;background:#fdecea;color:#b3261e;font-size:0.85rem;"></div>
+          <div id="mce-success-response" style="display:none;padding:10px 14px;border-radius:8px;background:#eaf6ee;color:#1b5323;font-size:0.85rem;"></div>
+        </div>
+
+        <button type="submit" name="subscribe" id="mc-embedded-subscribe"
+          style="width:100%;padding:14px;font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;font-weight:600;color:#fff;background:#1b5323;border:none;border-radius:40px;cursor:pointer;">
+          Subscribe
+        </button>
+
+      </div>
+    </form>
+  </div>
+
+</div>
