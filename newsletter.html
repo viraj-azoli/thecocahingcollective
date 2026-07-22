@@ -115,16 +115,13 @@ footer p{font-size:0.78rem;color:rgba(26,46,28,0.45);}
 
   <div class="resub">
     <p class="label-caps" style="margin-bottom:16px;">Don't miss the next issue</p>
-    <form action="https://afe40f08.sibforms.com/serve/MUIFAEjRSfWK8cAOTT9002AyFC9TG5vO6uIpFvUXPns_QdWCkhpLCCQ_Mz_r2Q4hj1PyHyPaIoj3XkY17BUWzag6uM2_vmvHfoOTu9GBhyqj5H2JQik9qeFDnkf59T578KQKn76Jw8niZYl2I_0U2mekPpwN75FO3B_YeNDclLQNVJ3gui9NEzc3FvYA9F9OagpooMbcosFRnQWEAA==" method="post" target="_blank" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:440px;margin:0 auto;">
-      <input type="text" name="FIRSTNAME" placeholder="Your name" required
+    <form class="js-newsletter-form" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:440px;margin:0 auto;">
+      <input type="text" name="name" placeholder="Your name" required
         style="flex:1 1 140px;padding:12px 14px;font-size:0.9rem;font-family:'Outfit',sans-serif;border:1.5px solid rgba(27,83,35,0.20);border-radius:8px;color:var(--hi);"/>
-      <input type="email" name="EMAIL" placeholder="you@email.com" required
+      <input type="email" name="email" placeholder="you@email.com" required
         style="flex:1 1 180px;padding:12px 14px;font-size:0.9rem;font-family:'Outfit',sans-serif;border:1.5px solid rgba(27,83,35,0.20);border-radius:8px;color:var(--hi);"/>
-      <input type="hidden" name="locale" value="en">
-      <div aria-hidden="true" style="position:absolute;left:-5000px;">
-        <input type="text" name="email_address_check" value="" tabindex="-1">
-      </div>
       <button type="submit" class="cta-btn" style="border:none;cursor:pointer;width:100%;">Subscribe to the Newsletter</button>
+      <p class="js-newsletter-msg" style="display:none;width:100%;font-size:0.82rem;margin:4px 0 0;text-align:center;"></p>
     </form>
   </div>
 </div>
@@ -132,6 +129,58 @@ footer p{font-size:0.78rem;color:rgba(26,46,28,0.45);}
 <footer>
   <p>© 2026 The Coaching Collective Online. All rights reserved.</p>
 </footer>
+
+<script>
+/* Newsletter signup — posts to the newsletter-signup Supabase Edge
+   Function, which adds the contact to Brevo and sends both the
+   subscriber's welcome email and the founder notification. */
+(function () {
+  var SUPABASE_URL = 'https://gzagyzvcekvpsdpkkqno.supabase.co';
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6YWd5enZjZWt2cHNkcGtrcW5vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MzE1NTUsImV4cCI6MjA5NDMwNzU1NX0.jusPYod4RBzdE3A24kvHgRp8s8uOkiRavFm81aVpy_8';
+
+  document.querySelectorAll('.js-newsletter-form').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var button = form.querySelector('button[type="submit"]');
+      var msg = form.querySelector('.js-newsletter-msg');
+      var name = form.querySelector('[name="name"]').value.trim();
+      var email = form.querySelector('[name="email"]').value.trim();
+      var originalText = button.textContent;
+
+      button.disabled = true;
+      button.textContent = 'Subscribing…';
+      msg.style.display = 'none';
+
+      fetch(SUPABASE_URL + '/functions/v1/newsletter-signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'apikey': SUPABASE_ANON_KEY,
+        },
+        body: JSON.stringify({ name: name, email: email }),
+      })
+        .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+        .then(function (result) {
+          if (!result.ok) throw new Error((result.data && result.data.error) || 'Something went wrong');
+          form.reset();
+          msg.textContent = "You're in! Check your inbox for a welcome email.";
+          msg.style.color = 'var(--green-dark, #1b5323)';
+          msg.style.display = 'block';
+        })
+        .catch(function (err) {
+          msg.textContent = err.message || 'Could not subscribe right now. Please try again.';
+          msg.style.color = '#b3261e';
+          msg.style.display = 'block';
+        })
+        .finally(function () {
+          button.disabled = false;
+          button.textContent = originalText;
+        });
+    });
+  });
+})();
+</script>
 
 </body>
 </html>

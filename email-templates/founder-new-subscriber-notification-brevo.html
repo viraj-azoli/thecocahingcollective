@@ -19,7 +19,7 @@
 <body style="margin:0;padding:0;background-color:#ede8dc;">
 
 <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">
-  New newsletter subscriber: {{ contact.FIRSTNAME }} ({{ contact.EMAIL }})
+  New newsletter subscriber: {{ params.FIRSTNAME }} ({{ params.EMAIL }})
 </div>
 
 <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#ede8dc">
@@ -50,11 +50,11 @@
             <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
               <tr>
                 <td style="padding:0 0 8px;font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#4a5e4d;width:70px;">Name</td>
-                <td style="padding:0 0 8px;font-family:Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:#1a2e1c;">{{ contact.FIRSTNAME }}</td>
+                <td style="padding:0 0 8px;font-family:Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:#1a2e1c;">{{ params.FIRSTNAME }}</td>
               </tr>
               <tr>
                 <td style="padding:0;font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#4a5e4d;width:70px;">Email</td>
-                <td style="padding:0;font-family:Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:#1a2e1c;">{{ contact.EMAIL }}</td>
+                <td style="padding:0;font-family:Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;color:#1a2e1c;">{{ params.EMAIL }}</td>
               </tr>
             </table>
           </td>
@@ -64,7 +64,7 @@
       <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin-top:24px;">
         <tr>
           <td align="center" bgcolor="#1b5323" style="border-radius:40px;">
-            <a href="mailto:{{ contact.EMAIL }}" style="display:inline-block;padding:12px 28px;font-family:Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;color:#ffffff;">
+            <a href="mailto:{{ params.EMAIL }}" style="display:inline-block;padding:12px 28px;font-family:Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;color:#ffffff;">
               Say hello
             </a>
           </td>
