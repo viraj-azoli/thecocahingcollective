@@ -2,7 +2,14 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 
 const BREVO_API_KEY = Deno.env.get('BREVO_API_KEY')!;
 const FOUNDER_EMAIL = Deno.env.get('NEWSLETTER_FOUNDER_EMAIL') || 'pamrupprecht1@gmail.com';
-const BREVO_LIST_ID = 3; // "new signups" audience in Brevo
+// List 3 ("new signups") has a pre-existing Brevo automation attached that
+// fires its own (locked, un-brandable, un-disableable via API) "You are now
+// subscribed!" email whenever a contact is added to it — confirmed by
+// testing, this would duplicate the branded welcome email below. List 4
+// ("identified_contacts") is an existing, empty, automation-free list —
+// confirmed via testing that adding to it triggers nothing extra. Using it
+// here keeps this function in full control of what gets sent.
+const BREVO_LIST_ID = 4;
 const WELCOME_TEMPLATE_ID = 12; // "TCCO — Newsletter Welcome Email"
 const FOUNDER_TEMPLATE_ID = 13; // "TCCO — Founder New Subscriber Notification"
 
