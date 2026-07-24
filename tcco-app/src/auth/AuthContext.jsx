@@ -33,6 +33,14 @@ export function AuthProvider({ children }) {
 
     initAuth();
 
+    // Safety net: whatever the cause (a hung network request, an unexpected
+    // Supabase client lock, etc.), never leave the user stuck on the loading
+    // spinner indefinitely — force it to resolve after 8s so the app falls
+    // through to the login screen instead of hanging forever.
+    const watchdog = setTimeout(() => {
+      if (active) setLoading(false);
+    }, 8000);
+
     // NOTE: never await Supabase queries directly inside onAuthStateChange —
     // the client holds an internal lock during the callback and awaiting a
     // query here can deadlock (symptom: infinite loading spinner on reload).
@@ -54,6 +62,7 @@ export function AuthProvider({ children }) {
 
     return () => {
       active = false;
+      clearTimeout(watchdog);
       subscription.unsubscribe();
     };
   }, []);

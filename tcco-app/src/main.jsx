@@ -7,6 +7,20 @@ import { PageErrorBoundary } from './components/shared/ErrorBoundary.jsx'
 import { initAnalytics } from './lib/analytics.js'
 import './index.css'
 
+// This app briefly shipped a service worker that was later removed (it kept
+// hitting Hostinger FTP overwrite locks on the non-hashed sw.js filename).
+// Browsers that installed it will keep running it indefinitely — silently
+// serving old cached responses — until it's explicitly unregistered. Clean
+// up any leftover registration/caches from that period on every load.
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then((regs) => {
+    regs.forEach((reg) => reg.unregister());
+  });
+}
+if ('caches' in window) {
+  caches.keys().then((keys) => keys.forEach((key) => caches.delete(key)));
+}
+
 initAnalytics()
 
 Sentry.init({
