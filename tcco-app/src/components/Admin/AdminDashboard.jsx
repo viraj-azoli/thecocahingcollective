@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
 import { showToast } from '../shared/Toast';
+import { appBaseUrl } from '../../lib/appUrl';
 import '../Layout/AppLayout.css';
 
 export default function AdminDashboard() {
@@ -12,24 +13,23 @@ export default function AdminDashboard() {
   const [recentSessions, setRecentSessions] = useState([]);
   const [recentSeekers, setRecentSeekers]   = useState([]);
   const [loading, setLoading]               = useState(true);
+  const [confirmReject, setConfirmReject]   = useState(null);
 
   useEffect(() => { loadData(); }, []);
 
   const loadData = async () => {
     try {
+      // Counts come from an RPC rather than four head-count queries. Those
+      // ran under the caller's RLS, so an admin counted only their own rows
+      // and the dashboard showed zeros. The RPC is admin-gated server-side
+      // and returns counts only — it never exposes journal contents.
       const [
-        { count: seekerCount },
-        { count: coachCount },
-        { count: sessionCount },
-        { count: journalCount },
+        { data: statData, error: statErr },
         { data: unverifiedCoaches },
         { data: sessions },
         { data: seekers },
       ] = await Promise.all([
-        supabase.from('seeker_profiles').select('*', { count: 'exact', head: true }),
-        supabase.from('coach_profiles').select('*', { count: 'exact', head: true }),
-        supabase.from('sessions').select('*', { count: 'exact', head: true }),
-        supabase.from('journal_entries').select('*', { count: 'exact', head: true }),
+        supabase.rpc('admin_platform_stats'),
         supabase.from('coach_profiles').select('*').eq('verified', false),
         supabase
           .from('sessions')
@@ -39,7 +39,17 @@ export default function AdminDashboard() {
         supabase.from('seeker_profiles').select('*').order('created_at', { ascending: false }).limit(5),
       ]);
 
-      setStats({ seekerCount, coachCount, sessionCount, journalCount });
+      if (statErr) {
+        console.error('admin_platform_stats failed:', statErr.message);
+        showToast('Platform stats unavailable — migration 005 may not be applied', 'error');
+      }
+
+      setStats({
+        seekerCount:  statData?.seeker_count  ?? 0,
+        coachCount:   statData?.coach_count   ?? 0,
+        sessionCount: statData?.session_count ?? 0,
+        journalCount: statData?.journal_count ?? 0,
+      });
       setUnverified(unverifiedCoaches || []);
       setRecentSessions(sessions || []);
       setRecentSeekers(seekers || []);
@@ -51,16 +61,52 @@ export default function AdminDashboard() {
   };
 
   const approveCoach = async (coach) => {
-    const { error } = await supabase.from('coach_profiles').update({ verified: true }).eq('id', coach.id);
+    const { data: updated, error } = await supabase
+      .from('coach_profiles')
+      .update({ verified: true })
+      .eq('id', coach.id)
+      .select();
+
     if (error) { showToast('Failed to approve coach', 'error'); return; }
+    if (!updated || updated.length === 0) {
+      showToast('Approval blocked — admin permissions may not be applied yet', 'error');
+      return;
+    }
+
     setUnverified(prev => prev.filter(c => c.id !== coach.id));
     showToast(`${coach.name} approved successfully`, 'success');
+
+    // Approving here now sends the same email the Coaches page sends, instead
+    // of silently skipping it and leaving the coach with no idea they're live.
+    if (coach.user_id) {
+      const { data: userRow } = await supabase
+        .from('users').select('email').eq('id', coach.user_id).single();
+      if (userRow?.email) {
+        supabase.functions.invoke('send-email', {
+          body: {
+            to: userRow.email,
+            template: 'coach_verification_approved',
+            data: { name: coach.name, appUrl: appBaseUrl() },
+          },
+        }).catch(() => {/* non-blocking */});
+      }
+    }
   };
 
   const rejectCoach = async (coach) => {
-    const { error } = await supabase.from('coach_profiles').delete().eq('id', coach.id);
+    const { error, count } = await supabase
+      .from('coach_profiles')
+      .delete({ count: 'exact' })
+      .eq('id', coach.id);
+
     if (error) { showToast('Failed to reject coach', 'error'); return; }
+    if (!count) {
+      showToast('Delete blocked — admin permissions may not be applied yet', 'error');
+      return;
+    }
+
     setUnverified(prev => prev.filter(c => c.id !== coach.id));
+    setConfirmReject(null);
     showToast(`${coach.name} rejected and removed`, 'info');
   };
 
@@ -152,7 +198,7 @@ export default function AdminDashboard() {
                   <p style={{ fontSize: '12px', color: 'var(--text-soft)' }}>Joined {formatDate(coach.created_at)}</p>
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <button className="btn btn-primary btn-sm" onClick={() => approveCoach(coach)}>Approve</button>
-                    <button className="btn btn-danger btn-sm" onClick={() => rejectCoach(coach)}>Reject</button>
+                    <button className="btn btn-danger btn-sm" onClick={() => setConfirmReject(coach)}>Reject</button>
                   </div>
                 </div>
               ))}
@@ -253,6 +299,35 @@ export default function AdminDashboard() {
         </div>
 
       </div>
+
+      {/* Reject permanently deletes the coach's profile, so make it deliberate. */}
+      {confirmReject && (
+        <div className="modal-overlay" onClick={() => setConfirmReject(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '440px', width: '90%' }}>
+            <div className="modal-header">
+              <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-h)', margin: 0 }}>
+                Reject this coach?
+              </h2>
+              <button className="modal-close" onClick={() => setConfirmReject(null)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <p style={{ fontSize: '14px', color: 'var(--text-soft)', lineHeight: 1.6 }}>
+                This permanently deletes <strong style={{ color: 'var(--text-h)' }}>{confirmReject.name}</strong>'s
+                coach profile, along with their availability and any sessions attached to it.
+              </p>
+              <p style={{ fontSize: '13px', color: '#B45309', lineHeight: 1.6, marginTop: '10px' }}>
+                This cannot be undone.
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-outline" onClick={() => setConfirmReject(null)}>Cancel</button>
+              <button className="btn btn-danger" onClick={() => rejectCoach(confirmReject)}>
+                Delete profile
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AppLayout>
   );
 }

@@ -21,6 +21,15 @@ export function ProtectedRoute({ children, requiredRole = null }) {
     return <Navigate to={redirectMap[userProfile.user_type] || '/login'} replace />;
   }
 
+  // Admin is never granted on a missing profile. For seeker/coach a null
+  // profile is a normal transient state right after signup (the public.users
+  // row may not have landed yet) and the page itself handles setup — but the
+  // same leniency on /admin/* would hand the admin console to anyone whose
+  // profile fetch happened to fail.
+  if (requiredRole === 'admin' && !userProfile) {
+    return <Navigate to="/" replace />;
+  }
+
   // If role required but profile is null (e.g. public.users row doesn't exist yet),
   // still allow access — the dashboard/onboarding will handle setup
   return children;

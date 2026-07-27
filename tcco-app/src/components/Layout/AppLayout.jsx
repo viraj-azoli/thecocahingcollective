@@ -44,6 +44,7 @@ const ADMIN_NAV = [
     { icon: '🧭', label: 'Seekers',    to: '/admin/seekers' },
     { icon: '📅', label: 'Sessions',   to: '/admin/sessions' },
     { icon: '📚', label: 'Content',    to: '/admin/content' },
+    { icon: '🔑', label: 'Whitelist',  to: '/admin/whitelist' },
   ]},
 ];
 

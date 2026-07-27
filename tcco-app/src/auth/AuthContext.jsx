@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { track, identify, reset } from '../lib/analytics';
+import { appBaseUrl } from '../lib/appUrl';
 
 export const AuthContext = createContext();
 
@@ -119,7 +120,7 @@ export function AuthProvider({ children }) {
 
     // Fire-and-forget welcome email
     supabase.functions.invoke('send-email', {
-      body: { to: email, template: userType === 'seeker' ? 'welcome_seeker' : 'welcome_coach', data: { name: email.split('@')[0], appUrl: window.location.origin } },
+      body: { to: email, template: userType === 'seeker' ? 'welcome_seeker' : 'welcome_coach', data: { name: email.split('@')[0], appUrl: appBaseUrl() } },
     }).catch(() => {});
 
     track('user_signed_up', { role: userType });

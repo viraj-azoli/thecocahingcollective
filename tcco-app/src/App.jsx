@@ -64,6 +64,7 @@ const AdminSeekersPage    = lazyPage(() => import('./components/Admin/AdminSeeke
 const AdminAnalyticsPage  = lazyPage(() => import('./components/Admin/AdminAnalyticsPage'));
 const AdminSessionsPage   = lazyPage(() => import('./components/Admin/AdminSessionsPage'));
 const AdminContentPage    = lazyPage(() => import('./components/Admin/AdminContentPage'));
+const AdminWhitelistPage  = lazyPage(() => import('./components/Admin/AdminWhitelistPage'));
 
 // Shared pages
 const MessagesPage = lazyPage(() => import('./components/shared/MessagesPage'));
@@ -136,6 +137,7 @@ function AppRoutes() {
       <Route path="/admin/seekers"    element={<ProtectedRoute requiredRole="admin"><AdminSeekersPage /></ProtectedRoute>} />
       <Route path="/admin/sessions"   element={<ProtectedRoute requiredRole="admin"><AdminSessionsPage /></ProtectedRoute>} />
       <Route path="/admin/content"    element={<ProtectedRoute requiredRole="admin"><AdminContentPage /></ProtectedRoute>} />
+      <Route path="/admin/whitelist"  element={<ProtectedRoute requiredRole="admin"><AdminWhitelistPage /></ProtectedRoute>} />
 
       {/* Root & catch-all — RootRedirect sends each role to its own dashboard */}
       <Route path="/" element={<RootRedirect />} />

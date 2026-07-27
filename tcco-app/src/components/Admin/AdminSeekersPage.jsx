@@ -17,13 +17,17 @@ export default function AdminSeekersPage() {
 
   const loadSeekers = async () => {
     try {
+      // Journal counts come from an admin-gated RPC. Selecting from
+      // journal_entries directly returned nothing under RLS, and granting
+      // admins raw access would expose every seeker's private entries just
+      // to render a count.
       const [{ data: seekerData }, { data: journalData }] = await Promise.all([
         supabase.from('seeker_profiles').select('*').order('created_at', { ascending: false }),
-        supabase.from('journal_entries').select('seeker_id'),
+        supabase.rpc('admin_journal_counts'),
       ]);
 
       const jMap = {};
-      journalData?.forEach(j => { jMap[j.seeker_id] = (jMap[j.seeker_id] || 0) + 1; });
+      journalData?.forEach(j => { jMap[j.seeker_id] = Number(j.entry_count) || 0; });
 
       setSeekers(seekerData || []);
       setJournalCounts(jMap);

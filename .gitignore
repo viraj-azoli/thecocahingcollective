@@ -8,3 +8,6 @@ dashboard.html
 .vscode/
 aider/
 tcco-app/aider
+
+# Supabase CLI local scratch (linked project ref)
+supabase/.temp/

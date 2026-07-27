@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
 import { showToast } from '../shared/Toast';
+import { appBaseUrl } from '../../lib/appUrl';
 import '../Layout/AppLayout.css';
 
 const FILTERS = ['All', 'Verified', 'Pending'];
@@ -37,29 +38,43 @@ export default function AdminCoachesPage() {
 
   const toggleVerified = async (coach) => {
     const newVal = !coach.verified;
-    const { error } = await supabase.from('coach_profiles').update({ verified: newVal }).eq('id', coach.id);
+    const { data: updated, error } = await supabase
+      .from('coach_profiles')
+      .update({ verified: newVal })
+      .eq('id', coach.id)
+      .select();
+
     if (error) { showToast('Update failed', 'error'); return; }
+
+    // RLS refusals don't error — they just match zero rows and look like a
+    // success. Without this check the button reported "verified" while the
+    // database was unchanged.
+    if (!updated || updated.length === 0) {
+      showToast('Update blocked — admin permissions may not be applied yet', 'error');
+      return;
+    }
+
     setCoaches(prev => prev.map(c => c.id === coach.id ? { ...c, verified: newVal } : c));
     if (selected?.id === coach.id) setSelected(prev => ({ ...prev, verified: newVal }));
     showToast(newVal ? `${coach.name} verified` : `${coach.name} unverified`, 'success');
 
-    // Send verification approval email
+    // Send verification approval email. The address lives on users.email —
+    // coach_profiles has never had a contact_email or email column, which is
+    // why this previously always resolved to undefined and skipped the send.
     if (newVal && coach.user_id) {
       const { data: userRow } = await supabase
-        .from('users').select('id').eq('id', coach.user_id).single();
-      if (userRow) {
-        // Use Supabase admin to get email — fetch from auth via edge function context
-        // Fallback: send to contact_email if stored, otherwise skip
-        const coachEmail = coach.contact_email || coach.email;
-        if (coachEmail) {
-          supabase.functions.invoke('send-email', {
-            body: {
-              to: coachEmail,
-              template: 'coach_verification_approved',
-              data: { name: coach.name, appUrl: window.location.origin },
-            },
-          }).catch(() => {/* non-blocking */});
-        }
+        .from('users').select('email').eq('id', coach.user_id).single();
+
+      if (userRow?.email) {
+        supabase.functions.invoke('send-email', {
+          body: {
+            to: userRow.email,
+            template: 'coach_verification_approved',
+            data: { name: coach.name, appUrl: appBaseUrl() },
+          },
+        }).catch(() => {/* non-blocking */});
+      } else {
+        console.warn('No email on file for coach', coach.id, '— approval email skipped');
       }
     }
   };
