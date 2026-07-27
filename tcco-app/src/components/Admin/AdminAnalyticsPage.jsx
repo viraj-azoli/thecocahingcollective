@@ -64,6 +64,7 @@ export default function AdminAnalyticsPage() {
         { data: rawRevenueData },
         { data: recent },
         { data: top },
+        { data: completedByCoach },
       ] = await Promise.all([
         supabase.from('seeker_profiles').select('*', { count: 'exact', head: true }),
         supabase.from('coach_profiles').select('*', { count: 'exact', head: true }).eq('verified', true),
@@ -71,12 +72,21 @@ export default function AdminAnalyticsPage() {
         supabase.from('sessions').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
         supabase.from('sessions').select('scheduled_date, amount_paid').eq('status', 'completed').order('scheduled_date'),
         supabase.from('sessions').select('*, seeker:seeker_profiles(name), coach:coach_profiles(name)').order('created_at', { ascending: false }).limit(10),
-        supabase.from('coach_profiles').select('name, rating, review_count, sessions_completed').eq('verified', true).order('rating', { ascending: false }).limit(5),
+        // coach_profiles has no sessions_completed column — asking for it made
+        // PostgREST reject the whole query, which is why Top Coaches was empty.
+        // The count is derived from the sessions table instead.
+        supabase.from('coach_profiles').select('id, name, rating, review_count').eq('verified', true).order('rating', { ascending: false }).limit(5),
+        supabase.from('sessions').select('coach_id').eq('status', 'completed'),
       ]);
+
+      const completedCount = {};
+      (completedByCoach || []).forEach(s => {
+        completedCount[s.coach_id] = (completedCount[s.coach_id] || 0) + 1;
+      });
 
       setStats({ totalSeekers, totalCoaches, totalSessions, totalCompleted });
       setRecentSessions(recent || []);
-      setLeadingCoaches(top || []);
+      setLeadingCoaches((top || []).map(c => ({ ...c, sessions_completed: completedCount[c.id] || 0 })));
 
       // Group revenue by month
       const byMonth = {};
