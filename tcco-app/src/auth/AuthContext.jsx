@@ -142,7 +142,7 @@ export function AuthProvider({ children }) {
   const loginWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: { redirectTo: `${appBaseUrl()}/auth/callback` },
     });
     if (error) { setError(error.message); throw error; }
   };
@@ -157,7 +157,7 @@ export function AuthProvider({ children }) {
 
   const resetPassword = async (email) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset`,
+      redirectTo: `${appBaseUrl()}/auth/reset`,
     });
     if (error) { setError(error.message); throw error; }
   };

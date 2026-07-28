@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
+import { appBaseUrl } from '../../lib/appUrl';
 import { track } from '../../lib/analytics';
 import AppLayout from '../Layout/AppLayout';
 import { showToast } from '../shared/Toast';
@@ -319,14 +320,14 @@ export default function SettingsPage() {
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <input
                     className="form-input"
-                    value={`${window.location.origin}/signup?ref=${profile.referral_code}`}
+                    value={`${appBaseUrl()}/signup?ref=${profile.referral_code}`}
                     readOnly
                     style={{ flex: 1 }}
                   />
                   <button
                     className="btn btn-outline"
                     onClick={() => {
-                      navigator.clipboard.writeText(`${window.location.origin}/signup?ref=${profile.referral_code}`);
+                      navigator.clipboard.writeText(`${appBaseUrl()}/signup?ref=${profile.referral_code}`);
                       showToast('Copied!');
                     }}
                   >Copy</button>

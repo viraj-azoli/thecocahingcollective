@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
+import { appBaseUrl } from '../../lib/appUrl';
 import { track } from '../../lib/analytics';
 import AppLayout from '../Layout/AppLayout';
 import SEO from '../shared/SEO';
@@ -99,12 +100,17 @@ function BookingModal({ coach, seekerProfileId, userEmail, onClose, onBooked }) 
 
       // Save intake response if present
       if (intakeForm?.id && Object.keys(intakeAnswers).length > 0 && seekerProfileId) {
-        await supabase.from('intake_responses').insert({
+        // A PostgREST query builder is a thenable, not a Promise — it has no
+        // .catch(). Calling one threw a TypeError here, which the outer catch
+        // reported as a failed booking even though the session had already
+        // been created. Check the returned error instead.
+        const { error: intakeErr } = await supabase.from('intake_responses').insert({
           form_id: intakeForm.id,
           seeker_id: seekerProfileId,
           session_id: sessionData?.id,
           answers: intakeAnswers,
-        }).catch(() => {/* non-blocking */});
+        });
+        if (intakeErr) console.warn('Could not save intake response:', intakeErr.message);
       }
 
       track('booking_confirmed', { coachId: coach.id, coachName: coach.name, date: selectedDate });
@@ -121,7 +127,7 @@ function BookingModal({ coach, seekerProfileId, userEmail, onClose, onBooked }) 
               date: new Date(selectedDate + 'T00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }),
               time: new Date(`1970-01-01T${selectedTime}:00`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
               duration: 55,
-              sessionUrl: `${window.location.origin}/sessions`,
+              sessionUrl: `${appBaseUrl()}/sessions`,
             },
           },
         }).catch(() => {/* non-blocking */});
@@ -486,7 +492,7 @@ export default function CoachProfilePage() {
       <SEO
         title={coach.name + (coach.title ? ` — ${coach.title}` : '')}
         description={coach.bio || `Work with ${coach.name}, a verified coach on TCCO.`}
-        url={`${window.location.origin}/coaches/${coach.id}`}
+        url={`${appBaseUrl()}/coaches/${coach.id}`}
       />
       <div className="page-body">
         {/* Back */}
