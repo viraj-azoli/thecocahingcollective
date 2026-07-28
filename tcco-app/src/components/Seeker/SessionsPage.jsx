@@ -87,6 +87,21 @@ export default function SessionsPage() {
 
   useEffect(() => { if (!user?.id) return; loadSessions(); }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Returning from Stripe Checkout. The booking is confirmed by the webhook,
+  // which can land a moment after the redirect — so re-fetch shortly after
+  // rather than leaving the seeker staring at an empty Upcoming list.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('payment') !== 'success') return;
+
+    showToast('Payment received — your session is confirmed.', 'success');
+    window.history.replaceState({}, '', window.location.pathname);
+
+    const retries = [1500, 4000];
+    const timers = retries.map(ms => setTimeout(() => loadSessions(), ms));
+    return () => timers.forEach(clearTimeout);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const loadSessions = async () => {
     try {
       const { data: profileRow } = await supabase

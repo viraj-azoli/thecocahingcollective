@@ -15,23 +15,6 @@ const GOALS_OPTIONS = [
 const FORMAT_OPTIONS = ['1-on-1', 'Group sessions', 'Self-paced'];
 const EXPERIENCE_OPTIONS = ['Beginner', 'Some experience', 'Experienced'];
 
-const TIERS = [
-  {
-    name: 'Discovery',
-    price: 'Free',
-    features: ['1 session/month', 'Basic library access', 'Journal'],
-  },
-  {
-    name: 'Growth',
-    price: '$79/mo',
-    features: ['4 sessions/month', 'Full library', 'Progress tracking', 'Community'],
-  },
-  {
-    name: 'Mastery',
-    price: '$149/mo',
-    features: ['Unlimited sessions', 'Priority matching', '1-on-1 coaching', 'All features'],
-  },
-];
 
 const NOTIF_DEFAULTS = {
   session_reminders: true,
@@ -51,7 +34,6 @@ const NOTIF_CONFIG = [
 
 export default function SettingsPage() {
   const { user } = useAuth();
-  const [upgrading, setUpgrading] = useState(false);
   const [profile, setProfile]     = useState(null);
   const [profileId, setProfileId] = useState(null);
   const [loading, setLoading]     = useState(true);
@@ -106,22 +88,6 @@ export default function SettingsPage() {
     }
   };
 
-  const handleUpgrade = async (tierName) => {
-    if (!user?.email) return;
-    track('upgrade_clicked', { tier: tierName });
-    setUpgrading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-        body: { tier: tierName, userId: user.id, email: user.email },
-      });
-      if (error) throw error;
-      if (data?.url) window.location.href = data.url;
-    } catch (err) {
-      showToast('Could not start checkout. Please try again.', 'error');
-    } finally {
-      setUpgrading(false);
-    }
-  };
 
   const toggleGoal = (g) => setGoals(prev => prev.includes(g) ? prev.filter(x => x !== g) : [...prev, g]);
   const toggleFormat = (f) => setFormats(prev => prev.includes(f) ? prev.filter(x => x !== f) : [...prev, f]);
@@ -193,7 +159,6 @@ export default function SettingsPage() {
     }
   };
 
-  const currentTier = profile?.tier || 'Discovery';
 
   if (loading) {
     return (

@@ -38,11 +38,16 @@ serve(async (req) => {
     let accountId = coachProfile?.stripe_account_id;
 
     if (!accountId) {
-      // Create new Express account
+      // card_payments is required for direct charges — seekers pay the coach
+      // on the coach's own account, so the coach is the merchant of record.
+      // transfers alone would only allow money to be sent to them.
       const account = await stripe.accounts.create({
         type: 'express',
         email,
-        capabilities: { transfers: { requested: true } },
+        capabilities: {
+          card_payments: { requested: true },
+          transfers: { requested: true },
+        },
       });
 
       accountId = account.id;
@@ -52,6 +57,17 @@ serve(async (req) => {
         .eq('user_id', coachUserId);
     }
 
+    // Mirror Stripe's current view onto the profile. account.updated keeps
+    // this fresh afterwards, but a coach returning from onboarding shouldn't
+    // have to wait for a webhook to see that they're live.
+    const account = await stripe.accounts.retrieve(accountId);
+    await supabase.from('coach_profiles')
+      .update({
+        stripe_charges_enabled: account.charges_enabled,
+        stripe_payouts_enabled: account.payouts_enabled,
+      })
+      .eq('user_id', coachUserId);
+
     // Generate onboarding link (works for both new and existing accounts)
     const link = await stripe.accountLinks.create({
       account: accountId,
@@ -60,7 +76,11 @@ serve(async (req) => {
       type: 'account_onboarding',
     });
 
-    return new Response(JSON.stringify({ url: link.url }), {
+    return new Response(JSON.stringify({
+      url: link.url,
+      chargesEnabled: account.charges_enabled,
+      payoutsEnabled: account.payouts_enabled,
+    }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (err) {

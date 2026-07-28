@@ -75,17 +75,31 @@ function BookingModal({ coach, seekerProfileId, userEmail, onClose, onBooked }) 
     if (!selectedDate) return;
     supabase
       .from('sessions')
-      .select('scheduled_time')
+      .select('scheduled_time, status, created_at')
       .eq('coach_id', coach.id)
       .eq('scheduled_date', selectedDate)
-      .in('status', ['scheduled', 'in_progress'])
-      .then(({ data }) => setBookedSessions((data || []).map(s => s.scheduled_time?.slice(0, 5))));
+      .in('status', ['scheduled', 'in_progress', 'pending_payment'])
+      .then(({ data }) => {
+        // A slot mid-checkout is held so two seekers can't both pay the coach
+        // for it — but only for as long as the Stripe session lives (30 min),
+        // otherwise an abandoned checkout would block the slot indefinitely.
+        const cutoff = Date.now() - 30 * 60 * 1000;
+        const held = (data || []).filter(s =>
+          s.status !== 'pending_payment' || new Date(s.created_at).getTime() > cutoff
+        );
+        setBookedSessions(held.map(s => s.scheduled_time?.slice(0, 5)));
+      });
   }, [selectedDate, coach.id]);
 
   const handleBook = async () => {
     setSaving(true);
     setError('');
     try {
+      // Payment-first. The row starts as pending_payment and is promoted to
+      // scheduled by the stripe-webhook once the seeker actually pays the
+      // coach. amount_paid is set from the real charge, not from the list
+      // price — this flow used to record the price as paid without ever
+      // taking a payment.
       const { data: sessionData, error: err } = await supabase.from('sessions').insert({
         coach_id: coach.id,
         seeker_id: seekerProfileId,
@@ -93,8 +107,7 @@ function BookingModal({ coach, seekerProfileId, userEmail, onClose, onBooked }) 
         scheduled_time: selectedTime + ':00',
         duration_minutes: 55,
         session_type: 'video',
-        status: 'scheduled',
-        amount_paid: coach.price_per_session,
+        status: 'pending_payment',
       }).select().single();
       if (err) throw err;
 
@@ -113,28 +126,23 @@ function BookingModal({ coach, seekerProfileId, userEmail, onClose, onBooked }) 
         if (intakeErr) console.warn('Could not save intake response:', intakeErr.message);
       }
 
-      track('booking_confirmed', { coachId: coach.id, coachName: coach.name, date: selectedDate });
+      track('booking_payment_started', { coachId: coach.id, coachName: coach.name, date: selectedDate });
 
-      // Fire-and-forget booking confirmation email
-      if (userEmail) {
-        supabase.functions.invoke('send-email', {
-          body: {
-            to: userEmail,
-            template: 'booking_confirmation',
-            data: {
-              seekerName: userEmail.split('@')[0],
-              coachName: coach.name,
-              date: new Date(selectedDate + 'T00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }),
-              time: new Date(`1970-01-01T${selectedTime}:00`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-              duration: 55,
-              sessionUrl: `${appBaseUrl()}/sessions`,
-            },
-          },
-        }).catch(() => {/* non-blocking */});
+      // Hand off to Stripe Checkout on the coach's own account. The
+      // confirmation email is sent by the webhook after payment clears, so a
+      // seeker who abandons checkout is never told the session is booked.
+      const { data: checkout, error: checkoutErr } = await supabase.functions.invoke(
+        'create-session-checkout',
+        { body: { sessionId: sessionData.id } },
+      );
+
+      if (checkoutErr || !checkout?.url) {
+        // Don't leave an orphaned pending row holding the slot.
+        await supabase.from('sessions').delete().eq('id', sessionData.id);
+        throw new Error(checkout?.error || 'Could not start payment. Please try again.');
       }
 
-      setSuccess(true);
-      setStep(4);
+      window.location.href = checkout.url;
     } catch (e) {
       setError(e.message || 'Booking failed. Please try again.');
     } finally {
@@ -554,9 +562,21 @@ export default function CoachProfilePage() {
 
             {/* Book + Message buttons */}
             <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-              <button className="btn btn-primary btn-lg" onClick={() => setShowModal(true)}>
+              {/* Seekers pay the coach directly, so there is nothing to book
+                  until Stripe has enabled charges on the coach's account. */}
+              <button
+                className="btn btn-primary btn-lg"
+                onClick={() => setShowModal(true)}
+                disabled={!coach.stripe_charges_enabled}
+                title={coach.stripe_charges_enabled ? undefined : 'This coach has not finished setting up payments yet'}
+              >
                 📅 Book a Session
               </button>
+              {!coach.stripe_charges_enabled && (
+                <p style={{ width: '100%', fontSize: '13px', color: 'var(--text-soft)', margin: '4px 0 0' }}>
+                  This coach isn't accepting bookings yet — they're still setting up payments.
+                </p>
+              )}
               {seekerProfileId && (
                 <button
                   className="btn btn-outline btn-lg"
