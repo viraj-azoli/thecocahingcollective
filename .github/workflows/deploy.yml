@@ -7,6 +7,8 @@ on:
 jobs:
   build-and-deploy-app:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     defaults:
       run:
         working-directory: tcco-app
@@ -36,6 +38,28 @@ jobs:
           VITE_POSTHOG_KEY: ${{ secrets.VITE_POSTHOG_KEY }}
           VITE_POSTHOG_HOST: ${{ secrets.VITE_POSTHOG_HOST }}
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+
+      # Hostinger deploys the repository itself, and it runs AFTER this
+      # workflow. Whatever is committed at app/ is therefore what ends up
+      # live — the FTP upload below gets overwritten by it, and removing
+      # app/ from the repo makes Hostinger prune the directory and take the
+      # app offline. So the build has to be committed, not just uploaded.
+      - name: Commit build output to app/
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          rm -rf app
+          cp -R tcco-app/dist app
+          if [ -z "$(git status --porcelain app/)" ]; then
+            echo "app/ already matches this build"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app
+          # [skip ci] stops this commit re-triggering the workflow; it still
+          # reaches Hostinger, which is the point.
+          git commit -m "Publish build output to app/ [skip ci]"
+          git push
 
       - name: Deploy app to Hostinger
         id: ftp-deploy

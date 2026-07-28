@@ -11,8 +11,3 @@ tcco-app/aider
 
 # Supabase CLI local scratch (linked project ref)
 supabase/.temp/
-
-# Built SPA output — deployed by the GitHub Action from tcco-app/dist/.
-# Committing it meant the repo copy overwrote the freshly built index.html
-# on every deploy, pinning the live site to a stale bundle.
-app/
