@@ -27,9 +27,12 @@ export function useSeekerOnboarding(userId) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Not currently called anywhere — onboarding starts everyone on Discovery
+  // and they upgrade through checkout. Kept in sync with the real tier names
+  // so it can't reintroduce the retired 'Connection' value if it's ever wired
+  // up: that tier isn't sold and is rejected by the database CHECK.
   const recommendTier = (answers) => {
-    // First-timers get Discovery, experienced get Connection by default
-    return answers.coaching_experience === 'first-timer' ? 'Discovery' : 'Connection';
+    return answers.coaching_experience === 'first-timer' ? 'Discovery' : 'Growth';
   };
 
   const updateQuizAnswer = (question, value) => {
