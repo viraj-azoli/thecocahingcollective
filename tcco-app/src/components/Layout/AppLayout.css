@@ -71,6 +71,10 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   width: auto;
   object-fit: contain;
   display: block;
+  /* The only logo asset is dark green, which all but disappears against the
+     dark green sidebar. It's a single-colour mark on a transparent
+     background, so flattening it to white is enough — no separate asset. */
+  filter: brightness(0) invert(1);
 }
 .al-logo-mark {
   display: inline-flex;
