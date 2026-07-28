@@ -36,8 +36,6 @@ export default function SignUp() {
       navigate(dashboards[userProfile.user_type] || '/dashboard');
     }
 
-    const ref = new URLSearchParams(location.search).get('ref');
-    if (ref) sessionStorage.setItem('tcco_ref', ref);
   }, [location.search, user, userProfile, navigate]);
 
   const handleSignup = async (e) => {
@@ -62,24 +60,7 @@ export default function SignUp() {
     setLoading(true);
 
     try {
-      const newUser = await signup(email, password, userType);
-
-      // Handle referral if code was stored
-      if (newUser && userType === 'seeker') {
-        const refCode = sessionStorage.getItem('tcco_ref');
-        if (refCode) {
-          sessionStorage.removeItem('tcco_ref');
-          // Find referrer by code (fire-and-forget)
-          supabase.from('seeker_profiles').select('id').eq('referral_code', refCode).single()
-            .then(({ data: referrer }) => {
-              if (referrer?.id) {
-                // Get the new seeker's profile id after onboarding
-                // Store for later recording in SeekerOnboarding
-                sessionStorage.setItem('tcco_referrer_id', referrer.id);
-              }
-            }).catch(() => {});
-        }
-      }
+      await signup(email, password, userType);
 
       // Redirect to appropriate onboarding
       if (userType === 'seeker') {

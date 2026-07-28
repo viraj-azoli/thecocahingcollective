@@ -99,29 +99,6 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 .db-nav-active      { background: var(--sidebar-active) !important; color: #fff !important; font-weight: 600; }
 
 /* Membership */
-.db-membership {
-  padding: 16px 12px;
-  border-top: 1px solid rgba(255,255,255,.08);
-  margin-top: auto;
-}
-.db-membership-label {
-  font-size: 10px; font-weight: 700; letter-spacing: 1.1px;
-  color: rgba(255,255,255,.4); margin-bottom: 6px;
-}
-.db-membership-tier  { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 4px; }
-.db-membership-usage { font-size: 12px; color: rgba(255,255,255,.55); margin-bottom: 8px; }
-.db-membership-bar   { height: 4px; background: rgba(255,255,255,.15); border-radius: 2px; overflow: hidden; margin-bottom: 12px; }
-.db-membership-fill  { height: 100%; background: var(--accent); border-radius: 2px; }
-.db-upgrade-btn {
-  width: 100%;
-  padding: 8px 0;
-  background: var(--accent);
-  color: #fff;
-  border-radius: var(--r-sm);
-  font-size: 13px; font-weight: 600;
-  transition: opacity .15s;
-}
-.db-upgrade-btn:hover { opacity: .85; }
 
 .db-settings-btn {
   display: flex; align-items: center; gap: 10px;

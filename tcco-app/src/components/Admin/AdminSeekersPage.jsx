@@ -3,13 +3,11 @@ import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
 import '../Layout/AppLayout.css';
 
-const TIER_FILTERS = ['All', 'Discovery', 'Growth', 'Mastery'];
 
 export default function AdminSeekersPage() {
   const [seekers, setSeekers]   = useState([]);
   const [loading, setLoading]   = useState(true);
   const [search, setSearch]     = useState('');
-  const [filter, setFilter]     = useState('All');
   const [selected, setSelected] = useState(null);
   const [journalCounts, setJournalCounts] = useState({});
 
@@ -38,11 +36,9 @@ export default function AdminSeekersPage() {
     }
   };
 
-  const filtered = seekers.filter(s => {
-    const matchSearch = !search.trim() || s.name?.toLowerCase().includes(search.toLowerCase());
-    const matchFilter = filter === 'All' ? true : (s.tier || 'Discovery') === filter;
-    return matchSearch && matchFilter;
-  });
+  const filtered = seekers.filter(s =>
+    !search.trim() || s.name?.toLowerCase().includes(search.toLowerCase())
+  );
 
   const formatDate = d => d ? new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
 
@@ -78,19 +74,6 @@ export default function AdminSeekersPage() {
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
-        </div>
-
-        {/* Filter chips */}
-        <div className="tabs" style={{ marginBottom: '4px' }}>
-          {TIER_FILTERS.map(f => (
-            <button
-              key={f}
-              className={`tab${filter === f ? ' tab-active' : ''}`}
-              onClick={() => setFilter(f)}
-            >
-              {f}
-            </button>
-          ))}
         </div>
 
         {filtered.length === 0 ? (

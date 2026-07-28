@@ -275,30 +275,6 @@ export default function SettingsPage() {
               {saving ? 'Saving…' : 'Save changes'}
             </button>
 
-            {/* Referral section */}
-            {profile?.referral_code && (
-              <div className="card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <p className="section-label">REFER A FRIEND</p>
-                <p style={{ fontSize: '14px', color: 'var(--text-soft)' }}>
-                  Share your link and earn 1 free session when your friend subscribes.
-                </p>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <input
-                    className="form-input"
-                    value={`${appBaseUrl()}/signup?ref=${profile.referral_code}`}
-                    readOnly
-                    style={{ flex: 1 }}
-                  />
-                  <button
-                    className="btn btn-outline"
-                    onClick={() => {
-                      navigator.clipboard.writeText(`${appBaseUrl()}/signup?ref=${profile.referral_code}`);
-                      showToast('Copied!');
-                    }}
-                  >Copy</button>
-                </div>
-              </div>
-            )}
           </div>
         )}
 
