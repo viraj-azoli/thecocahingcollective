@@ -73,9 +73,13 @@ jobs:
           server-dir: app/
           timeout: 60000
 
-      # Hostinger's FTP occasionally times out on connect — retry once
+      # Hostinger's FTP occasionally times out on connect — retry once.
+      # Non-fatal: the commit step above is what actually delivers the build
+      # (Hostinger deploys the repo, and does so after this workflow), so a
+      # dead FTP socket shouldn't mark an otherwise good deploy as failed.
       - name: Retry deploy on failure
         if: steps.ftp-deploy.outcome == 'failure'
+        continue-on-error: true
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
