@@ -85,6 +85,9 @@ export function formatUntil(dateStr, timeStr) {
   if (mins < 60) return `in ${mins} min`;
   const hours = Math.round(mins / 60);
   if (hours < 24) return `in ${hours} ${hours === 1 ? 'hour' : 'hours'}`;
-  const days = Math.round(hours / 24);
-  return `in ${days} ${days === 1 ? 'day' : 'days'}`;
+  // Floor, not round: 37 hours away is "tomorrow", so rounding to 2 days
+  // contradicted the date label sitting right beside it.
+  const days = Math.floor(hours / 24);
+  if (days === 1) return 'tomorrow';
+  return `in ${days} days`;
 }

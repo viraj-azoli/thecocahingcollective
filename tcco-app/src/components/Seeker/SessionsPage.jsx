@@ -4,67 +4,14 @@ import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
 import VideoRoom from '../shared/VideoRoom';
+import SEO from '../shared/SEO';
 import { showToast } from '../shared/Toast';
+import {
+  PageHeader, Card, Button, Tabs, SessionCard, EmptyState,
+  Modal, ConfirmDialog, StarRating, Badge,
+} from '../../ui';
+import { formatWhen } from '../../lib/datetime';
 import '../Layout/AppLayout.css';
-
-function formatSessionDate(dateStr, timeStr) {
-  if (!dateStr) return '—';
-  const d = new Date(dateStr + 'T00:00');
-  const today = new Date(); today.setHours(0,0,0,0);
-  const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
-  const timeFormatted = timeStr
-    ? new Date(`2000-01-01T${timeStr}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-    : '';
-  if (d.getTime() === today.getTime()) return `Today at ${timeFormatted}`;
-  if (d.getTime() === tomorrow.getTime()) return `Tomorrow at ${timeFormatted}`;
-  return d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) + (timeFormatted ? ` · ${timeFormatted}` : '');
-}
-
-function initials(name) {
-  if (!name) return '?';
-  const parts = name.trim().split(' ');
-  return parts.length >= 2 ? parts[0][0] + parts[parts.length - 1][0] : parts[0][0];
-}
-
-const AVATAR_COLORS = [
-  'linear-gradient(135deg,#2D9E6B,#1a7a52)',
-  'linear-gradient(135deg,#6366f1,#4f46e5)',
-  'linear-gradient(135deg,#f59e0b,#d97706)',
-  'linear-gradient(135deg,#ec4899,#be185d)',
-  'linear-gradient(135deg,#06b6d4,#0284c7)',
-];
-function avatarColor(name) {
-  let sum = 0; for (let c of (name || '')) sum += c.charCodeAt(0);
-  return AVATAR_COLORS[sum % AVATAR_COLORS.length];
-}
-
-function StarPicker({ value, onChange }) {
-  const [hover, setHover] = useState(0);
-  return (
-    <div className="stars-row">
-      {[1,2,3,4,5].map(i => (
-        <span
-          key={i}
-          className={`star ${i <= (hover || value) ? 'filled' : ''}`}
-          style={{ fontSize: '24px', cursor: 'pointer' }}
-          onMouseEnter={() => setHover(i)}
-          onMouseLeave={() => setHover(0)}
-          onClick={() => onChange(i)}
-        >★</span>
-      ))}
-    </div>
-  );
-}
-
-function StaticStars({ value }) {
-  return (
-    <div className="stars-row">
-      {[1,2,3,4,5].map(i => (
-        <span key={i} className={`star star-static ${i <= value ? 'filled' : ''}`} style={{ fontSize: '16px' }}>★</span>
-      ))}
-    </div>
-  );
-}
 
 export default function SessionsPage() {
   const { user } = useAuth();
@@ -73,32 +20,30 @@ export default function SessionsPage() {
   const [sessions, setSessions]   = useState([]);
   const [loading, setLoading]     = useState(true);
   const [prepNotes, setPrepNotes] = useState({});
-  const [prepOpen, setPrepOpen]   = useState({});
+  const [prepFor, setPrepFor]     = useState(null);   // session open in the notes dialog
   const [ratings, setRatings]     = useState({});
   const [feedback, setFeedback]   = useState({});
-  const [savedReviews, setSavedReviews] = useState({}); // sessionId → review row
+  const [savedReviews, setSavedReviews] = useState({});
   const [seekerProfileId, setSeekerProfileId] = useState(null);
-  const [rescheduleSession, setRescheduleSession] = useState(null); // session being rescheduled
+  const [rescheduleSession, setRescheduleSession] = useState(null);
   const [rescheduleDate, setRescheduleDate] = useState('');
   const [rescheduleTime, setRescheduleTime] = useState('');
-  const [roomUrl, setRoomUrl]         = useState(null);
+  const [cancelTarget, setCancelTarget] = useState(null);
+  const [cancelling, setCancelling]     = useState(false);
+  const [roomUrl, setRoomUrl]           = useState(null);
   const [activeSession, setActiveSession] = useState(null);
-  const [joiningId, setJoiningId]     = useState(null);
+  const [joiningId, setJoiningId]       = useState(null);
 
   useEffect(() => { if (!user?.id) return; loadSessions(); }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Returning from Stripe Checkout. The booking is confirmed by the webhook,
-  // which can land a moment after the redirect — so re-fetch shortly after
-  // rather than leaving the seeker staring at an empty Upcoming list.
+  // Returning from Stripe Checkout — the booking is confirmed by the webhook,
+  // which can land just after the redirect.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('payment') !== 'success') return;
-
     showToast('Payment received — your session is confirmed.', 'success');
     window.history.replaceState({}, '', window.location.pathname);
-
-    const retries = [1500, 4000];
-    const timers = retries.map(ms => setTimeout(() => loadSessions(), ms));
+    const timers = [1500, 4000].map(ms => setTimeout(() => loadSessions(), ms));
     return () => timers.forEach(clearTimeout);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -107,12 +52,12 @@ export default function SessionsPage() {
       const { data: profileRow } = await supabase
         .from('seeker_profiles').select('id').eq('user_id', user?.id).single();
       const profileId = profileRow?.id;
-      if (!profileId) { setLoading(false); return; }
       setSeekerProfileId(profileId);
+      if (!profileId) { setLoading(false); return; }
 
       const { data } = await supabase
         .from('sessions')
-        .select('*, coach:coach_profiles(name, title, avatar_url)')
+        .select('*, coach:coach_profiles(id, name, title, avatar_url)')
         .eq('seeker_id', profileId)
         .order('scheduled_date', { ascending: false });
 
@@ -125,17 +70,11 @@ export default function SessionsPage() {
         if (s.feedback_by_seeker) fMap[s.id] = s.feedback_by_seeker;
         if (s.notes_seeker) pMap[s.id] = s.notes_seeker;
       });
-      setRatings(rMap);
-      setFeedback(fMap);
-      setPrepNotes(pMap);
+      setRatings(rMap); setFeedback(fMap); setPrepNotes(pMap);
 
-      // Load existing reviews for completed sessions
       const completedIds = all.filter(s => s.status === 'completed').map(s => s.id);
       if (completedIds.length > 0) {
-        const { data: revs } = await supabase
-          .from('reviews')
-          .select('*')
-          .in('session_id', completedIds);
+        const { data: revs } = await supabase.from('reviews').select('*').in('session_id', completedIds);
         const revMap = {};
         (revs || []).forEach(r => { revMap[r.session_id] = r; });
         setSavedReviews(revMap);
@@ -151,9 +90,7 @@ export default function SessionsPage() {
     setJoiningId(session.id);
     try {
       if (session.zoom_link) {
-        setActiveSession(session);
-        setRoomUrl(session.zoom_link);
-        return;
+        setActiveSession(session); setRoomUrl(session.zoom_link); return;
       }
       const { data, error } = await supabase.functions.invoke('create-daily-room', {
         body: { sessionId: session.id },
@@ -162,8 +99,7 @@ export default function SessionsPage() {
       if (data?.url) {
         await supabase.from('sessions').update({ zoom_link: data.url }).eq('id', session.id);
         setSessions(prev => prev.map(s => s.id === session.id ? { ...s, zoom_link: data.url } : s));
-        setActiveSession(session);
-        setRoomUrl(data.url);
+        setActiveSession(session); setRoomUrl(data.url);
       }
     } catch (err) {
       showToast('Could not start session. Please try again.', 'error');
@@ -172,42 +108,42 @@ export default function SessionsPage() {
     }
   };
 
-  const upcoming   = sessions.filter(s => s.status === 'scheduled' || s.status === 'in_progress');
-  const past       = sessions.filter(s => s.status === 'completed');
-  const cancelled  = sessions.filter(s => s.status === 'cancelled');
+  // The query sorts newest-first, which is right for history but backwards for
+  // what's coming: it put the furthest-away session at the top. Upcoming reads
+  // soonest-first; past and cancelled stay most-recent-first.
+  const byDate = (a, b) =>
+    `${a.scheduled_date}T${a.scheduled_time || ''}`.localeCompare(`${b.scheduled_date}T${b.scheduled_time || ''}`);
+
+  const upcoming  = sessions.filter(s => s.status === 'scheduled' || s.status === 'in_progress').sort(byDate);
+  const past      = sessions.filter(s => s.status === 'completed');
+  const cancelled = sessions.filter(s => s.status === 'cancelled');
 
   const savePrepNotes = async (sessionId) => {
     const { error } = await supabase
-      .from('sessions')
-      .update({ notes_seeker: prepNotes[sessionId] || '' })
-      .eq('id', sessionId);
-    if (!error) showToast('Notes saved!');
-    else showToast('Failed to save notes', 'error');
+      .from('sessions').update({ notes_seeker: prepNotes[sessionId] || '' }).eq('id', sessionId);
+    if (error) { showToast('Failed to save notes', 'error'); return; }
+    setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, notes_seeker: prepNotes[sessionId] || '' } : s));
+    setPrepFor(null);
+    showToast('Notes saved');
   };
 
-  const cancelSession = async (session) => {
-    const sessionDate = new Date(`${session.scheduled_date}T${session.scheduled_time}`);
-    const hoursUntil = (sessionDate - new Date()) / 3600000;
+  // Late-cancellation window, surfaced in the dialog rather than in OS chrome.
+  const hoursUntil = (session) => {
+    if (!session) return Infinity;
+    const at = new Date(`${session.scheduled_date}T${session.scheduled_time || '00:00'}`);
+    return (at - new Date()) / 3600000;
+  };
 
-    if (hoursUntil < 24) {
-      const proceed = window.confirm(
-        `⚠️ Late cancellation: less than 24 hours until your session. You may be charged a cancellation fee. Continue?`
-      );
-      if (!proceed) return;
-    } else {
-      if (!window.confirm('Cancel this session?')) return;
-    }
-
+  const confirmCancel = async () => {
+    if (!cancelTarget) return;
+    setCancelling(true);
     const { error } = await supabase
-      .from('sessions')
-      .update({ status: 'cancelled' })
-      .eq('id', session.id);
-    if (!error) {
-      showToast('Session cancelled');
-      loadSessions();
-    } else {
-      showToast('Failed to cancel session', 'error');
-    }
+      .from('sessions').update({ status: 'cancelled' }).eq('id', cancelTarget.id);
+    setCancelling(false);
+    if (error) { showToast('Failed to cancel session', 'error'); return; }
+    setCancelTarget(null);
+    showToast('Session cancelled');
+    loadSessions();
   };
 
   const reschedule = async () => {
@@ -217,21 +153,15 @@ export default function SessionsPage() {
       scheduled_time: rescheduleTime + ':00',
       status: 'scheduled',
     }).eq('id', rescheduleSession.id);
-    if (!error) {
-      showToast('Session rescheduled!');
-      setRescheduleSession(null);
-      setRescheduleDate('');
-      setRescheduleTime('');
-      loadSessions();
-    } else {
-      showToast('Reschedule failed', 'error');
-    }
+    if (error) { showToast('Reschedule failed', 'error'); return; }
+    showToast('Session rescheduled');
+    setRescheduleSession(null); setRescheduleDate(''); setRescheduleTime('');
+    loadSessions();
   };
 
   const saveReview = async (sessionId) => {
     const session = sessions.find(s => s.id === sessionId);
     if (!session || !seekerProfileId) return;
-
     const { error } = await supabase.from('reviews').insert({
       session_id: sessionId,
       coach_id: session.coach_id,
@@ -240,297 +170,215 @@ export default function SessionsPage() {
       body: feedback[sessionId] || '',
       is_public: true,
     });
-    if (!error) {
-      showToast('Review published!');
-      loadSessions();
-    } else {
-      showToast('Failed to save review', 'error');
-    }
+    if (error) { showToast('Failed to save review', 'error'); return; }
+    showToast('Review published');
+    loadSessions();
   };
+
+  const TABS = [
+    { value: 'upcoming',  label: 'Upcoming',  count: upcoming.length },
+    { value: 'past',      label: 'Past',      count: past.length },
+    { value: 'cancelled', label: 'Cancelled', count: cancelled.length },
+  ];
 
   if (loading) {
     return (
       <AppLayout role="seeker">
-        <div className="page-loading"><div className="spinner" /><p>Loading sessions…</p></div>
+        <div className="cc cc-page"><div className="cc-loading"><span /></div></div>
       </AppLayout>
     );
   }
 
+  const late = hoursUntil(cancelTarget) < 24;
+
   return (
     <>
-    <AppLayout role="seeker">
-      <div className="page-body">
-        <div className="page-header">
+      <AppLayout role="seeker">
+        <SEO title="Sessions" noIndex />
+        <div className="cc cc-page">
+          <PageHeader
+            title="Sessions"
+            subtitle="Your coaching sessions, past and upcoming."
+            actions={<Button variant="primary" icon="plus" onClick={() => navigate('/coaches')}>Book a session</Button>}
+          />
+
           <div>
-            <h1 className="page-title">Sessions</h1>
-            <p className="page-subtitle">Manage your coaching sessions</p>
+            <Tabs tabs={TABS} value={tab} onChange={setTab} />
+
+            {tab === 'upcoming' && (
+              upcoming.length === 0 ? (
+                <EmptyState
+                  icon="sessions"
+                  title="Nothing scheduled"
+                  body="When you book with a coach, your sessions appear here."
+                  action={<Button variant="primary" onClick={() => navigate('/coaches')}>Find a coach</Button>}
+                />
+              ) : (
+                <div className="cc-stack cc-gap-3">
+                  {upcoming.map(s => (
+                    <SessionCard
+                      key={s.id}
+                      session={s}
+                      variant="upcoming"
+                      onJoin={joinSession}
+                      onPrep={() => setPrepFor(s)}
+                      onCancel={() => setCancelTarget(s)}
+                    />
+                  ))}
+                </div>
+              )
+            )}
+
+            {tab === 'past' && (
+              past.length === 0 ? (
+                <EmptyState icon="clock" title="No past sessions yet" body="Completed sessions will be listed here." />
+              ) : (
+                <div className="cc-stack cc-gap-3">
+                  {past.map(s => {
+                    const review = savedReviews[s.id];
+                    return (
+                      <Card key={s.id} flush>
+                        <SessionCard session={s} variant="past" onRebook={() => navigate(`/coaches/${s.coach?.id || ''}`)} />
+                        <div className="cc-session-review">
+                          {review ? (
+                            <div className="cc-inline cc-gap-3">
+                              <StarRating value={review.rating} readOnly />
+                              <span className="cc-muted" style={{ fontSize: 'var(--cc-text-sm)' }}>
+                                {review.body || 'Review submitted'}
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="cc-stack cc-gap-3">
+                              <div className="cc-inline cc-gap-3">
+                                <span className="cc-eyebrow" style={{ margin: 0 }}>How was it?</span>
+                                <StarRating
+                                  value={ratings[s.id] || 0}
+                                  onChange={v => setRatings(p => ({ ...p, [s.id]: v }))}
+                                />
+                              </div>
+                              {ratings[s.id] > 0 && (
+                                <>
+                                  <textarea
+                                    className="cc-input cc-textarea"
+                                    rows={2}
+                                    placeholder="Anything you'd like to share (optional)"
+                                    value={feedback[s.id] || ''}
+                                    onChange={e => setFeedback(p => ({ ...p, [s.id]: e.target.value }))}
+                                  />
+                                  <div>
+                                    <Button variant="primary" size="sm" onClick={() => saveReview(s.id)}>
+                                      Publish review
+                                    </Button>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )
+            )}
+
+            {tab === 'cancelled' && (
+              cancelled.length === 0 ? (
+                <EmptyState icon="close" title="Nothing cancelled" body="Cancelled sessions would show up here." />
+              ) : (
+                <div className="cc-stack cc-gap-3">
+                  {cancelled.map(s => (
+                    <SessionCard key={s.id} session={s} variant="cancelled" />
+                  ))}
+                </div>
+              )
+            )}
           </div>
         </div>
+      </AppLayout>
 
-        {/* Tabs */}
-        <div className="tabs">
-          <button className={`tab ${tab === 'upcoming' ? 'tab-active' : ''}`} onClick={() => setTab('upcoming')}>
-            Upcoming ({upcoming.length})
-          </button>
-          <button className={`tab ${tab === 'past' ? 'tab-active' : ''}`} onClick={() => setTab('past')}>
-            Past ({past.length})
-          </button>
-          <button className={`tab ${tab === 'cancelled' ? 'tab-active' : ''}`} onClick={() => setTab('cancelled')}>
-            Cancelled ({cancelled.length})
-          </button>
-        </div>
-
-        {/* Upcoming */}
-        {tab === 'upcoming' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {upcoming.length === 0 ? (
-              <div className="empty-state">
-                <span className="empty-icon">📅</span>
-                <p>No upcoming sessions.</p>
-                <button className="btn btn-primary btn-sm" onClick={() => navigate('/coaches')}>Browse coaches</button>
-              </div>
-            ) : upcoming.map(s => (
-              <div key={s.id} className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {/* Top row */}
-                <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-                  <div
-                    className="avatar avatar-md"
-                    style={{ background: avatarColor(s.coach?.name), color: '#fff', fontWeight: 700, flexShrink: 0 }}
-                  >
-                    {initials(s.coach?.name)}
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <p style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-h)' }}>{s.coach?.name || 'Coach'}</p>
-                    <p style={{ fontSize: '13px', color: 'var(--text-soft)' }}>{s.coach?.title}</p>
-                    <p style={{ fontSize: '14px', color: 'var(--text-b)', marginTop: '6px' }}>
-                      📅 {formatSessionDate(s.scheduled_date, s.scheduled_time)}
-                    </p>
-                    <p style={{ fontSize: '13px', color: 'var(--text-soft)', marginTop: '2px' }}>
-                      📹 {s.session_type === 'video' ? 'Video' : s.session_type} · {s.duration_minutes || 55} min
-                    </p>
-                  </div>
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', flexWrap: 'wrap', flexShrink: 0 }}>
-                    <span className={`badge ${s.status === 'in_progress' ? 'badge-green' : 'badge-blue'}`}>
-                      {s.status === 'in_progress' ? '🔴 Live now' : '⏳ Upcoming'}
-                    </span>
-                    <button
-                      className="btn btn-primary btn-sm"
-                      disabled={joiningId === s.id}
-                      onClick={() => joinSession(s)}
-                    >
-                      {joiningId === s.id ? '…' : '🔗 Join'}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Prep notes */}
-                <div style={{ borderTop: '1px solid var(--border-card)', paddingTop: '12px' }}>
-                  <button
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600, color: 'var(--text-b)', padding: 0, display: 'flex', alignItems: 'center', gap: '6px' }}
-                    onClick={() => setPrepOpen(o => ({ ...o, [s.id]: !o[s.id] }))}
-                  >
-                    📝 Prep notes {prepOpen[s.id] ? '▲' : '▼'}
-                  </button>
-                  {prepOpen[s.id] && (
-                    <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      <textarea
-                        className="form-textarea"
-                        style={{ minHeight: '80px' }}
-                        placeholder="Add notes to prepare for your session…"
-                        value={prepNotes[s.id] || ''}
-                        onChange={e => setPrepNotes(n => ({ ...n, [s.id]: e.target.value }))}
-                      />
-                      <button className="btn btn-outline btn-sm" style={{ alignSelf: 'flex-start' }} onClick={() => savePrepNotes(s.id)}>
-                        Save notes
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                {/* Reschedule + Cancel */}
-                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                  <button
-                    className="btn btn-outline btn-sm"
-                    onClick={() => { setRescheduleSession(s); setRescheduleDate(''); setRescheduleTime(''); }}
-                  >
-                    🔄 Reschedule
-                  </button>
-                  <button
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '13px', color: '#dc2626', padding: 0, textAlign: 'left' }}
-                    onClick={() => cancelSession(s)}
-                  >
-                    Cancel session
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Past */}
-        {tab === 'past' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {past.length === 0 ? (
-              <div className="empty-state">
-                <span className="empty-icon">📋</span>
-                <p>No past sessions yet.</p>
-              </div>
-            ) : past.map(s => {
-              const savedRev = savedReviews[s.id];
-              const alreadyRated = !!(savedRev || (s.rating_by_seeker && s.rating_by_seeker > 0));
-              return (
-                <div key={s.id} className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  {/* Top */}
-                  <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-                    <div
-                      className="avatar avatar-md"
-                      style={{ background: avatarColor(s.coach?.name), color: '#fff', fontWeight: 700, flexShrink: 0 }}
-                    >
-                      {initials(s.coach?.name)}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <p style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-h)' }}>{s.coach?.name || 'Coach'}</p>
-                      <p style={{ fontSize: '13px', color: 'var(--text-soft)' }}>{s.coach?.title}</p>
-                      <p style={{ fontSize: '14px', color: 'var(--text-b)', marginTop: '6px' }}>
-                        📅 {formatSessionDate(s.scheduled_date, s.scheduled_time)}
-                      </p>
-                    </div>
-                    <span className="badge badge-green">✓ Completed</span>
-                  </div>
-
-                  {/* Review section */}
-                  <div style={{ borderTop: '1px solid var(--border-card)', paddingTop: '14px' }}>
-                    {alreadyRated ? (
-                      <div>
-                        <p style={{ fontSize: '13px', color: 'var(--text-soft)', marginBottom: '6px' }}>Your review</p>
-                        <StaticStars value={savedRev?.rating || s.rating_by_seeker || 0} />
-                        {(savedRev?.body || s.feedback_by_seeker) && (
-                          <p style={{ fontSize: '14px', color: 'var(--text-b)', marginTop: '8px', fontStyle: 'italic' }}>
-                            "{savedRev?.body || s.feedback_by_seeker}"
-                          </p>
-                        )}
-                      </div>
-                    ) : (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-h)' }}>Leave a review</p>
-                        <StarPicker
-                          value={ratings[s.id] || 0}
-                          onChange={v => setRatings(r => ({ ...r, [s.id]: v }))}
-                        />
-                        <textarea
-                          className="form-textarea"
-                          style={{ minHeight: '72px' }}
-                          placeholder="Share feedback for your coach…"
-                          value={feedback[s.id] || ''}
-                          onChange={e => setFeedback(f => ({ ...f, [s.id]: e.target.value }))}
-                        />
-                        <button
-                          className="btn btn-primary btn-sm"
-                          style={{ alignSelf: 'flex-start' }}
-                          disabled={!ratings[s.id]}
-                          onClick={() => saveReview(s.id)}
-                        >
-                          Save review
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Cancelled */}
-        {tab === 'cancelled' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {cancelled.length === 0 ? (
-              <div className="empty-state">
-                <span className="empty-icon">🚫</span>
-                <p>No cancelled sessions.</p>
-              </div>
-            ) : cancelled.map(s => (
-              <div key={s.id} className="card" style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap', opacity: 0.7 }}>
-                <div
-                  className="avatar avatar-md"
-                  style={{ background: avatarColor(s.coach?.name), color: '#fff', fontWeight: 700, flexShrink: 0 }}
-                >
-                  {initials(s.coach?.name)}
-                </div>
-                <div style={{ flex: 1 }}>
-                  <p style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-h)' }}>{s.coach?.name || 'Coach'}</p>
-                  <p style={{ fontSize: '13px', color: 'var(--text-soft)' }}>
-                    {formatSessionDate(s.scheduled_date, s.scheduled_time)}
-                  </p>
-                </div>
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                  <span className="badge badge-gray">Cancelled</span>
-                  <button className="btn btn-outline btn-sm" onClick={() => navigate('/coaches')}>Book again</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </AppLayout>
-
-    {roomUrl && (
-      <VideoRoom
-        roomUrl={roomUrl}
-        sessionTitle={activeSession?.coach?.name ? `Session with ${activeSession.coach.name}` : 'Coaching Session'}
-        onLeave={() => { setRoomUrl(null); setActiveSession(null); }}
-      />
-    )}
-
-    {/* Reschedule modal */}
-    {rescheduleSession && (
-      <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget) setRescheduleSession(null); }}>
-        <div className="modal">
-          <div className="modal-header">
-            <h3>Reschedule session</h3>
-            <button className="modal-close" onClick={() => setRescheduleSession(null)}>×</button>
-          </div>
-          <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            <p style={{ fontSize: '14px', color: 'var(--text-soft)' }}>
-              Rescheduling session with {rescheduleSession.coach?.name}
+      {/* Prep notes */}
+      <Modal
+        open={!!prepFor}
+        onClose={() => setPrepFor(null)}
+        title="Prep notes"
+        footer={
+          <>
+            <Button onClick={() => setPrepFor(null)}>Cancel</Button>
+            <Button variant="primary" onClick={() => savePrepNotes(prepFor.id)}>Save notes</Button>
+          </>
+        }
+      >
+        {prepFor && (
+          <>
+            <p className="cc-muted" style={{ margin: 0, fontSize: 'var(--cc-text-sm)' }}>
+              Session with {prepFor.coach?.name || 'your coach'} ·{' '}
+              {formatWhen(prepFor.scheduled_date, prepFor.scheduled_time)}
             </p>
-            <div>
-              <label className="form-label">New date</label>
-              <input
-                className="form-input"
-                type="date"
-                min={new Date().toISOString().split('T')[0]}
-                value={rescheduleDate}
-                onChange={e => setRescheduleDate(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="form-label">New time</label>
-              <select
-                className="form-input"
-                value={rescheduleTime}
-                onChange={e => setRescheduleTime(e.target.value)}
-              >
-                <option value="">Pick a time</option>
-                {['09:00','10:00','11:00','14:00','15:00','16:00','17:00'].map(t => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="modal-footer">
-            <button className="btn btn-outline" onClick={() => setRescheduleSession(null)}>Cancel</button>
-            <button
-              className="btn btn-primary"
-              onClick={reschedule}
+            <textarea
+              className="cc-input cc-textarea"
+              rows={6}
+              autoFocus
+              placeholder="What would you like to focus on?"
+              value={prepNotes[prepFor.id] || ''}
+              onChange={e => setPrepNotes(p => ({ ...p, [prepFor.id]: e.target.value }))}
+            />
+          </>
+        )}
+      </Modal>
+
+      {/* Reschedule */}
+      <Modal
+        open={!!rescheduleSession}
+        onClose={() => setRescheduleSession(null)}
+        title="Reschedule session"
+        size="sm"
+        footer={
+          <>
+            <Button onClick={() => setRescheduleSession(null)}>Cancel</Button>
+            <Button
+              variant="primary"
               disabled={!rescheduleDate || !rescheduleTime}
+              onClick={reschedule}
             >
-              Confirm reschedule
-            </button>
-          </div>
-        </div>
-      </div>
-    )}
+              Reschedule
+            </Button>
+          </>
+        }
+      >
+        <label className="cc-field">
+          <span className="cc-field-label">New date</span>
+          <input type="date" className="cc-input" value={rescheduleDate} onChange={e => setRescheduleDate(e.target.value)} />
+        </label>
+        <label className="cc-field">
+          <span className="cc-field-label">New time</span>
+          <input type="time" className="cc-input" value={rescheduleTime} onChange={e => setRescheduleTime(e.target.value)} />
+        </label>
+      </Modal>
+
+      {/* Cancellation — the fee warning used to appear in OS browser chrome */}
+      <ConfirmDialog
+        open={!!cancelTarget}
+        onClose={() => setCancelTarget(null)}
+        onConfirm={confirmCancel}
+        destructive
+        loading={cancelling}
+        title="Cancel this session?"
+        body={cancelTarget
+          ? `Your session with ${cancelTarget.coach?.name || 'your coach'} on ${formatWhen(cancelTarget.scheduled_date, cancelTarget.scheduled_time)} will be cancelled.`
+          : ''}
+        warning={late ? 'Less than 24 hours until this session — you may be charged a cancellation fee.' : undefined}
+        confirmLabel="Cancel session"
+        cancelLabel="Keep it"
+      />
+
+      {roomUrl && (
+        <VideoRoom
+          roomUrl={roomUrl}
+          sessionTitle={activeSession?.coach?.name ? `Session with ${activeSession.coach.name}` : 'Coaching Session'}
+          onLeave={() => { setRoomUrl(null); setActiveSession(null); }}
+        />
+      )}
     </>
   );
 }

@@ -316,6 +316,31 @@
 .cc-mood-on .cc-mood-num { color: var(--cc-brand); }
 .cc-mood-on .cc-mood-label { color: var(--cc-brand); font-weight: 500; }
 
+/* ── FormField ──────────────────────────────────────────────────────── */
+
+.cc-field { display: flex; flex-direction: column; gap: var(--cc-space-2); }
+.cc-field-label { font-size: var(--cc-text-sm); font-weight: 500; color: var(--cc-text-primary); }
+.cc-field-hint { font-size: var(--cc-text-xs); color: var(--cc-text-tertiary); }
+.cc-field-error { font-size: var(--cc-text-xs); color: var(--cc-danger); }
+
+/* ── Page loading ───────────────────────────────────────────────────── */
+
+.cc-loading { display: flex; align-items: center; justify-content: center; min-height: 40vh; }
+.cc-loading span {
+  width: 22px; height: 22px;
+  border: 2px solid var(--cc-border-hairline);
+  border-top-color: var(--cc-brand);
+  border-radius: var(--cc-r-full);
+  animation: cc-rotate 800ms linear infinite;
+}
+
+/* Review strip beneath a past session */
+.cc-session-review {
+  padding: var(--cc-space-4) var(--cc-space-5);
+  border-top: 1px solid var(--cc-border-hairline);
+  background: var(--cc-surface-page);
+}
+
 /* ── Modal ──────────────────────────────────────────────────────────── */
 
 .cc-overlay {
