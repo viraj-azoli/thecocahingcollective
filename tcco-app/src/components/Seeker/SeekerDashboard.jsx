@@ -8,31 +8,21 @@ import { showToast } from '../shared/Toast';
 import { SkeletonDashboard } from '../shared/Skeleton';
 import { SectionErrorBoundary } from '../shared/ErrorBoundary';
 import ProfileCompleteness from '../shared/ProfileCompleteness';
+import {
+  PageHeader, SectionHeader, Card, Button, StatTile, StatRow,
+  EmptyState, Avatar, Tag, MoodScale, ActionCard, ActionGrid, Icon,
+} from '../../ui';
+import { greeting, formatWhen } from '../../lib/datetime';
 import '../Layout/AppLayout.css';
-import './Dashboard.css';
-
 
 const QUICK_PATHS = [
-  { icon: '🧭', label: 'Find a Coach',    sub: 'Browse coaches',    to: '/coaches' },
-  { icon: '📓', label: 'Write in Journal', sub: 'Add an entry',     to: '/journal/new' },
-  { icon: '📚', label: 'Explore Library', sub: 'Browse resources',  to: '/library' },
-  { icon: '📅', label: 'Book a Session',  sub: 'Find a time',       to: '/coaches' },
+  { icon: 'coaches',  label: 'Find a coach',   sub: 'Browse the collective', to: '/coaches' },
+  { icon: 'journal',  label: 'Write an entry', sub: 'Journal',               to: '/journal/new' },
+  { icon: 'library',  label: 'Explore library', sub: 'Audio and reading',    to: '/library' },
+  { icon: 'sessions', label: 'Book a session', sub: 'Find a time',           to: '/coaches' },
 ];
 
-const TYPE_META = {
-  audio:      { icon: '🎧', label: 'Audio' },
-  article:    { icon: '📄', label: 'Article' },
-  live_event: { icon: '🎥', label: 'Live' },
-  program:    { icon: '📋', label: 'Program' },
-};
-
-const moodConfig = [
-  { rating: 1, emoji: '😔', label: 'Low',    color: '#D97706' },
-  { rating: 2, emoji: '😕', label: 'Off',    color: '#F59E0B' },
-  { rating: 3, emoji: '😐', label: 'Okay',   color: '#EAB308' },
-  { rating: 4, emoji: '😊', label: 'Good',   color: '#16A34A' },
-  { rating: 5, emoji: '✨', label: 'Bright', color: '#06B6D4' },
-];
+const TYPE_LABEL = { audio: 'Audio', article: 'Article', live_event: 'Live', program: 'Program' };
 
 export default function SeekerDashboard() {
   const { user } = useAuth();
@@ -49,7 +39,6 @@ export default function SeekerDashboard() {
   const [moodNote, setMoodNote]           = useState('');
   const [moodSaved, setMoodSaved]         = useState(false);
 
-  // Load on mount
   useEffect(() => { if (!user?.id) return; loadAll(); }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadAll = async () => {
@@ -104,20 +93,6 @@ export default function SeekerDashboard() {
 
   const saveIntention = () => { setIntention(intentDraft); setEditingIntent(false); };
 
-  const getGreeting = () => {
-    const h = new Date().getHours();
-    if (h < 12) return 'Good morning';
-    if (h < 17) return 'Good afternoon';
-    return 'Good evening';
-  };
-
-  const formatDate = (dateStr, timeStr) => {
-    if (!dateStr) return '';
-    const d = new Date(`${dateStr}T${timeStr || '00:00'}`);
-    return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
-      + ' · ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-  };
-
   if (loading) {
     return (
       <AppLayout role="seeker" profileName="Loading..." profileInitial="?">
@@ -129,209 +104,202 @@ export default function SeekerDashboard() {
   const name = seekerProfile?.name?.split(' ')[0] || 'Friend';
 
   return (
-    <AppLayout role="seeker" seekerProfile={seekerProfile} profileName={seekerProfile?.name} profileInitial={seekerProfile?.name?.[0]} profileAvatar={seekerProfile?.avatar_url}>
+    <AppLayout
+      role="seeker"
+      seekerProfile={seekerProfile}
+      profileName={seekerProfile?.name}
+      profileInitial={seekerProfile?.name?.[0]}
+      profileAvatar={seekerProfile?.avatar_url}
+    >
       <SEO title="Dashboard" noIndex />
-      <div className="db-main">
+      <div className="cc cc-page">
 
-        {/* Profile completeness nudge */}
         <ProfileCompleteness
           settingsPath="/settings"
           fields={[
-            { label: 'Name',       done: !!seekerProfile?.name },
-            { label: 'Photo',      done: !!seekerProfile?.avatar_url },
-            { label: 'Bio',        done: !!((seekerProfile?.bio || seekerProfile?.onboarding_quiz?.bio)?.length > 10) },
-            { label: 'Goals',      done: !!(seekerProfile?.onboarding_quiz?.goals?.length > 0) },
+            { label: 'Name',  done: !!seekerProfile?.name },
+            { label: 'Photo', done: !!seekerProfile?.avatar_url },
+            { label: 'Bio',   done: !!((seekerProfile?.bio || seekerProfile?.onboarding_quiz?.bio)?.length > 10) },
+            { label: 'Goals', done: !!(seekerProfile?.onboarding_quiz?.goals?.length > 0) },
           ]}
         />
 
-        {/* Hero */}
-        <div className="db-hero">
-          <div className="db-hero-body">
-            <h1 className="db-hero-greeting">{getGreeting()}, {name}.</h1>
-            <p className="db-hero-tagline">One small thing today.</p>
-            <p className="db-hero-message">
-              You've been showing up. Keep the door open today.
-            </p>
-            <div className="db-hero-actions">
+        <PageHeader
+          eyebrow={new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long' })}
+          title={`${greeting()}, ${name}.`}
+          subtitle="One small thing today."
+          actions={
+            <>
               {nextSession && (
-                <button className="db-hero-btn db-hero-btn-primary" onClick={() => navigate('/sessions')}>
-                  ▶ Join {nextSession.scheduled_time?.slice(0,5)} session
-                </button>
+                <Button variant="primary" icon="video" onClick={() => navigate('/sessions')}>
+                  Join session
+                </Button>
               )}
-              <button className="db-hero-btn db-hero-btn-outline" onClick={() => navigate('/journal/new')}>
-                ✏️ Write a check-in
-              </button>
+              <Button icon="journal" onClick={() => navigate('/journal/new')}>Write a check-in</Button>
+            </>
+          }
+        />
+
+        {/* Today's intention */}
+        <Card>
+          <SectionHeader label="Today's intention" />
+          {editingIntent ? (
+            <div className="cc-inline cc-gap-2">
+              <input
+                className="cc-input cc-grow"
+                value={intentDraft}
+                onChange={e => setIntentDraft(e.target.value)}
+                placeholder="What's your intention for today?"
+                onKeyDown={e => e.key === 'Enter' && saveIntention()}
+                autoFocus
+              />
+              <Button variant="primary" onClick={saveIntention}>Save</Button>
             </div>
-          </div>
+          ) : (
+            <div className="cc-inline cc-gap-3">
+              <p className={`cc-grow${intention ? '' : ' cc-quiet'}`} style={{ margin: 0 }}>
+                {intention || 'Set your intention for today.'}
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => { setIntentDraft(intention); setEditingIntent(true); }}
+              >
+                {intention ? 'Edit' : 'Set'}
+              </Button>
+            </div>
+          )}
+        </Card>
 
-          <div className="db-intention">
-            <p className="db-intention-label">TODAY'S INTENTION</p>
-            {editingIntent ? (
-              <div className="db-intention-edit-row">
-                <input
-                  className="db-intention-input"
-                  value={intentDraft}
-                  onChange={e => setIntentDraft(e.target.value)}
-                  placeholder="What's your intention for today?"
-                  autoFocus
-                />
-                <button className="db-intention-save" onClick={saveIntention}>Save</button>
-              </div>
-            ) : (
-              <div className="db-intention-display">
-                <p className="db-intention-text">
-                  "{intention || 'Set your intention for today'}"
-                </p>
-                <button
-                  className="db-intention-edit-btn"
-                  onClick={() => { setIntentDraft(intention); setEditingIntent(true); }}
-                >Edit</button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Quick Paths */}
-        <section className="db-section">
-          <p className="db-section-title">QUICK PATHS</p>
-          <div className="db-quick-grid">
+        {/* Quick paths */}
+        <section>
+          <SectionHeader label="Quick paths" />
+          <ActionGrid>
             {QUICK_PATHS.map(p => (
-              <button key={p.label} className="db-quick-card" onClick={() => navigate(p.to)}>
-                <span className="db-quick-icon">{p.icon}</span>
-                <span className="db-quick-label">{p.label}</span>
-                <span className="db-quick-sub">{p.sub}</span>
-              </button>
+              <ActionCard key={p.label} icon={p.icon} label={p.label} sub={p.sub} onClick={() => navigate(p.to)} />
             ))}
-          </div>
+          </ActionGrid>
         </section>
 
-        {/* Stats */}
-        <div className="db-stats-grid">
-          <div className="db-stat-card">
-            <span className="db-stat-icon">💧</span>
-            <div className="db-stat-value">{seekerProfile?.day_streak ?? 0}</div>
-            <div className="db-stat-label">DAY STREAK</div>
-            <div className="db-stat-delta positive">Keep it up!</div>
-          </div>
-          <div className="db-stat-card">
-            <span className="db-stat-icon">⏱️</span>
-            <div className="db-stat-value">{seekerProfile?.total_sessions ?? 0}</div>
-            <div className="db-stat-label">TOTAL SESSIONS</div>
-            <div className="db-stat-delta neutral">All time</div>
-          </div>
-          <div className="db-stat-card">
-            <span className="db-stat-icon">🎯</span>
-            <div className="db-stat-value">{seekerProfile?.sessions_completed ?? 0}</div>
-            <div className="db-stat-label">SESSIONS COMPLETED</div>
-            <div className="db-stat-delta neutral">Great progress</div>
-          </div>
-          <div className="db-stat-card">
-            <span className="db-stat-icon">❤️</span>
-            <div className="db-stat-value">{Number(seekerProfile?.mood_average ?? 0).toFixed(1)}</div>
-            <div className="db-stat-label">AVG MOOD · 14 DAYS</div>
-            <div className="db-stat-delta positive">Stay mindful</div>
-          </div>
-        </div>
+        {/* Stats — three real figures. The previous fourth tile read
+            seekerProfile.total_sessions, a column that does not exist on
+            seeker_profiles, so it always rendered 0. */}
+        <StatRow columns={3}>
+          <StatTile
+            icon="streak"
+            value={seekerProfile?.day_streak ?? 0}
+            label="Day streak"
+          />
+          <StatTile
+            icon="goal"
+            value={seekerProfile?.sessions_completed ?? 0}
+            label="Sessions completed"
+          />
+          <StatTile
+            icon="mood"
+            value={Number(seekerProfile?.mood_average ?? 0).toFixed(1)}
+            label="Average mood · 14 days"
+          />
+        </StatRow>
 
-        {/* Next Session */}
-        {nextSession ? (
-          <section className="db-section">
-            <p className="db-section-title">UPCOMING SESSION</p>
-            <div className="db-session-card">
-              <div className="db-session-left">
-                <div className="db-coach-avatar">{nextSession.coach?.name?.[0] ?? '?'}</div>
-                <div>
-                  <p className="db-coach-name">{nextSession.coach?.name ?? 'Your Coach'}</p>
-                  <p className="db-coach-title">{nextSession.coach?.title ?? 'Coach'}</p>
+        {/* Next session */}
+        <section>
+          <SectionHeader
+            label="Upcoming session"
+            action={nextSession && (
+              <Button variant="ghost" size="sm" iconAfter="chevronRight" onClick={() => navigate('/sessions')}>
+                All sessions
+              </Button>
+            )}
+          />
+          {nextSession ? (
+            <Card flush>
+              <div className="cc-row">
+                <Avatar name={nextSession.coach?.name} size="md" />
+                <div className="cc-row-main">
+                  <div className="cc-row-title">{nextSession.coach?.name ?? 'Your coach'}</div>
+                  <div className="cc-row-meta">{nextSession.coach?.title ?? 'Coach'}</div>
                 </div>
+                <div className="cc-stack" style={{ textAlign: 'right' }}>
+                  <div className="cc-row-title" style={{ fontWeight: 400 }}>
+                    {formatWhen(nextSession.scheduled_date, nextSession.scheduled_time)}
+                  </div>
+                  <div className="cc-row-meta">Video · {nextSession.duration_minutes ?? 55} min</div>
+                </div>
+                <Button variant="primary" size="sm" icon="video" onClick={() => navigate('/sessions')}>
+                  Join
+                </Button>
               </div>
-              <div className="db-session-meta">
-                <p className="db-session-when">{formatDate(nextSession.scheduled_date, nextSession.scheduled_time)}</p>
-                <p className="db-session-type">📹 Video · {nextSession.duration_minutes ?? 55} min</p>
-              </div>
-              <div className="db-session-actions">
-                <button className="db-session-btn" onClick={() => navigate('/sessions')}>Prep notes</button>
-                <button className="db-session-btn db-session-join" onClick={() => navigate('/sessions')}>🔗 Join</button>
-              </div>
-            </div>
-          </section>
-        ) : (
-          <section className="db-section">
-            <p className="db-section-title">UPCOMING SESSION</p>
-            <div className="db-session-empty">
-              <span>📅</span>
-              <p>No sessions scheduled yet.</p>
-              <button className="db-session-book-btn" onClick={() => navigate('/coaches')}>Book a session →</button>
-            </div>
-          </section>
-        )}
+            </Card>
+          ) : (
+            <EmptyState
+              icon="sessions"
+              title="No sessions scheduled"
+              body="When you book with a coach, your next session will appear here."
+              action={<Button variant="primary" onClick={() => navigate('/coaches')}>Find a coach</Button>}
+            />
+          )}
+        </section>
 
-        {/* Daily Check-in */}
-        <section className="db-section">
-          <div className="db-checkin-card">
-            <div className="db-checkin-header">
-              <p className="db-section-title" style={{ margin: 0 }}>DAILY CHECK-IN</p>
-              {!moodSaved && <button className="db-skip-btn" onClick={() => setMoodSaved(true)}>Skip</button>}
-            </div>
+        {/* Daily check-in */}
+        <section>
+          <SectionHeader
+            label="Daily check-in"
+            action={!moodSaved && (
+              <Button variant="ghost" size="sm" onClick={() => setMoodSaved(true)}>Skip</Button>
+            )}
+          />
+          <Card>
             {moodSaved ? (
-              <div className="db-checkin-saved">
-                <span>✅</span>
-                <p>Check-in saved. See you tomorrow.</p>
+              <div className="cc-inline cc-gap-2 cc-muted">
+                <Icon name="success" size={16} />
+                <span>Check-in saved. See you tomorrow.</span>
               </div>
             ) : (
-              <>
-                <p className="db-checkin-q">How are you arriving today?</p>
-                <div className="db-mood-row">
-                  {moodConfig.map(m => (
-                    <button
-                      key={m.rating}
-                      className={`db-mood-btn ${moodRating === m.rating ? 'db-mood-active' : ''}`}
-                      style={moodRating === m.rating ? { background: m.color, borderColor: m.color } : {}}
-                      onClick={() => setMoodRating(m.rating)}
-                    >
-                      <span className="db-mood-emoji">{m.emoji}</span>
-                      <span className="db-mood-label" style={moodRating === m.rating ? { color: '#fff' } : {}}>{m.label}</span>
-                    </button>
-                  ))}
-                </div>
+              <div className="cc-stack cc-gap-4">
+                <p style={{ margin: 0 }}>How are you arriving today?</p>
+                <MoodScale value={moodRating} onChange={setMoodRating} />
                 <textarea
-                  className="db-checkin-note"
-                  placeholder="Add a note (optional) →"
+                  className="cc-input cc-textarea"
+                  placeholder="Add a note (optional)"
                   value={moodNote}
                   onChange={e => setMoodNote(e.target.value)}
+                  rows={3}
                 />
-                {moodRating && (
-                  <button className="db-checkin-submit" onClick={saveMood}>Save check-in</button>
-                )}
-              </>
+                <div>
+                  <Button variant="primary" disabled={!moodRating} onClick={saveMood}>
+                    Save check-in
+                  </Button>
+                </div>
+              </div>
             )}
-          </div>
+          </Card>
         </section>
 
         {/* Library */}
         {content.length > 0 && (
           <SectionErrorBoundary label="library">
-            <section className="db-section">
-              <div className="db-section-header">
-                <p className="db-section-title">FROM THE LIBRARY</p>
-                <button className="db-see-all" onClick={() => navigate('/library')}>See all →</button>
-              </div>
-              <div className="db-library-grid">
-                {content.map(item => {
-                  const meta = TYPE_META[item.type] || { icon: '📄', label: item.type };
-                  return (
-                    <div key={item.id} className="db-library-card">
-                      <div className="db-library-type">
-                        <span>{meta.icon}</span>
-                        <span>{meta.label}</span>
-                        {item.duration_minutes && <span className="db-library-dur">{item.duration_minutes} min</span>}
-                      </div>
-                      <p className="db-library-title">{item.title}</p>
-                      <p className="db-library-desc">{item.description}</p>
-                      {item.coach?.name && <p className="db-library-coach">by {item.coach.name}</p>}
+            <section>
+              <SectionHeader
+                label="From the library"
+                action={
+                  <Button variant="ghost" size="sm" iconAfter="chevronRight" onClick={() => navigate('/library')}>
+                    See all
+                  </Button>
+                }
+              />
+              <div className="cc-action-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+                {content.map(item => (
+                  <Card key={item.id} interactive onClick={() => navigate('/library')}>
+                    <div className="cc-inline cc-gap-2" style={{ marginBottom: 'var(--cc-space-3)' }}>
+                      <Tag>{TYPE_LABEL[item.type] || item.type}</Tag>
+                      {item.duration_minutes && <span className="cc-quiet" style={{ fontSize: 'var(--cc-text-xs)' }}>{item.duration_minutes} min</span>}
                     </div>
-                  );
-                })}
+                    <div className="cc-row-title">{item.title}</div>
+                    {item.description && <p className="cc-muted" style={{ fontSize: 'var(--cc-text-sm)', margin: 'var(--cc-space-2) 0 0' }}>{item.description}</p>}
+                    {item.coach?.name && <p className="cc-quiet" style={{ fontSize: 'var(--cc-text-xs)', margin: 'var(--cc-space-3) 0 0' }}>by {item.coach.name}</p>}
+                  </Card>
+                ))}
               </div>
             </section>
           </SectionErrorBoundary>

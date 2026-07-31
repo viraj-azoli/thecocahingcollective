@@ -25,6 +25,7 @@
     "@vitejs/plugin-react": "^6.0.1",
     "axios": "^1.16.1",
     "date-fns": "^4.1.0",
+    "lucide-react": "^1.28.0",
     "posthog-js": "^1.373.5",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",

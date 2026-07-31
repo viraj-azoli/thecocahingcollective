@@ -4,47 +4,48 @@ import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
 import { ToastContainer } from '../shared/Toast';
 import NotificationsDropdown from '../shared/NotificationsDropdown';
+import Icon from '../../ui/Icon';
 import './AppLayout.css';
 
 const SEEKER_NAV = [
   { section: 'PRACTICE', items: [
-    { icon: '🏠', label: 'Home',      to: '/dashboard' },
-    { icon: '👥', label: 'Coaches',   to: '/coaches' },
-    { icon: '📅', label: 'Sessions',  to: '/sessions' },
-    { icon: '💬', label: 'Messages',  to: '/messages' },
-    { icon: '📓', label: 'Journal',   to: '/journal' },
-    { icon: '📚', label: 'Library',   to: '/library' },
+    { icon: 'home',      label: 'Home',      to: '/dashboard' },
+    { icon: 'coaches',   label: 'Coaches',   to: '/coaches' },
+    { icon: 'sessions',  label: 'Sessions',  to: '/sessions' },
+    { icon: 'messages',  label: 'Messages',  to: '/messages' },
+    { icon: 'journal',   label: 'Journal',   to: '/journal' },
+    { icon: 'library',   label: 'Library',   to: '/library' },
   ]},
   { section: 'GROWTH', items: [
-    { icon: '📈', label: 'Progress',  to: '/progress' },
-    { icon: '❤️', label: 'Saved',     to: '/favourites' },
-    { icon: '🤝', label: 'Community', to: '/community' },
+    { icon: 'progress',  label: 'Progress',  to: '/progress' },
+    { icon: 'saved',     label: 'Saved',     to: '/favourites' },
+    { icon: 'community', label: 'Community', to: '/community' },
   ]},
 ];
 
 const COACH_NAV = [
   { section: 'COACHING', items: [
-    { icon: '🏠', label: 'Home',         to: '/coach/dashboard' },
-    { icon: '👥', label: 'Clients',      to: '/coach/clients' },
-    { icon: '📅', label: 'Sessions',     to: '/coach/sessions' },
-    { icon: '💬', label: 'Messages',     to: '/coach/messages' },
-    { icon: '📚', label: 'Content',      to: '/coach/content' },
-    { icon: '🗓️', label: 'Availability', to: '/coach/availability' },
-    { icon: '💰', label: 'Earnings',     to: '/coach/earnings' },
-    { icon: '📋', label: 'Intake Forms', to: '/coach/intake' },
-    { icon: '📦', label: 'Packages',     to: '/coach/packages' },
+    { icon: 'home',         label: 'Home',         to: '/coach/dashboard' },
+    { icon: 'coaches',      label: 'Clients',      to: '/coach/clients' },
+    { icon: 'sessions',     label: 'Sessions',     to: '/coach/sessions' },
+    { icon: 'messages',     label: 'Messages',     to: '/coach/messages' },
+    { icon: 'content',      label: 'Content',      to: '/coach/content' },
+    { icon: 'availability', label: 'Availability', to: '/coach/availability' },
+    { icon: 'earnings',     label: 'Earnings',     to: '/coach/earnings' },
+    { icon: 'intake',       label: 'Intake Forms', to: '/coach/intake' },
+    { icon: 'packages',     label: 'Packages',     to: '/coach/packages' },
   ]},
 ];
 
 const ADMIN_NAV = [
   { section: 'PLATFORM', items: [
-    { icon: '📊', label: 'Overview',   to: '/admin/dashboard' },
-    { icon: '📈', label: 'Analytics',  to: '/admin/analytics' },
-    { icon: '👥', label: 'Coaches',    to: '/admin/coaches' },
-    { icon: '🧭', label: 'Seekers',    to: '/admin/seekers' },
-    { icon: '📅', label: 'Sessions',   to: '/admin/sessions' },
-    { icon: '📚', label: 'Content',    to: '/admin/content' },
-    { icon: '🔑', label: 'Whitelist',  to: '/admin/whitelist' },
+    { icon: 'overview',  label: 'Overview',   to: '/admin/dashboard' },
+    { icon: 'progress',  label: 'Analytics',  to: '/admin/analytics' },
+    { icon: 'coaches',   label: 'Coaches',    to: '/admin/coaches' },
+    { icon: 'seekers',   label: 'Seekers',    to: '/admin/seekers' },
+    { icon: 'sessions',  label: 'Sessions',   to: '/admin/sessions' },
+    { icon: 'content',   label: 'Content',    to: '/admin/content' },
+    { icon: 'whitelist', label: 'Whitelist',  to: '/admin/whitelist' },
   ]},
 ];
 
@@ -146,7 +147,7 @@ export default function AppLayout({ children, role = 'seeker', seekerProfile, pr
                       }
                       onClick={() => setMobileOpen(false)}
                     >
-                      <span>{item.icon}</span>
+                      <Icon name={item.icon} size={17} />
                       {item.label}
                     </NavLink>
                   </li>
@@ -167,11 +168,11 @@ export default function AppLayout({ children, role = 'seeker', seekerProfile, pr
               }
               onClick={() => setMobileOpen(false)}
             >
-              <span>⚙️</span> Settings
+              <Icon name="settings" size={17} /> Settings
             </NavLink>
           )}
           <button className="al-logout-btn" onClick={handleLogout}>
-            <span>🚪</span> Sign out
+            <Icon name="logout" size={17} /> Sign out
           </button>
           <div className="al-profile-pill">
             <div
@@ -210,7 +211,7 @@ export default function AppLayout({ children, role = 'seeker', seekerProfile, pr
             className={({ isActive }) => `al-bottom-item${isActive ? ' al-bottom-active' : ''}`}
             onClick={() => setMobileOpen(false)}
           >
-            <span className="al-bottom-icon">{item.icon}</span>
+            <span className="al-bottom-icon"><Icon name={item.icon} size={19} /></span>
             <span className="al-bottom-label">{item.label}</span>
           </NavLink>
         ))}

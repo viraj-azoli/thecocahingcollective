@@ -1,0 +1,347 @@
+/* =========================================================================
+   Calm Clinical — primitive styles
+
+   Rules this file obeys, and that screens must obey too:
+     - only tokens from tokens.css, never literal colours/space/radii
+     - no screen-specific rules live here
+   ========================================================================= */
+
+/* ── Page scaffold ──────────────────────────────────────────────────── */
+
+.cc {
+  font-family: var(--cc-font-sans);
+  color: var(--cc-text-primary);
+  font-size: var(--cc-text-base);
+  line-height: var(--cc-lh-normal);
+}
+
+.cc-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cc-space-8);
+  padding: var(--cc-space-8) var(--cc-space-8) var(--cc-space-12);
+  background: var(--cc-surface-page);
+  /* The app shell (.al-main) is a flex column, so the page must claim the
+     remaining space or the body's legacy beige shows through beneath it. */
+  flex: 1;
+  min-height: 0;
+}
+
+/* The shell's top bar still carries the legacy beige. Match it to the page so
+   there is no seam above the content on redesigned screens. */
+.al-main:has(> .cc-page) .al-topbar { background: var(--cc-surface-page); }
+
+@media (max-width: 640px) {
+  .cc-page { padding: var(--cc-space-5) var(--cc-space-4) var(--cc-space-10); gap: var(--cc-space-6); }
+}
+
+/* Focus is defined once, here, and inherited by every interactive primitive.
+   Nothing in the app had a visible focus state before this. */
+.cc :focus-visible,
+.cc-focusable:focus-visible {
+  outline: none;
+  box-shadow: var(--cc-focus-ring);
+  border-radius: var(--cc-r-sm);
+}
+
+/* ── Eyebrow / section label ────────────────────────────────────────── */
+
+.cc-eyebrow {
+  font-size: var(--cc-text-xs);
+  font-weight: 500;
+  letter-spacing: var(--cc-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--cc-text-tertiary);
+  margin: 0;
+}
+
+/* ── PageHeader ─────────────────────────────────────────────────────── */
+
+.cc-pagehead { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--cc-space-4); }
+.cc-pagehead-main { min-width: 0; }
+.cc-pagehead-title {
+  font-family: var(--cc-font-serif);
+  font-weight: 400;
+  font-size: var(--cc-text-xl);
+  line-height: var(--cc-lh-tight);
+  letter-spacing: -.005em;
+  color: var(--cc-text-primary);
+  margin: 0;
+}
+.cc-pagehead-sub {
+  font-size: var(--cc-text-sm);
+  color: var(--cc-text-secondary);
+  margin: var(--cc-space-1) 0 0;
+}
+.cc-pagehead-actions { display: flex; gap: var(--cc-space-2); flex-shrink: 0; }
+
+/* ── SectionHeader ──────────────────────────────────────────────────── */
+
+.cc-sectionhead {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--cc-space-3); margin-bottom: var(--cc-space-3);
+}
+
+/* ── Card ───────────────────────────────────────────────────────────── */
+
+.cc-card {
+  background: var(--cc-surface-card);
+  border: 1px solid var(--cc-border-hairline);
+  border-radius: var(--cc-r-md);
+  padding: var(--cc-space-5);
+}
+.cc-card-flush { padding: 0; overflow: hidden; }
+.cc-card-quiet { background: var(--cc-surface-sunken); border-color: transparent; }
+.cc-card-interactive {
+  cursor: pointer;
+  transition: border-color var(--cc-dur) var(--cc-ease), box-shadow var(--cc-dur) var(--cc-ease);
+}
+.cc-card-interactive:hover { border-color: var(--cc-border-strong); box-shadow: var(--cc-shadow-sm); }
+
+/* ── Button ─────────────────────────────────────────────────────────── */
+
+.cc-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--cc-space-2);
+  font-family: var(--cc-font-sans);
+  font-size: var(--cc-text-sm);
+  font-weight: 500;
+  line-height: 1;
+  border-radius: var(--cc-r-sm);
+  border: 1px solid transparent;
+  padding: 9px var(--cc-space-4);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--cc-dur) var(--cc-ease),
+              border-color var(--cc-dur) var(--cc-ease),
+              color var(--cc-dur) var(--cc-ease);
+}
+.cc-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* Primary is brand green. The legacy .btn-primary was orange with a green
+   hover, so it changed colour family mid-interaction. */
+.cc-btn-primary { background: var(--cc-brand); color: var(--cc-text-inverse); }
+.cc-btn-primary:hover:not(:disabled) { background: var(--cc-brand-hover); }
+
+.cc-btn-secondary {
+  background: var(--cc-surface-card);
+  color: var(--cc-text-primary);
+  border-color: var(--cc-border-strong);
+}
+.cc-btn-secondary:hover:not(:disabled) { background: var(--cc-surface-sunken); }
+
+.cc-btn-ghost { background: transparent; color: var(--cc-text-secondary); }
+.cc-btn-ghost:hover:not(:disabled) { background: var(--cc-surface-sunken); color: var(--cc-text-primary); }
+
+.cc-btn-danger { background: var(--cc-danger); color: var(--cc-text-inverse); }
+.cc-btn-danger:hover:not(:disabled) { filter: brightness(.93); }
+
+.cc-btn-sm { font-size: var(--cc-text-xs); padding: 6px var(--cc-space-3); }
+.cc-btn-lg { font-size: var(--cc-text-base); padding: 12px var(--cc-space-5); }
+.cc-btn-block { width: 100%; }
+
+/* Button's own spinner. The legacy .spinner lives in AppLayout.css, which is
+   not loaded on auth routes — so those screens rendered no spinner at all. */
+.cc-spin { animation: cc-rotate 800ms linear infinite; }
+@keyframes cc-rotate { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .cc-spin { animation-duration: 2s; } }
+
+/* ── Badge ──────────────────────────────────────────────────────────── */
+
+.cc-badge {
+  display: inline-flex; align-items: center; gap: var(--cc-space-1);
+  font-size: var(--cc-text-xs);
+  font-weight: 500;
+  line-height: 1;
+  padding: 4px var(--cc-space-2);
+  border-radius: var(--cc-r-xs);
+  white-space: nowrap;
+}
+.cc-badge-success { background: var(--cc-success-subtle); color: var(--cc-success); }
+.cc-badge-warning { background: var(--cc-warning-subtle); color: var(--cc-warning); }
+.cc-badge-danger  { background: var(--cc-danger-subtle);  color: var(--cc-danger); }
+.cc-badge-info    { background: var(--cc-info-subtle);    color: var(--cc-info); }
+.cc-badge-neutral { background: var(--cc-neutral-subtle); color: var(--cc-neutral); }
+.cc-badge-glyph { font-size: 10px; line-height: 1; }
+
+/* ── Tag (static label — deliberately not a chip) ───────────────────── */
+
+.cc-tag {
+  display: inline-flex; align-items: center;
+  font-size: var(--cc-text-xs);
+  color: var(--cc-text-secondary);
+  background: var(--cc-surface-sunken);
+  border-radius: var(--cc-r-xs);
+  padding: 4px var(--cc-space-2);
+  white-space: nowrap;
+}
+
+/* ── StatTile ───────────────────────────────────────────────────────── */
+
+.cc-stats { display: grid; gap: var(--cc-space-3); }
+.cc-stats-2 { grid-template-columns: repeat(2, 1fr); }
+.cc-stats-3 { grid-template-columns: repeat(3, 1fr); }
+.cc-stats-4 { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 860px) { .cc-stats-4 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .cc-stats-3, .cc-stats-4 { grid-template-columns: repeat(2, 1fr); } }
+
+.cc-stat {
+  background: var(--cc-surface-card);
+  border: 1px solid var(--cc-border-hairline);
+  border-radius: var(--cc-r-md);
+  padding: var(--cc-space-4);
+}
+.cc-stat-head { display: flex; align-items: center; gap: var(--cc-space-2); margin-bottom: var(--cc-space-3); }
+.cc-stat-icon { color: var(--cc-text-tertiary); display: inline-flex; }
+.cc-stat-value {
+  font-family: var(--cc-font-serif);
+  font-weight: 400;
+  font-size: var(--cc-figure-md);
+  line-height: 1;
+  color: var(--cc-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.cc-stat-label {
+  font-size: var(--cc-text-xs);
+  color: var(--cc-text-tertiary);
+  margin-top: var(--cc-space-2);
+}
+.cc-stat-delta { font-size: var(--cc-text-xs); margin-top: var(--cc-space-1); }
+.cc-stat-delta-up { color: var(--cc-success); }
+.cc-stat-delta-down { color: var(--cc-danger); }
+.cc-stat-delta-flat { color: var(--cc-text-tertiary); }
+
+/* ── Avatar ─────────────────────────────────────────────────────────── */
+
+.cc-avatar {
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: var(--cc-r-full);
+  background: var(--cc-brand-subtle);
+  color: var(--cc-brand);
+  font-weight: 500;
+  flex-shrink: 0;
+  overflow: hidden;
+  object-fit: cover;
+  text-transform: uppercase;
+}
+.cc-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cc-avatar-xs { width: 24px; height: 24px; font-size: 9px; }
+.cc-avatar-sm { width: 32px; height: 32px; font-size: 11px; }
+.cc-avatar-md { width: 40px; height: 40px; font-size: 13px; }
+.cc-avatar-lg { width: 56px; height: 56px; font-size: 17px; }
+.cc-avatar-xl { width: 76px; height: 76px; font-size: 23px; }
+
+/* ── EmptyState ─────────────────────────────────────────────────────── */
+
+.cc-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  padding: var(--cc-space-12) var(--cc-space-6);
+  background: var(--cc-surface-card);
+  border: 1px dashed var(--cc-border-hairline);
+  border-radius: var(--cc-r-md);
+  gap: var(--cc-space-2);
+}
+.cc-empty-icon { color: var(--cc-text-tertiary); margin-bottom: var(--cc-space-1); }
+.cc-empty-title { font-size: var(--cc-text-base); font-weight: 500; color: var(--cc-text-primary); margin: 0; }
+.cc-empty-body { font-size: var(--cc-text-sm); color: var(--cc-text-secondary); margin: 0; max-width: 42ch; }
+.cc-empty-action { margin-top: var(--cc-space-3); }
+
+/* ── Text inputs ────────────────────────────────────────────────────── */
+
+.cc-input {
+  font-family: var(--cc-font-sans);
+  font-size: var(--cc-text-base);
+  color: var(--cc-text-primary);
+  background: var(--cc-surface-card);
+  border: 1px solid var(--cc-border-hairline);
+  border-radius: var(--cc-r-sm);
+  padding: 9px var(--cc-space-3);
+  width: 100%;
+  transition: border-color var(--cc-dur) var(--cc-ease);
+}
+.cc-input::placeholder { color: var(--cc-text-tertiary); }
+.cc-input:hover { border-color: var(--cc-border-strong); }
+.cc-input:focus { outline: none; border-color: var(--cc-brand); box-shadow: var(--cc-focus-ring); }
+.cc-textarea { resize: vertical; min-height: 76px; line-height: var(--cc-lh-normal); }
+
+/* ── ActionCard ─────────────────────────────────────────────────────── */
+
+.cc-action-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--cc-space-3); }
+@media (max-width: 860px) { .cc-action-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.cc-action {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  background: var(--cc-surface-card);
+  border: 1px solid var(--cc-border-hairline);
+  border-radius: var(--cc-r-md);
+  padding: var(--cc-space-4);
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--cc-font-sans);
+  transition: border-color var(--cc-dur) var(--cc-ease), background var(--cc-dur) var(--cc-ease);
+}
+.cc-action:hover { border-color: var(--cc-border-strong); background: var(--cc-surface-card); }
+.cc-action-icon { color: var(--cc-brand); display: inline-flex; margin-bottom: var(--cc-space-3); }
+.cc-action-label { font-size: var(--cc-text-base); font-weight: 500; color: var(--cc-text-primary); }
+.cc-action-sub { font-size: var(--cc-text-xs); color: var(--cc-text-tertiary); }
+
+/* ── MoodScale ──────────────────────────────────────────────────────── */
+
+.cc-mood { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--cc-space-2); }
+.cc-mood-item {
+  display: flex; flex-direction: column; align-items: center; gap: var(--cc-space-1);
+  padding: var(--cc-space-3) var(--cc-space-2);
+  background: var(--cc-surface-card);
+  border: 1px solid var(--cc-border-hairline);
+  border-radius: var(--cc-r-sm);
+  cursor: pointer;
+  font-family: var(--cc-font-sans);
+  transition: border-color var(--cc-dur) var(--cc-ease), background var(--cc-dur) var(--cc-ease);
+}
+.cc-mood-readonly .cc-mood-item { cursor: default; }
+.cc-mood-item:hover { border-color: var(--cc-border-strong); }
+.cc-mood-num {
+  font-family: var(--cc-font-serif);
+  font-size: var(--cc-figure-sm);
+  line-height: 1;
+  color: var(--cc-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+.cc-mood-label { font-size: var(--cc-text-xs); color: var(--cc-text-tertiary); }
+.cc-mood-on { background: var(--cc-brand-subtle); border-color: var(--cc-brand); }
+.cc-mood-on .cc-mood-num { color: var(--cc-brand); }
+.cc-mood-on .cc-mood-label { color: var(--cc-brand); font-weight: 500; }
+
+/* ── Divider ────────────────────────────────────────────────────────── */
+
+.cc-divider { height: 1px; background: var(--cc-border-hairline); border: 0; margin: 0; }
+
+/* ── Row list (shared shape for session/content rows) ───────────────── */
+
+.cc-rows { display: flex; flex-direction: column; }
+.cc-row {
+  display: flex; align-items: center; gap: var(--cc-space-3);
+  padding: var(--cc-space-4) var(--cc-space-5);
+  border-bottom: 1px solid var(--cc-border-hairline);
+}
+.cc-row:last-child { border-bottom: 0; }
+.cc-row-main { flex: 1; min-width: 0; }
+.cc-row-title { font-size: var(--cc-text-base); font-weight: 500; color: var(--cc-text-primary); }
+.cc-row-meta { font-size: var(--cc-text-xs); color: var(--cc-text-tertiary); margin-top: 2px; }
+
+/* ── Utilities (layout only — no visual styling) ────────────────────── */
+
+.cc-stack { display: flex; flex-direction: column; }
+.cc-gap-2 { gap: var(--cc-space-2); }
+.cc-gap-3 { gap: var(--cc-space-3); }
+.cc-gap-4 { gap: var(--cc-space-4); }
+.cc-inline { display: flex; align-items: center; }
+.cc-grow { flex: 1; min-width: 0; }
+.cc-muted { color: var(--cc-text-secondary); }
+.cc-quiet { color: var(--cc-text-tertiary); }
+.cc-figure {
+  font-family: var(--cc-font-serif);
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+}

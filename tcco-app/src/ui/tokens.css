@@ -1,0 +1,112 @@
+/* =========================================================================
+   Calm Clinical — design tokens
+   Spec: docs/superpowers/specs/2026-07-30-seeker-ui-calm-clinical-design.md
+
+   These are ADDITIVE. The legacy variables in index.css and AppLayout.css are
+   left exactly as they are, because coach and admin screens still consume
+   them and are out of scope. Nothing here repoints an existing name.
+   ========================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&display=swap');
+
+:root {
+  /* ── Surfaces & borders ───────────────────────────────────────────────
+     Hairlines carry separation here, not shadows. */
+  --cc-surface-page:     #FBFAF8;
+  --cc-surface-card:     #FFFFFF;
+  --cc-surface-sunken:   #F4F2ED;
+  --cc-surface-inverse:  #16352C;
+  --cc-border-hairline:  #E4E9E7;
+  --cc-border-strong:    #CBD8D2;
+
+  /* ── Brand & text ─────────────────────────────────────────────────────
+     Orange is deliberately demoted: it is emphasis, never a primary action.
+     That is also what removes the old orange→green hover flip. */
+  --cc-brand:            #1A5843;
+  --cc-brand-hover:      #144636;
+  --cc-brand-subtle:     #E9EFEC;
+  --cc-accent:           #CD512F;
+
+  --cc-text-primary:     #16352C;
+  --cc-text-secondary:   #5A6B64;
+  --cc-text-tertiary:    #8A9A93;
+  --cc-text-inverse:     #F7F5F0;
+
+  /* ── Semantic ─────────────────────────────────────────────────────────
+     Desaturated on purpose. Badge always pairs these with a glyph, so status
+     survives greyscale and colour-blindness. */
+  --cc-success:          #2E7D5B;
+  --cc-success-subtle:   #E6F0EA;
+  --cc-warning:          #A66A1F;
+  --cc-warning-subtle:   #F7EFE1;
+  --cc-danger:           #A8422F;
+  --cc-danger-subtle:    #F6E9E5;
+  --cc-info:             #3A6B7D;
+  --cc-info-subtle:      #E8F0F3;
+  --cc-neutral:          #5A6B64;
+  --cc-neutral-subtle:   #F4F2ED;
+
+  /* ── Type ─────────────────────────────────────────────────────────────
+     Inter runs the interface; Newsreader is reserved for figures and the
+     occasional page-level greeting. */
+  --cc-font-sans:  'Inter', system-ui, -apple-system, sans-serif;
+  --cc-font-serif: 'Newsreader', Georgia, serif;
+
+  --cc-text-xs:    11px;
+  --cc-text-sm:    12px;
+  --cc-text-base:  14px;
+  --cc-text-md:    16px;
+  --cc-text-lg:    18px;
+  --cc-text-xl:    22px;
+  --cc-text-2xl:   28px;
+
+  --cc-lh-tight:   1.25;
+  --cc-lh-snug:    1.4;
+  --cc-lh-normal:  1.6;
+
+  --cc-figure-sm:  22px;
+  --cc-figure-md:  28px;
+  --cc-figure-lg:  36px;
+
+  --cc-tracking-eyebrow: .11em;
+
+  /* ── Space (4px base) ─────────────────────────────────────────────── */
+  --cc-space-1:  4px;
+  --cc-space-2:  8px;
+  --cc-space-3:  12px;
+  --cc-space-4:  16px;
+  --cc-space-5:  20px;
+  --cc-space-6:  24px;
+  --cc-space-8:  32px;
+  --cc-space-10: 40px;
+  --cc-space-12: 48px;
+
+  /* ── Radii ────────────────────────────────────────────────────────────
+     Tighter than the legacy 8/12/16. Heavy rounding is the strongest
+     "consumer app" cue; clinical products keep corners tight. */
+  --cc-r-xs:   3px;
+  --cc-r-sm:   4px;
+  --cc-r-md:   6px;
+  --cc-r-lg:   10px;
+  --cc-r-full: 999px;
+
+  /* ── Elevation — almost absent by design ─────────────────────────── */
+  --cc-shadow-xs: 0 1px 2px rgba(22, 53, 44, .04);
+  --cc-shadow-sm: 0 1px 3px rgba(22, 53, 44, .06);
+  --cc-shadow-md: 0 4px 12px rgba(22, 53, 44, .08);
+
+  /* ── Focus — did not exist anywhere in the app before this ───────── */
+  --cc-focus-ring: 0 0 0 3px rgba(26, 88, 67, .22);
+
+  /* ── Motion ──────────────────────────────────────────────────────── */
+  --cc-dur-fast: 120ms;
+  --cc-dur:      180ms;
+  --cc-ease:     cubic-bezier(.2, .6, .2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --cc-dur-fast: 0ms;
+    --cc-dur:      0ms;
+  }
+}
