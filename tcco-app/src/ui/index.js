@@ -18,3 +18,6 @@ export { default as ActionCard, ActionGrid } from './ActionCard';
 export { default as Sparkline } from './Sparkline';
 export { default as StreakDots } from './StreakDots';
 export { default as SessionCard } from './SessionCard';
+export { default as Modal, ConfirmDialog } from './Modal';
+export { default as StarRating } from './StarRating';
+export { default as Tabs } from './Tabs';

@@ -316,6 +316,129 @@
 .cc-mood-on .cc-mood-num { color: var(--cc-brand); }
 .cc-mood-on .cc-mood-label { color: var(--cc-brand); font-weight: 500; }
 
+/* ── Modal ──────────────────────────────────────────────────────────── */
+
+.cc-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(22, 53, 44, .32);
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--cc-space-5);
+  animation: cc-fade var(--cc-dur) var(--cc-ease);
+}
+@keyframes cc-fade { from { opacity: 0; } }
+
+.cc-modal {
+  background: var(--cc-surface-card);
+  border-radius: var(--cc-r-lg);
+  box-shadow: var(--cc-shadow-md);
+  width: 100%;
+  max-height: calc(100vh - var(--cc-space-10));
+  display: flex; flex-direction: column;
+  outline: none;
+}
+.cc-modal-sm { max-width: 420px; }
+.cc-modal-md { max-width: 560px; }
+.cc-modal-lg { max-width: 760px; }
+
+.cc-modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--cc-space-3);
+  padding: var(--cc-space-5) var(--cc-space-5) var(--cc-space-4);
+  border-bottom: 1px solid var(--cc-border-hairline);
+}
+.cc-modal-title {
+  font-family: var(--cc-font-serif);
+  font-weight: 400;
+  font-size: var(--cc-text-lg);
+  color: var(--cc-text-primary);
+  margin: 0;
+}
+.cc-modal-close {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px;
+  border: 0; background: transparent;
+  color: var(--cc-text-tertiary);
+  border-radius: var(--cc-r-sm);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--cc-dur) var(--cc-ease), color var(--cc-dur) var(--cc-ease);
+}
+.cc-modal-close:hover { background: var(--cc-surface-sunken); color: var(--cc-text-primary); }
+
+.cc-modal-body {
+  padding: var(--cc-space-5);
+  overflow-y: auto;
+  display: flex; flex-direction: column; gap: var(--cc-space-4);
+}
+.cc-modal-foot {
+  display: flex; justify-content: flex-end; gap: var(--cc-space-2);
+  padding: var(--cc-space-4) var(--cc-space-5);
+  border-top: 1px solid var(--cc-border-hairline);
+}
+
+.cc-confirm-warning {
+  display: flex; align-items: flex-start; gap: var(--cc-space-2);
+  font-size: var(--cc-text-sm);
+  color: var(--cc-warning);
+  background: var(--cc-warning-subtle);
+  border-radius: var(--cc-r-sm);
+  padding: var(--cc-space-3);
+  margin: 0;
+}
+.cc-confirm-warning svg { flex-shrink: 0; margin-top: 1px; }
+
+/* ── StarRating ─────────────────────────────────────────────────────── */
+
+.cc-stars { display: inline-flex; align-items: center; gap: 1px; }
+.cc-star { color: var(--cc-border-strong); line-height: 1; }
+.cc-star-on { color: var(--cc-warning); }
+.cc-star-btn {
+  border: 0; background: transparent; padding: 0 1px; cursor: pointer;
+  border-radius: var(--cc-r-xs);
+  transition: color var(--cc-dur-fast) var(--cc-ease);
+}
+.cc-stars-value {
+  font-family: var(--cc-font-serif);
+  font-variant-numeric: tabular-nums;
+  color: var(--cc-text-primary);
+  margin-left: var(--cc-space-2);
+  font-size: var(--cc-text-base);
+}
+.cc-stars-count { font-size: var(--cc-text-xs); color: var(--cc-text-tertiary); margin-left: var(--cc-space-1); }
+
+/* ── Tabs ───────────────────────────────────────────────────────────── */
+
+.cc-tabs {
+  display: flex; gap: var(--cc-space-1);
+  border-bottom: 1px solid var(--cc-border-hairline);
+  margin-bottom: var(--cc-space-4);
+  overflow-x: auto;
+}
+.cc-tab {
+  display: inline-flex; align-items: center; gap: var(--cc-space-2);
+  border: 0; background: transparent;
+  font-family: var(--cc-font-sans);
+  font-size: var(--cc-text-base);
+  color: var(--cc-text-secondary);
+  padding: var(--cc-space-3) var(--cc-space-3);
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color var(--cc-dur) var(--cc-ease), border-color var(--cc-dur) var(--cc-ease);
+}
+.cc-tab:hover { color: var(--cc-text-primary); }
+.cc-tab-on { color: var(--cc-brand); border-bottom-color: var(--cc-brand); font-weight: 500; }
+.cc-tab-count {
+  font-size: var(--cc-text-xs);
+  color: var(--cc-text-tertiary);
+  background: var(--cc-surface-sunken);
+  border-radius: var(--cc-r-full);
+  padding: 1px var(--cc-space-2);
+  font-variant-numeric: tabular-nums;
+}
+.cc-tab-on .cc-tab-count { background: var(--cc-brand-subtle); color: var(--cc-brand); }
+
 /* ── Divider ────────────────────────────────────────────────────────── */
 
 .cc-divider { height: 1px; background: var(--cc-border-hairline); border: 0; margin: 0; }
