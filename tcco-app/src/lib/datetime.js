@@ -70,3 +70,21 @@ export function greeting(date = new Date()) {
   if (h < 18) return 'Good afternoon';
   return 'Good evening';
 }
+
+/** Forward-looking countdown: 'in 2 days', 'in 3 hours', 'starting now'. */
+export function formatUntil(dateStr, timeStr) {
+  const d = parseDate(dateStr);
+  if (!d || Number.isNaN(d.getTime())) return '';
+  if (timeStr) {
+    const [h, m] = String(timeStr).split(':');
+    d.setHours(Number(h) || 0, Number(m) || 0, 0, 0);
+  }
+  const mins = Math.round((d.getTime() - Date.now()) / 60000);
+  if (mins < -60) return 'passed';
+  if (mins <= 5) return 'starting now';
+  if (mins < 60) return `in ${mins} min`;
+  const hours = Math.round(mins / 60);
+  if (hours < 24) return `in ${hours} ${hours === 1 ? 'hour' : 'hours'}`;
+  const days = Math.round(hours / 24);
+  return `in ${days} ${days === 1 ? 'day' : 'days'}`;
+}

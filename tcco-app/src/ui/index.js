@@ -15,3 +15,6 @@ export { default as Avatar, initials } from './Avatar';
 export { default as EmptyState } from './EmptyState';
 export { default as MoodScale, MOODS, moodLabel } from './MoodScale';
 export { default as ActionCard, ActionGrid } from './ActionCard';
+export { default as Sparkline } from './Sparkline';
+export { default as StreakDots } from './StreakDots';
+export { default as SessionCard } from './SessionCard';

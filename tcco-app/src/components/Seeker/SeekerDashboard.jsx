@@ -10,9 +10,10 @@ import { SectionErrorBoundary } from '../shared/ErrorBoundary';
 import ProfileCompleteness from '../shared/ProfileCompleteness';
 import {
   PageHeader, SectionHeader, Card, Button, StatTile, StatRow,
-  EmptyState, Avatar, Tag, MoodScale, ActionCard, ActionGrid, Icon,
+  EmptyState, Tag, MoodScale, ActionCard, ActionGrid, Icon,
+  StreakDots, Sparkline, SessionCard,
 } from '../../ui';
-import { greeting, formatWhen } from '../../lib/datetime';
+import { greeting } from '../../lib/datetime';
 import '../Layout/AppLayout.css';
 
 const QUICK_PATHS = [
@@ -30,6 +31,7 @@ export default function SeekerDashboard() {
   const [seekerProfile, setSeekerProfile] = useState(null);
   const [nextSession, setNextSession]     = useState(null);
   const [content, setContent]             = useState([]);
+  const [moodTrend, setMoodTrend]         = useState([]);
   const [loading, setLoading]             = useState(true);
 
   const [intention, setIntention]         = useState('');
@@ -69,6 +71,17 @@ export default function SeekerDashboard() {
         .eq('featured', true)
         .limit(3);
       setContent(items || []);
+
+      // Recent moods drive the sparkline beside the average. Oldest-first so
+      // the trend reads left to right.
+      const { data: moods } = await supabase
+        .from('journal_entries')
+        .select('mood, date')
+        .eq('seeker_id', profileId)
+        .not('mood', 'is', null)
+        .order('date', { ascending: false })
+        .limit(7);
+      setMoodTrend((moods || []).map(m => m.mood).reverse());
     } catch (err) {
       console.error('Dashboard load error:', err);
     } finally {
@@ -189,6 +202,7 @@ export default function SeekerDashboard() {
             icon="streak"
             value={seekerProfile?.day_streak ?? 0}
             label="Day streak"
+            visual={<StreakDots streak={seekerProfile?.day_streak ?? 0} />}
           />
           <StatTile
             icon="goal"
@@ -199,6 +213,9 @@ export default function SeekerDashboard() {
             icon="mood"
             value={Number(seekerProfile?.mood_average ?? 0).toFixed(1)}
             label="Average mood · 14 days"
+            visual={moodTrend.length > 1
+              ? <Sparkline values={moodTrend} max={5} label="Mood over the last 7 entries" />
+              : null}
           />
         </StatRow>
 
@@ -213,24 +230,12 @@ export default function SeekerDashboard() {
             )}
           />
           {nextSession ? (
-            <Card flush>
-              <div className="cc-row">
-                <Avatar name={nextSession.coach?.name} size="md" />
-                <div className="cc-row-main">
-                  <div className="cc-row-title">{nextSession.coach?.name ?? 'Your coach'}</div>
-                  <div className="cc-row-meta">{nextSession.coach?.title ?? 'Coach'}</div>
-                </div>
-                <div className="cc-stack" style={{ textAlign: 'right' }}>
-                  <div className="cc-row-title" style={{ fontWeight: 400 }}>
-                    {formatWhen(nextSession.scheduled_date, nextSession.scheduled_time)}
-                  </div>
-                  <div className="cc-row-meta">Video · {nextSession.duration_minutes ?? 55} min</div>
-                </div>
-                <Button variant="primary" size="sm" icon="video" onClick={() => navigate('/sessions')}>
-                  Join
-                </Button>
-              </div>
-            </Card>
+            <SessionCard
+              session={nextSession}
+              variant="upcoming"
+              onJoin={() => navigate('/sessions')}
+              onPrep={() => navigate('/sessions')}
+            />
           ) : (
             <EmptyState
               icon="sessions"

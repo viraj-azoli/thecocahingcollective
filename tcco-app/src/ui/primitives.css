@@ -193,6 +193,9 @@
 }
 .cc-stat-head { display: flex; align-items: center; gap: var(--cc-space-2); margin-bottom: var(--cc-space-3); }
 .cc-stat-icon { color: var(--cc-text-tertiary); display: inline-flex; }
+.cc-stat-body { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--cc-space-3); }
+.cc-stat-main { min-width: 0; }
+.cc-stat-visual { flex-shrink: 0; padding-bottom: 2px; }
 .cc-stat-value {
   font-family: var(--cc-font-serif);
   font-weight: 400;
@@ -345,3 +348,63 @@
   font-variant-numeric: tabular-nums;
   font-weight: 400;
 }
+
+
+/* ── Sparkline ──────────────────────────────────────────────────────── */
+
+.cc-spark { display: flex; align-items: flex-end; gap: 2px; height: 26px; width: 62px; }
+.cc-spark-bar { flex: 1; background: var(--cc-brand-subtle); border-radius: 1px; display: block; }
+.cc-spark-bar:last-child { background: var(--cc-brand); }
+
+/* ── StreakDots ─────────────────────────────────────────────────────── */
+
+.cc-streak { display: flex; gap: 3px; }
+.cc-streak-dot {
+  width: 9px; height: 9px;
+  border-radius: 2px;
+  background: var(--cc-border-hairline);
+  display: block;
+}
+.cc-streak-on { background: var(--cc-brand); }
+
+/* ── SessionCard ────────────────────────────────────────────────────── */
+
+.cc-session {
+  background: var(--cc-surface-card);
+  border: 1px solid var(--cc-border-hairline);
+  border-radius: var(--cc-r-md);
+  overflow: hidden;
+}
+.cc-session + .cc-session { margin-top: var(--cc-space-3); }
+.cc-session-main { display: flex; align-items: center; gap: var(--cc-space-3); padding: var(--cc-space-4) var(--cc-space-5); }
+.cc-session-when { text-align: right; flex-shrink: 0; }
+.cc-session-date { font-size: var(--cc-text-base); color: var(--cc-text-primary); }
+.cc-session-when .cc-row-meta { display: inline-flex; align-items: center; gap: 4px; justify-content: flex-end; }
+.cc-session-actions { display: flex; align-items: center; gap: var(--cc-space-2); flex-shrink: 0; }
+.cc-session-foot {
+  display: flex; align-items: center; gap: var(--cc-space-3);
+  padding: var(--cc-space-3) var(--cc-space-5);
+  border-top: 1px solid var(--cc-border-hairline);
+  background: var(--cc-surface-sunken);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 720px) {
+  .cc-session-main { flex-wrap: wrap; }
+  .cc-session-when { text-align: left; width: 100%; order: 3; }
+  .cc-session-actions { order: 4; }
+}
+
+/* Text button that reads as a link but behaves as a button. */
+.cc-linkbtn {
+  background: none; border: 0; padding: 0;
+  font-family: var(--cc-font-sans);
+  font-size: var(--cc-text-xs);
+  color: var(--cc-brand);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.cc-linkbtn:hover { color: var(--cc-brand-hover); }
+.cc-linkbtn-quiet { color: var(--cc-text-tertiary); }
+.cc-linkbtn-quiet:hover { color: var(--cc-danger); }
