@@ -6,6 +6,10 @@ import App from './App.jsx'
 import { PageErrorBoundary } from './components/shared/ErrorBoundary.jsx'
 import { initAnalytics } from './lib/analytics.js'
 import './index.css'
+// Tokens plus the legacy bridge, loaded globally so screens that have not
+// been individually converted still render in the new design language.
+import './ui/tokens.css'
+import './ui/bridge.css'
 
 // This app briefly shipped a service worker that was later removed (it kept
 // hitting Hostinger FTP overwrite locks on the non-hashed sw.js filename).

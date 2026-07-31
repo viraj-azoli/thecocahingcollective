@@ -1,0 +1,291 @@
+/* =========================================================================
+   Calm Clinical — legacy bridge
+
+   Restyles the AppLayout.css class set onto the new tokens, so screens that
+   have not been individually converted still render in the new language.
+   Coach (10), admin (8) and the not-yet-converted seeker screens all draw
+   from these classes; this brings them across without touching 24 files.
+
+   This is a bridge, not a destination. A converted screen uses cc-*
+   primitives and ignores everything here. As screens are converted, the
+   corresponding rules below become dead and can be deleted.
+
+   Everything is scoped under .al-wrapper — the app shell that always wraps
+   these screens. That guarantees these rules win over AppLayout.css
+   regardless of stylesheet order under code splitting, without !important.
+   ========================================================================= */
+
+.al-wrapper {
+  font-family: var(--cc-font-sans);
+  color: var(--cc-text-primary);
+  background: var(--cc-surface-page);
+}
+
+/* ── Page scaffold ──────────────────────────────────────────────────── */
+
+.al-wrapper .al-main { background: var(--cc-surface-page); }
+.al-wrapper .al-topbar { background: var(--cc-surface-page); border-bottom: 1px solid var(--cc-border-hairline); }
+
+.al-wrapper .page-body {
+  padding: var(--cc-space-8);
+  gap: var(--cc-space-8);
+  background: var(--cc-surface-page);
+}
+.al-wrapper .page-title {
+  font-family: var(--cc-font-serif);
+  font-weight: 400;
+  font-size: var(--cc-text-xl);
+  letter-spacing: -.005em;
+  color: var(--cc-text-primary);
+}
+.al-wrapper .page-subtitle {
+  font-size: var(--cc-text-sm);
+  color: var(--cc-text-secondary);
+}
+.al-wrapper .section-label {
+  font-size: var(--cc-text-xs);
+  font-weight: 500;
+  letter-spacing: var(--cc-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--cc-text-tertiary);
+}
+
+/* ── Card ───────────────────────────────────────────────────────────── */
+
+.al-wrapper .card {
+  background: var(--cc-surface-card);
+  border: 1px solid var(--cc-border-hairline);
+  border-radius: var(--cc-r-md);
+  box-shadow: none;
+  padding: var(--cc-space-5);
+}
+.al-wrapper .card-hover:hover { border-color: var(--cc-border-strong); box-shadow: var(--cc-shadow-sm); }
+.al-wrapper .divider { background: var(--cc-border-hairline); }
+
+/* ── Buttons ────────────────────────────────────────────────────────────
+   .btn-primary was var(--accent) orange with a hardcoded green hover, so a
+   primary button changed colour family mid-interaction. Primary is brand
+   green here, and hover stays in the same family. */
+
+.al-wrapper .btn {
+  font-family: var(--cc-font-sans);
+  font-size: var(--cc-text-sm);
+  font-weight: 500;
+  border-radius: var(--cc-r-sm);
+  padding: 9px var(--cc-space-4);
+  border: 1px solid transparent;
+  transition: background var(--cc-dur) var(--cc-ease), border-color var(--cc-dur) var(--cc-ease);
+}
+.al-wrapper .btn-primary { background: var(--cc-brand); color: var(--cc-text-inverse); }
+.al-wrapper .btn-primary:hover { background: var(--cc-brand-hover); }
+.al-wrapper .btn-outline {
+  background: var(--cc-surface-card);
+  color: var(--cc-text-primary);
+  border-color: var(--cc-border-strong);
+}
+.al-wrapper .btn-outline:hover { background: var(--cc-surface-sunken); }
+.al-wrapper .btn-ghost { background: transparent; color: var(--cc-text-secondary); }
+.al-wrapper .btn-ghost:hover { background: var(--cc-surface-sunken); color: var(--cc-text-primary); }
+.al-wrapper .btn-danger { background: var(--cc-danger); color: var(--cc-text-inverse); }
+.al-wrapper .btn-sm { font-size: var(--cc-text-xs); padding: 6px var(--cc-space-3); }
+.al-wrapper .btn-lg { font-size: var(--cc-text-base); padding: 12px var(--cc-space-5); }
+
+/* ── Badges ─────────────────────────────────────────────────────────────
+   Seven colour-named variants collapse onto four semantic roles. The names
+   stay so callers keep working; the palette underneath is desaturated. */
+
+.al-wrapper .badge {
+  font-size: var(--cc-text-xs);
+  font-weight: 500;
+  border-radius: var(--cc-r-xs);
+  padding: 4px var(--cc-space-2);
+}
+.al-wrapper .badge-green  { background: var(--cc-success-subtle); color: var(--cc-success); }
+.al-wrapper .badge-teal   { background: var(--cc-success-subtle); color: var(--cc-success); }
+.al-wrapper .badge-blue   { background: var(--cc-info-subtle);    color: var(--cc-info); }
+.al-wrapper .badge-purple { background: var(--cc-info-subtle);    color: var(--cc-info); }
+.al-wrapper .badge-yellow { background: var(--cc-warning-subtle); color: var(--cc-warning); }
+.al-wrapper .badge-red    { background: var(--cc-danger-subtle);  color: var(--cc-danger); }
+.al-wrapper .badge-gray   { background: var(--cc-neutral-subtle); color: var(--cc-neutral); }
+
+/* ── Chips ──────────────────────────────────────────────────────────── */
+
+.al-wrapper .chip {
+  font-size: var(--cc-text-xs);
+  color: var(--cc-text-secondary);
+  background: var(--cc-surface-sunken);
+  border: 1px solid transparent;
+  border-radius: var(--cc-r-xs);
+  padding: 4px var(--cc-space-2);
+}
+.al-wrapper .chip-active { background: var(--cc-brand-subtle); color: var(--cc-brand); border-color: var(--cc-brand); }
+
+/* ── Stat cards ─────────────────────────────────────────────────────── */
+
+.al-wrapper .stat-card {
+  background: var(--cc-surface-card);
+  border: 1px solid var(--cc-border-hairline);
+  border-radius: var(--cc-r-md);
+  box-shadow: none;
+  padding: var(--cc-space-4);
+}
+.al-wrapper .stat-value {
+  font-family: var(--cc-font-serif);
+  font-weight: 400;
+  font-size: var(--cc-figure-md);
+  color: var(--cc-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.al-wrapper .stat-label {
+  font-size: var(--cc-text-xs);
+  color: var(--cc-text-tertiary);
+  text-transform: none;
+  letter-spacing: 0;
+}
+.al-wrapper .stat-icon { color: var(--cc-text-tertiary); font-size: var(--cc-text-md); }
+.al-wrapper .stat-delta { font-size: var(--cc-text-xs); color: var(--cc-text-tertiary); }
+.al-wrapper .stat-delta.positive { color: var(--cc-success); }
+
+/* ── Tables ─────────────────────────────────────────────────────────── */
+
+.al-wrapper .table-wrap {
+  background: var(--cc-surface-card);
+  border: 1px solid var(--cc-border-hairline);
+  border-radius: var(--cc-r-md);
+  box-shadow: none;
+  overflow-x: auto;
+}
+.al-wrapper .tcco-table { font-size: var(--cc-text-base); }
+.al-wrapper .tcco-table th {
+  font-size: var(--cc-text-xs);
+  font-weight: 500;
+  letter-spacing: var(--cc-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--cc-text-tertiary);
+  background: var(--cc-surface-page);
+  border-bottom: 1px solid var(--cc-border-hairline);
+  padding: var(--cc-space-3) var(--cc-space-4);
+}
+.al-wrapper .tcco-table td {
+  border-bottom: 1px solid var(--cc-border-hairline);
+  padding: var(--cc-space-4);
+  color: var(--cc-text-primary);
+}
+.al-wrapper .tcco-table tbody tr:hover { background: var(--cc-surface-page); }
+.al-wrapper .tcco-table tbody tr:last-child td { border-bottom: 0; }
+
+/* ── Tabs ───────────────────────────────────────────────────────────── */
+
+.al-wrapper .tabs { border-bottom: 1px solid var(--cc-border-hairline); gap: var(--cc-space-1); }
+.al-wrapper .tab {
+  font-family: var(--cc-font-sans);
+  font-size: var(--cc-text-base);
+  color: var(--cc-text-secondary);
+  padding: var(--cc-space-3);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  background: transparent;
+  border-radius: 0;
+}
+.al-wrapper .tab-active { color: var(--cc-brand); border-bottom-color: var(--cc-brand); font-weight: 500; background: transparent; }
+
+/* ── Forms ──────────────────────────────────────────────────────────── */
+
+.al-wrapper .form-label {
+  font-size: var(--cc-text-sm);
+  font-weight: 500;
+  color: var(--cc-text-primary);
+  text-transform: none;
+  letter-spacing: 0;
+}
+.al-wrapper .form-input,
+.al-wrapper .form-textarea,
+.al-wrapper .form-select,
+.al-wrapper .search-bar {
+  font-family: var(--cc-font-sans);
+  font-size: var(--cc-text-base);
+  color: var(--cc-text-primary);
+  background: var(--cc-surface-card);
+  border: 1px solid var(--cc-border-hairline);
+  border-radius: var(--cc-r-sm);
+  padding: 9px var(--cc-space-3);
+}
+.al-wrapper .form-input:focus,
+.al-wrapper .form-textarea:focus,
+.al-wrapper .form-select:focus,
+.al-wrapper .search-bar:focus {
+  outline: none;
+  border-color: var(--cc-brand);
+  box-shadow: var(--cc-focus-ring);
+}
+.al-wrapper .form-hint { font-size: var(--cc-text-xs); color: var(--cc-text-tertiary); }
+.al-wrapper .form-error { font-size: var(--cc-text-xs); color: var(--cc-danger); }
+.al-wrapper .search-wrap .search-bar { padding-left: var(--cc-space-10); }
+
+/* ── Modals ─────────────────────────────────────────────────────────── */
+
+.al-wrapper .modal-overlay,
+.al-wrapper .tcco-modal-overlay { background: rgba(22, 53, 44, .32); }
+.al-wrapper .modal,
+.al-wrapper .tcco-modal {
+  background: var(--cc-surface-card);
+  border-radius: var(--cc-r-lg);
+  box-shadow: var(--cc-shadow-md);
+}
+.al-wrapper .modal-header,
+.al-wrapper .tcco-modal-header { border-bottom: 1px solid var(--cc-border-hairline); padding: var(--cc-space-5); }
+.al-wrapper .modal-body { padding: var(--cc-space-5); }
+.al-wrapper .modal-footer,
+.al-wrapper .tcco-modal-footer { border-top: 1px solid var(--cc-border-hairline); padding: var(--cc-space-4) var(--cc-space-5); }
+
+/* ── Empty states ───────────────────────────────────────────────────── */
+
+.al-wrapper .empty-state {
+  background: var(--cc-surface-card);
+  border: 1px dashed var(--cc-border-hairline);
+  border-radius: var(--cc-r-md);
+  color: var(--cc-text-secondary);
+  padding: var(--cc-space-12) var(--cc-space-6);
+}
+.al-wrapper .empty-icon { color: var(--cc-text-tertiary); }
+
+/* ── Avatars ────────────────────────────────────────────────────────── */
+
+.al-wrapper .avatar {
+  background: var(--cc-brand-subtle);
+  color: var(--cc-brand);
+  font-weight: 500;
+}
+
+/* ── Spinner ────────────────────────────────────────────────────────── */
+
+.al-wrapper .spinner,
+.al-wrapper .spinner-sm {
+  border-color: var(--cc-border-hairline);
+  border-top-color: var(--cc-brand);
+}
+.al-wrapper .page-loading { color: var(--cc-text-secondary); font-size: var(--cc-text-sm); }
+
+/* ── Stars ──────────────────────────────────────────────────────────── */
+
+.al-wrapper .star { color: var(--cc-border-strong); }
+.al-wrapper .star.filled, .al-wrapper .star-static.filled { color: var(--cc-warning); }
+
+/* ── Toggles ────────────────────────────────────────────────────────── */
+
+.al-wrapper .toggle-row { border-color: var(--cc-border-hairline); }
+.al-wrapper .toggle-info { color: var(--cc-text-secondary); font-size: var(--cc-text-sm); }
+
+/* ── Focus, everywhere ──────────────────────────────────────────────────
+   No :focus-visible styling existed anywhere in the app before this. */
+
+.al-wrapper button:focus-visible,
+.al-wrapper a:focus-visible,
+.al-wrapper input:focus-visible,
+.al-wrapper select:focus-visible,
+.al-wrapper textarea:focus-visible,
+.al-wrapper [tabindex]:focus-visible {
+  outline: none;
+  box-shadow: var(--cc-focus-ring);
+  border-radius: var(--cc-r-sm);
+}
