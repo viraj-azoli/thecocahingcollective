@@ -11,3 +11,6 @@ tcco-app/aider
 
 # Supabase CLI local scratch (linked project ref)
 supabase/.temp/
+
+# Visual brainstorming session files
+.superpowers/
