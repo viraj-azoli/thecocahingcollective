@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
+import { StatusScreen } from '../../ui';
 
 export default function AuthCallback() {
   const navigate = useNavigate();
@@ -14,10 +15,7 @@ export default function AuthCallback() {
     navigate(map[userProfile.user_type] || '/dashboard');
   }, [loading, user, userProfile, navigate]);
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: '#F4EFE6', gap: '12px' }}>
-      <div className="spinner" />
-      <p style={{ fontFamily: 'Georgia,serif', color: '#12372A' }}>Signing you in…</p>
-    </div>
-  );
+  // This used the .spinner class from AppLayout.css, a stylesheet that is not
+  // loaded on auth routes — so the spinner never actually rendered here.
+  return <StatusScreen icon="spinner" spinning title="Signing you in…" />;
 }

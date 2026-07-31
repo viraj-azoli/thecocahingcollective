@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
-import './Auth.css';
+import {
+  AuthShell, AuthHeader, Alert, PasswordInput, AuthDivider, GoogleButton, Button,
+} from '../../ui';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -25,7 +27,6 @@ export default function Login() {
         case 'coach':  navigate('/coach/dashboard', { replace: true }); break;
         case 'admin':  navigate('/admin/dashboard', { replace: true }); break;
         default:
-          // If no user_type in profile, redirect to onboarding
           navigate('/signup?oauth=true', { replace: true });
       }
     } catch (err) {
@@ -36,52 +37,58 @@ export default function Login() {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <div className="auth-header">
-          <h1>Welcome Back</h1>
-          <p>Sign in to The Coaching Collective Online</p>
-        </div>
+    <AuthShell>
+      <AuthHeader title="Welcome back" subtitle="Sign in to The Coaching Collective" />
 
-        <form onSubmit={handleLogin} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input id="email" type="email" placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          </div>
+      <form onSubmit={handleLogin} className="cc-stack cc-gap-4">
+        <label className="cc-field" htmlFor="email">
+          <span className="cc-field-label">Email</span>
+          <input
+            id="email"
+            className="cc-input"
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+            required
+          />
+        </label>
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input id="password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          </div>
+        <label className="cc-field" htmlFor="password">
+          <span className="cc-field-label">Password</span>
+          <PasswordInput
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+            required
+          />
+        </label>
 
-          {errorMsg && <div className="error-message">{errorMsg}</div>}
+        <Alert>{errorMsg}</Alert>
 
-          <button type="submit" disabled={loading} className="auth-button">
-            {loading ? 'Signing in...' : 'Sign in'}
-          </button>
+        <Button type="submit" variant="primary" size="lg" block loading={loading}>
+          Sign in
+        </Button>
 
-          <button type="button"
-            onClick={async () => {
-              try { await loginWithGoogle(); }
-              catch (err) { setErrorMsg(err.message || 'Google sign-in failed'); }
-            }}
-            style={{ background:'#fff', color:'#333', border:'1px solid #ddd', marginTop:'8px', width:'100%', padding:'13px', borderRadius:'8px', fontSize:'15px', fontWeight:'600', cursor:'pointer' }}
-          >
-            <span style={{ marginRight:'8px' }}>G</span> Continue with Google
-          </button>
+        <AuthDivider />
 
-          <p style={{ textAlign:'center', marginTop:'12px', fontSize:'13px', color:'#666' }}>
-            <Link to="/reset-password" style={{ color:'#2D9E6B', textDecoration:'none' }}>Forgot your password?</Link>
-          </p>
-        </form>
+        <GoogleButton
+          onClick={async () => {
+            try { await loginWithGoogle(); }
+            catch (err) { setErrorMsg(err.message || 'Google sign-in failed'); }
+          }}
+        />
 
-        <div className="auth-footer">
-          <p>
-            Don't have an account?{' '}
-            <Link to="/signup" className="auth-link">Sign up</Link>
-          </p>
-        </div>
-      </div>
-    </div>
+        <p className="cc-auth-foot">
+          <Link to="/reset-password" className="cc-auth-link">Forgot your password?</Link>
+        </p>
+      </form>
+
+      <p className="cc-auth-foot">
+        Don't have an account? <Link to="/signup" className="cc-auth-link">Sign up</Link>
+      </p>
+    </AuthShell>
   );
 }

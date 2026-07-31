@@ -2,7 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
-import './Auth.css';
+import { AuthShell, AuthHeader, Alert, PasswordInput, Button } from '../../ui';
+
+// Signup enforced 6 characters while the reset screen enforced 8. Eight wins,
+// and the requirement is now stated up front rather than only on failure.
+const MIN_PASSWORD = 8;
+
+const ROLES = [
+  { value: 'seeker', label: 'I am looking for a coach', hint: 'Browse the collective and book sessions' },
+  { value: 'coach',  label: 'I am a coach',             hint: 'Requires an invitation from the team' },
+];
 
 export default function SignUp() {
   const [email, setEmail] = useState('');
@@ -16,58 +25,42 @@ export default function SignUp() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Handle OAuth callback flow — if user is authenticated via Google but no profile yet
   useEffect(() => {
     const isOAuth = new URLSearchParams(location.search).get('oauth') === 'true';
     if (isOAuth && user && !userProfile) {
-      // User came from Google OAuth — create public.users row and redirect to onboarding
-      const userType = user.user_metadata?.user_type || 'seeker';
-      setUserType(userType);
-      supabase.from('users').upsert({ id: user.id, user_type: userType }, { onConflict: 'id' })
+      const t = user.user_metadata?.user_type || 'seeker';
+      setUserType(t);
+      supabase.from('users').upsert({ id: user.id, user_type: t }, { onConflict: 'id' })
         .then(({ error }) => {
           if (error) setError('Could not set up account. Please try again.');
-          else navigate(userType === 'seeker' ? '/onboarding-seeker' : '/onboarding-coach');
+          else navigate(t === 'seeker' ? '/onboarding-seeker' : '/onboarding-coach');
         });
       return;
     }
     if (!isOAuth && user && userProfile) {
-      // Already authenticated — redirect to the role's dashboard
       const dashboards = { seeker: '/dashboard', coach: '/coach/dashboard', admin: '/admin/dashboard' };
       navigate(dashboards[userProfile.user_type] || '/dashboard');
     }
-
   }, [location.search, user, userProfile, navigate]);
 
   const handleSignup = async (e) => {
     e.preventDefault();
     setError('');
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
+    if (password !== confirmPassword) { setError('Passwords do not match'); return; }
+    if (password.length < MIN_PASSWORD) {
+      setError(`Password must be at least ${MIN_PASSWORD} characters`);
       return;
     }
-
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
-      return;
-    }
-
     if (!agreeTerms) {
       setError('You must agree to the Terms of Service and Privacy Policy to continue');
       return;
     }
 
     setLoading(true);
-
     try {
       await signup(email, password, userType);
-
-      // Redirect to appropriate onboarding
-      if (userType === 'seeker') {
-        navigate('/onboarding-seeker');
-      } else {
-        navigate('/onboarding-coach');
-      }
+      navigate(userType === 'seeker' ? '/onboarding-seeker' : '/onboarding-coach');
     } catch (err) {
       setError(err.message || 'Failed to sign up');
     } finally {
@@ -76,117 +69,74 @@ export default function SignUp() {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <div className="auth-header">
-          <h1>Join The Coaching Collective</h1>
-          <p>Create your account to get started</p>
-        </div>
+    <AuthShell>
+      <AuthHeader title="Join the collective" subtitle="Create your account to get started" />
 
-        <form onSubmit={handleSignup} className="auth-form">
-          <div className="form-group">
-            <label>I am a:</label>
-            <div className="user-type-selector">
-              <label className="radio-label">
-                <input
-                  type="radio"
-                  name="userType"
-                  value="seeker"
-                  checked={userType === 'seeker'}
-                  onChange={(e) => setUserType(e.target.value)}
-                />
-                <span>Seeker (looking for a coach)</span>
-              </label>
-              <label className="radio-label">
-                <input
-                  type="radio"
-                  name="userType"
-                  value="coach"
-                  checked={userType === 'coach'}
-                  onChange={(e) => setUserType(e.target.value)}
-                />
-                <span>Coach (providing coaching)</span>
-              </label>
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              placeholder="your@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              id="confirmPassword"
-              type="password"
-              placeholder="••••••••"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="form-group checkbox-group" style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginTop: '16px', marginBottom: '16px' }}>
-            <input
-              type="checkbox"
-              id="agreeTerms"
-              checked={agreeTerms}
-              onChange={(e) => setAgreeTerms(e.target.checked)}
-              required
-              style={{ marginTop: '3px', flexShrink: 0 }}
-            />
-            <label htmlFor="agreeTerms" style={{ fontSize: '13px', fontWeight: 'normal', color: '#666', lineHeight: '1.4', cursor: 'pointer' }}>
-              I agree to the{' '}
-              <a href="/terms.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent, #12372A)', textDecoration: 'underline' }}>
-                Terms of Service
-              </a>{' '}
-              and{' '}
-              <a href="/privacy.html" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent, #12372A)', textDecoration: 'underline' }}>
-                Privacy Policy
-              </a>
+      <form onSubmit={handleSignup} className="cc-stack cc-gap-4">
+        {/* A real fieldset, so the choice is announced as a group */}
+        <fieldset className="cc-roles">
+          <legend className="cc-field-label">I am…</legend>
+          {ROLES.map(r => (
+            <label key={r.value} className={`cc-role${userType === r.value ? ' cc-role-on' : ''}`}>
+              <input
+                type="radio"
+                name="userType"
+                value={r.value}
+                checked={userType === r.value}
+                onChange={(e) => setUserType(e.target.value)}
+              />
+              <span className="cc-role-body">
+                <span className="cc-role-label">{r.label}</span>
+                <span className="cc-role-hint">{r.hint}</span>
+              </span>
             </label>
-          </div>
+          ))}
+        </fieldset>
 
-          {error && <div className="error-message">{error}</div>}
+        <label className="cc-field" htmlFor="email">
+          <span className="cc-field-label">Email</span>
+          <input
+            id="email" className="cc-input" type="email" placeholder="you@example.com"
+            value={email} onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email" required
+          />
+        </label>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="auth-button"
-          >
-            {loading ? 'Creating account...' : 'Create account'}
-          </button>
-        </form>
+        <label className="cc-field" htmlFor="password">
+          <span className="cc-field-label">Password</span>
+          <PasswordInput
+            id="password" value={password} onChange={(e) => setPassword(e.target.value)}
+            autoComplete="new-password" required
+            hint={`At least ${MIN_PASSWORD} characters`}
+          />
+        </label>
 
-        <div className="auth-footer">
-          <p>
-            Already have an account?{' '}
-            <Link to="/login" className="auth-link">
-              Sign in
-            </Link>
-          </p>
-        </div>
-      </div>
-    </div>
+        <label className="cc-field" htmlFor="confirm">
+          <span className="cc-field-label">Confirm password</span>
+          <PasswordInput
+            id="confirm" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
+            autoComplete="new-password" required
+          />
+        </label>
+
+        <label className="cc-check">
+          <input type="checkbox" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} />
+          <span>
+            I agree to the <a href="/terms.html" className="cc-auth-link">Terms of Service</a> and{' '}
+            <a href="/privacy.html" className="cc-auth-link">Privacy Policy</a>
+          </span>
+        </label>
+
+        <Alert>{error}</Alert>
+
+        <Button type="submit" variant="primary" size="lg" block loading={loading}>
+          Create account
+        </Button>
+      </form>
+
+      <p className="cc-auth-foot">
+        Already have an account? <Link to="/login" className="cc-auth-link">Sign in</Link>
+      </p>
+    </AuthShell>
   );
 }

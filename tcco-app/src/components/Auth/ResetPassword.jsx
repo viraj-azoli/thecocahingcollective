@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../auth/useAuth';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import './Auth.css';
+import { AuthShell, AuthHeader, StatusScreen, Alert, PasswordInput, Button } from '../../ui';
+
+const MIN_PASSWORD = 8;
 
 export default function ResetPassword() {
   const { resetPassword, updatePassword } = useAuth();
@@ -12,9 +14,7 @@ export default function ResetPassword() {
   const [sent, setSent]         = useState(false);
   const [loading, setLoading]   = useState(false);
   const [msg, setMsg]           = useState('');
-  const [isReset, setIsReset] = useState(
-    window.location.hash.includes('type=recovery')
-  );
+  const [isReset, setIsReset]   = useState(window.location.hash.includes('type=recovery'));
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
@@ -25,6 +25,7 @@ export default function ResetPassword() {
 
   const handleRequest = async (e) => {
     e.preventDefault();
+    setMsg('');
     setLoading(true);
     try { await resetPassword(email); setSent(true); }
     catch (err) { setMsg(err.message); }
@@ -33,40 +34,78 @@ export default function ResetPassword() {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    setMsg('');
+    if (password.length < MIN_PASSWORD) {
+      setMsg(`Password must be at least ${MIN_PASSWORD} characters`);
+      return;
+    }
     setLoading(true);
     try { await updatePassword(password); navigate('/login'); }
     catch (err) { setMsg(err.message); }
     finally { setLoading(false); }
   };
 
-  if (isReset) return (
-    <div className="auth-wrap"><div className="auth-card">
-      <h2 className="auth-title">Set new password</h2>
-      <form onSubmit={handleUpdate} style={{ display:'flex', flexDirection:'column', gap:'14px' }}>
-        <input className="auth-input" type="password" placeholder="New password (min 8 chars)" value={password} onChange={e => setPassword(e.target.value)} required minLength={8} />
-        {msg && <p className="auth-error">{msg}</p>}
-        <button className="auth-btn" disabled={loading}>{loading ? 'Saving…' : 'Update password'}</button>
-      </form>
-    </div></div>
-  );
+  if (isReset) {
+    return (
+      <AuthShell>
+        <AuthHeader title="Set a new password" subtitle="Choose something you have not used before." />
+        <form onSubmit={handleUpdate} className="cc-stack cc-gap-4">
+          <label className="cc-field" htmlFor="new-password">
+            <span className="cc-field-label">New password</span>
+            <PasswordInput
+              id="new-password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              autoComplete="new-password"
+              hint={`At least ${MIN_PASSWORD} characters`}
+              required
+            />
+          </label>
+          <Alert>{msg}</Alert>
+          <Button type="submit" variant="primary" size="lg" block loading={loading}>
+            Update password
+          </Button>
+        </form>
+      </AuthShell>
+    );
+  }
 
-  if (sent) return (
-    <div className="auth-wrap"><div className="auth-card">
-      <h2 className="auth-title">Check your inbox</h2>
-      <p style={{ color:'#555', fontSize:'15px' }}>We sent a password reset link to <strong>{email}</strong>.</p>
-      <button className="auth-btn" style={{ marginTop:'16px' }} onClick={() => navigate('/login')}>Back to sign in</button>
-    </div></div>
-  );
+  if (sent) {
+    return (
+      <StatusScreen
+        icon="success"
+        title="Check your inbox"
+        body={`We sent a password reset link to ${email}.`}
+        action={<Button variant="primary" onClick={() => navigate('/login')}>Back to sign in</Button>}
+      />
+    );
+  }
 
   return (
-    <div className="auth-wrap"><div className="auth-card">
-      <h2 className="auth-title">Reset password</h2>
-      <form onSubmit={handleRequest} style={{ display:'flex', flexDirection:'column', gap:'14px' }}>
-        <input className="auth-input" type="email" placeholder="Email address" value={email} onChange={e => setEmail(e.target.value)} required />
-        {msg && <p className="auth-error">{msg}</p>}
-        <button className="auth-btn" disabled={loading}>{loading ? 'Sending…' : 'Send reset link'}</button>
-        <Link to="/login" className="auth-link" style={{ textAlign:'center' }}>Back to sign in</Link>
+    <AuthShell>
+      <AuthHeader title="Reset password" subtitle="We will email you a link to set a new one." />
+      <form onSubmit={handleRequest} className="cc-stack cc-gap-4">
+        <label className="cc-field" htmlFor="reset-email">
+          <span className="cc-field-label">Email</span>
+          <input
+            id="reset-email"
+            className="cc-input"
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            autoComplete="email"
+            required
+          />
+        </label>
+        <Alert>{msg}</Alert>
+        <Button type="submit" variant="primary" size="lg" block loading={loading}>
+          Send reset link
+        </Button>
       </form>
-    </div></div>
+      <p className="cc-auth-foot">
+        <Link to="/login" className="cc-auth-link">Back to sign in</Link>
+      </p>
+    </AuthShell>
   );
 }

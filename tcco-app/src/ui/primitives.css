@@ -316,6 +316,130 @@
 .cc-mood-on .cc-mood-num { color: var(--cc-brand); }
 .cc-mood-on .cc-mood-label { color: var(--cc-brand); font-weight: 500; }
 
+/* ── Auth ───────────────────────────────────────────────────────────── */
+
+.cc-auth {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--cc-space-6);
+  background: var(--cc-surface-page);
+}
+.cc-auth-card {
+  width: 100%; max-width: 400px;
+  background: var(--cc-surface-card);
+  border: 1px solid var(--cc-border-hairline);
+  border-radius: var(--cc-r-lg);
+  padding: var(--cc-space-8);
+  display: flex; flex-direction: column; gap: var(--cc-space-4);
+}
+.cc-auth-head { text-align: center; margin-bottom: var(--cc-space-2); }
+.cc-auth-logo { height: 34px; width: auto; margin: 0 auto var(--cc-space-5); display: block; }
+.cc-auth-title {
+  font-family: var(--cc-font-serif);
+  font-weight: 400;
+  font-size: var(--cc-text-xl);
+  line-height: var(--cc-lh-tight);
+  color: var(--cc-text-primary);
+  margin: 0;
+}
+.cc-auth-sub { font-size: var(--cc-text-sm); color: var(--cc-text-secondary); margin: var(--cc-space-2) 0 0; }
+.cc-auth-foot {
+  text-align: center;
+  font-size: var(--cc-text-sm);
+  color: var(--cc-text-secondary);
+  margin: 0;
+}
+.cc-auth-link { color: var(--cc-brand); text-decoration: none; font-weight: 500; }
+.cc-auth-link:hover { text-decoration: underline; }
+
+.cc-auth-divider {
+  display: flex; align-items: center; gap: var(--cc-space-3);
+  color: var(--cc-text-tertiary);
+  font-size: var(--cc-text-xs);
+}
+.cc-auth-divider::before, .cc-auth-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--cc-border-hairline);
+}
+
+.cc-google {
+  display: flex; align-items: center; justify-content: center; gap: var(--cc-space-2);
+  width: 100%;
+  font-family: var(--cc-font-sans);
+  font-size: var(--cc-text-sm);
+  font-weight: 500;
+  color: var(--cc-text-primary);
+  background: var(--cc-surface-card);
+  border: 1px solid var(--cc-border-strong);
+  border-radius: var(--cc-r-sm);
+  padding: 10px var(--cc-space-4);
+  cursor: pointer;
+  transition: background var(--cc-dur) var(--cc-ease);
+}
+.cc-google:hover { background: var(--cc-surface-sunken); }
+
+.cc-pw { position: relative; display: flex; flex-direction: column; gap: var(--cc-space-2); }
+.cc-pw .cc-input { padding-right: 60px; }
+.cc-pw-toggle {
+  position: absolute; right: var(--cc-space-2); top: 7px;
+  border: 0; background: transparent;
+  font-family: var(--cc-font-sans);
+  font-size: var(--cc-text-xs);
+  color: var(--cc-text-tertiary);
+  cursor: pointer;
+  padding: var(--cc-space-1) var(--cc-space-2);
+  border-radius: var(--cc-r-xs);
+}
+.cc-pw-toggle:hover { color: var(--cc-text-primary); background: var(--cc-surface-sunken); }
+
+.cc-auth-status { text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--cc-space-3); }
+.cc-auth-status-icon { color: var(--cc-brand); display: inline-flex; }
+.cc-auth-status-action { margin-top: var(--cc-space-3); }
+
+/* ── Role picker (signup) ───────────────────────────────────────────── */
+
+.cc-roles { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--cc-space-2); }
+.cc-roles legend { padding: 0; margin-bottom: var(--cc-space-2); }
+.cc-role {
+  display: flex; align-items: flex-start; gap: var(--cc-space-3);
+  border: 1px solid var(--cc-border-hairline);
+  border-radius: var(--cc-r-sm);
+  padding: var(--cc-space-3) var(--cc-space-4);
+  cursor: pointer;
+  transition: border-color var(--cc-dur) var(--cc-ease), background var(--cc-dur) var(--cc-ease);
+}
+.cc-role:hover { border-color: var(--cc-border-strong); }
+.cc-role input { margin-top: 3px; accent-color: var(--cc-brand); }
+.cc-role-body { display: flex; flex-direction: column; gap: 2px; }
+.cc-role-label { font-size: var(--cc-text-base); color: var(--cc-text-primary); }
+.cc-role-hint { font-size: var(--cc-text-xs); color: var(--cc-text-tertiary); }
+.cc-role-on { border-color: var(--cc-brand); background: var(--cc-brand-subtle); }
+
+/* ── Checkbox row ───────────────────────────────────────────────────── */
+
+.cc-check {
+  display: flex; align-items: flex-start; gap: var(--cc-space-3);
+  font-size: var(--cc-text-sm);
+  color: var(--cc-text-secondary);
+  line-height: var(--cc-lh-snug);
+  cursor: pointer;
+}
+.cc-check input { margin-top: 2px; width: 15px; height: 15px; accent-color: var(--cc-brand); flex-shrink: 0; }
+
+/* ── Alert ──────────────────────────────────────────────────────────── */
+
+.cc-alert {
+  display: flex; align-items: flex-start; gap: var(--cc-space-2);
+  font-size: var(--cc-text-sm);
+  border-radius: var(--cc-r-sm);
+  padding: var(--cc-space-3);
+  margin: 0;
+}
+.cc-alert svg { flex-shrink: 0; margin-top: 2px; }
+.cc-alert-danger  { background: var(--cc-danger-subtle);  color: var(--cc-danger); }
+.cc-alert-success { background: var(--cc-success-subtle); color: var(--cc-success); }
+.cc-alert-info    { background: var(--cc-info-subtle);    color: var(--cc-info); }
+.cc-alert-warning { background: var(--cc-warning-subtle); color: var(--cc-warning); }
+
 /* ── FormField ──────────────────────────────────────────────────────── */
 
 .cc-field { display: flex; flex-direction: column; gap: var(--cc-space-2); }

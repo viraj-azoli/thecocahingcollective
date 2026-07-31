@@ -21,3 +21,6 @@ export { default as SessionCard } from './SessionCard';
 export { default as Modal, ConfirmDialog } from './Modal';
 export { default as StarRating } from './StarRating';
 export { default as Tabs } from './Tabs';
+export {
+  AuthShell, AuthHeader, Alert, PasswordInput, AuthDivider, GoogleButton, StatusScreen,
+} from './Auth';
