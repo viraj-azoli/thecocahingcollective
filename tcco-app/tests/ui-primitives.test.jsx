@@ -4,7 +4,7 @@ import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import {
   Button, Card, PageHeader, SectionHeader, StatTile, StatRow, Badge, Tag,
   Avatar, EmptyState, MoodScale, ActionCard, Icon, Modal, ConfirmDialog,
-  StarRating, Tabs,
+  StarRating, Tabs, DateGrid, TimeSlotGrid,
 } from '../src/ui';
 
 // This project has no vitest setupFiles, so testing-library's automatic
@@ -103,6 +103,27 @@ describe('design system primitives', () => {
   it('StarRating exposes its value to assistive tech when read-only', () => {
     render(<StarRating value={4} readOnly />);
     expect(screen.getByLabelText('4 out of 5')).toBeTruthy();
+  });
+
+  it('DateGrid keys dates in local time, not UTC', () => {
+    // toISOString() shifts to UTC, so for anyone west of Greenwich a date
+    // could be keyed as the previous day.
+    const onChange = vi.fn();
+    const d = new Date(2026, 7, 15, 23, 30); // 15 Aug, late evening local
+    render(<DateGrid days={[d]} value="" onChange={onChange} />);
+    fireEvent.click(screen.getAllByRole('radio')[0]);
+    expect(onChange).toHaveBeenCalledWith('2026-08-15');
+  });
+
+  it('TimeSlotGrid disables taken slots and says why', () => {
+    const onChange = vi.fn();
+    render(<TimeSlotGrid slots={['09:00', '10:00']} value="" taken={['09:00']} onChange={onChange} />);
+    const taken = screen.getByLabelText('9:00 AM — already booked');
+    expect(taken.disabled).toBe(true);
+    fireEvent.click(taken);
+    expect(onChange).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByLabelText('10:00 AM'));
+    expect(onChange).toHaveBeenCalledWith('10:00');
   });
 
   it('Avatar falls back to initials without an image', () => {

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Icon from '../../ui/Icon';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
@@ -7,59 +6,51 @@ import { appBaseUrl } from '../../lib/appUrl';
 import { track } from '../../lib/analytics';
 import AppLayout from '../Layout/AppLayout';
 import SEO from '../shared/SEO';
+import {
+  PageHeader, SectionHeader, Card, Button, Badge, Tag, Avatar, Icon,
+  StarRating, Modal, EmptyState, DateGrid, TimeSlotGrid,
+} from '../../ui';
+import { formatDateLong } from '../../lib/datetime';
 import '../Layout/AppLayout.css';
 
-const AVATAR_COLORS = [
-  'linear-gradient(135deg,#2D9E6B,#1a7a52)',
-  'linear-gradient(135deg,#6366f1,#4f46e5)',
-  'linear-gradient(135deg,#f59e0b,#d97706)',
-  'linear-gradient(135deg,#ec4899,#be185d)',
-  'linear-gradient(135deg,#06b6d4,#0284c7)',
-];
+const SLOTS = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'];
+const CONTENT_ICON = { audio: 'audio', article: 'article', live_event: 'live', program: 'program' };
 
-function avatarColor(name) {
-  let sum = 0;
-  for (let c of (name || '')) sum += c.charCodeAt(0);
-  return AVATAR_COLORS[sum % AVATAR_COLORS.length];
-}
+const timeLabel = (t) => {
+  if (!t) return '';
+  const h = parseInt(t.split(':')[0], 10);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  return `${h === 0 ? 12 : h > 12 ? h - 12 : h}:00 ${ampm}`;
+};
 
-function initials(name) {
-  if (!name) return '?';
-  const parts = name.trim().split(' ');
-  return parts.length >= 2 ? parts[0][0] + parts[parts.length - 1][0] : parts[0][0];
-}
+// ── Booking wizard ───────────────────────────────────────────────────────────
+//
+// step was 1-4 with a separate showIntake boolean, and the two were
+// independent — so the header could render "Pick a time" and "Intake form"
+// at once, and step 4 (a success screen) became unreachable when booking
+// started redirecting to Stripe. One enum makes those states impossible.
+const STEPS = {
+  date:    { title: 'Pick a date',      back: null },
+  time:    { title: 'Pick a time',      back: 'date' },
+  intake:  { title: 'A few questions',  back: 'time' },
+  confirm: { title: 'Confirm booking',  back: 'time' },
+};
 
-function StarDisplay({ rating = 0, size = 16 }) {
-  return (
-    <div className="stars-row">
-      {[1,2,3,4,5].map(i => (
-        <span key={i} className={`star star-static ${i <= Math.round(rating) ? 'filled' : ''}`} style={{ fontSize: size }}>★</span>
-      ))}
-    </div>
-  );
-}
-
-// ── Booking Modal ────────────────────────────────────────────────────────────
-function BookingModal({ coach, seekerProfileId, userEmail, onClose, onBooked }) {
-  const navigate = useNavigate();
-  const [step, setStep]             = useState(1);
+function BookingModal({ coach, seekerProfileId, open, onClose }) {
+  const [step, setStep]                 = useState('date');
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
-  const [bookedSessions, setBookedSessions] = useState([]);
-  const [saving, setSaving]         = useState(false);
-  const [error, setError]           = useState('');
-  const [success, setSuccess]       = useState(false);
-  // Intake form
-  const [intakeForm, setIntakeForm]       = useState(null);
-  const [intakeAnswers, setIntakeAnswers] = useState({});
-  const [showIntake, setShowIntake]       = useState(false);
+  const [taken, setTaken]               = useState([]);
+  const [saving, setSaving]             = useState(false);
+  const [error, setError]               = useState('');
+  const [intakeForm, setIntakeForm]     = useState(null);
+  const [answers, setAnswers]           = useState({});
 
   useEffect(() => {
     supabase.from('intake_forms').select('*').eq('coach_id', coach.id).maybeSingle()
       .then(({ data }) => setIntakeForm(data));
   }, [coach.id]);
 
-  // Build next 14 days
   const days = [];
   for (let i = 1; i <= 14; i++) {
     const d = new Date();
@@ -67,11 +58,6 @@ function BookingModal({ coach, seekerProfileId, userEmail, onClose, onBooked }) 
     days.push(d);
   }
 
-  const formatDateKey = d => d.toISOString().split('T')[0];
-
-  const STANDARD_SLOTS = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'];
-
-  // Load booked slots when date selected
   useEffect(() => {
     if (!selectedDate) return;
     supabase
@@ -81,27 +67,29 @@ function BookingModal({ coach, seekerProfileId, userEmail, onClose, onBooked }) 
       .eq('scheduled_date', selectedDate)
       .in('status', ['scheduled', 'in_progress', 'pending_payment'])
       .then(({ data }) => {
-        // A slot mid-checkout is held so two seekers can't both pay the coach
-        // for it — but only for as long as the Stripe session lives (30 min),
-        // otherwise an abandoned checkout would block the slot indefinitely.
+        // A slot mid-checkout is held so two seekers can't both pay for it,
+        // but only for the 30-minute life of the Stripe session.
         const cutoff = Date.now() - 30 * 60 * 1000;
-        const held = (data || []).filter(s =>
-          s.status !== 'pending_payment' || new Date(s.created_at).getTime() > cutoff
-        );
-        setBookedSessions(held.map(s => s.scheduled_time?.slice(0, 5)));
+        setTaken((data || [])
+          .filter(s => s.status !== 'pending_payment' || new Date(s.created_at).getTime() > cutoff)
+          .map(s => s.scheduled_time?.slice(0, 5)));
       });
   }, [selectedDate, coach.id]);
+
+  const needsIntake = !!(intakeForm?.is_required && intakeForm?.questions?.length);
+
+  const pickTime = (t) => {
+    setSelectedTime(t);
+    setStep(needsIntake ? 'intake' : 'confirm');
+  };
 
   const handleBook = async () => {
     setSaving(true);
     setError('');
     try {
-      // Payment-first. The row starts as pending_payment and is promoted to
-      // scheduled by the stripe-webhook once the seeker actually pays the
-      // coach. amount_paid is set from the real charge, not from the list
-      // price — this flow used to record the price as paid without ever
-      // taking a payment.
-      const { data: sessionData, error: err } = await supabase.from('sessions').insert({
+      // Payment-first: the row starts as pending_payment and the webhook
+      // promotes it once the seeker has actually paid the coach.
+      const { data: session, error: err } = await supabase.from('sessions').insert({
         coach_id: coach.id,
         seeker_id: seekerProfileId,
         scheduled_date: selectedDate,
@@ -112,37 +100,25 @@ function BookingModal({ coach, seekerProfileId, userEmail, onClose, onBooked }) 
       }).select().single();
       if (err) throw err;
 
-      // Save intake response if present
-      if (intakeForm?.id && Object.keys(intakeAnswers).length > 0 && seekerProfileId) {
-        // A PostgREST query builder is a thenable, not a Promise — it has no
-        // .catch(). Calling one threw a TypeError here, which the outer catch
-        // reported as a failed booking even though the session had already
-        // been created. Check the returned error instead.
+      if (intakeForm?.id && Object.keys(answers).length > 0 && seekerProfileId) {
         const { error: intakeErr } = await supabase.from('intake_responses').insert({
           form_id: intakeForm.id,
           seeker_id: seekerProfileId,
-          session_id: sessionData?.id,
-          answers: intakeAnswers,
+          session_id: session?.id,
+          answers,
         });
         if (intakeErr) console.warn('Could not save intake response:', intakeErr.message);
       }
 
       track('booking_payment_started', { coachId: coach.id, coachName: coach.name, date: selectedDate });
 
-      // Hand off to Stripe Checkout on the coach's own account. The
-      // confirmation email is sent by the webhook after payment clears, so a
-      // seeker who abandons checkout is never told the session is booked.
       const { data: checkout, error: checkoutErr } = await supabase.functions.invoke(
-        'create-session-checkout',
-        { body: { sessionId: sessionData.id } },
+        'create-session-checkout', { body: { sessionId: session.id } },
       );
-
       if (checkoutErr || !checkout?.url) {
-        // Don't leave an orphaned pending row holding the slot.
-        await supabase.from('sessions').delete().eq('id', sessionData.id);
+        await supabase.from('sessions').delete().eq('id', session.id);
         throw new Error(checkout?.error || 'Could not start payment. Please try again.');
       }
-
       window.location.href = checkout.url;
     } catch (e) {
       setError(e.message || 'Booking failed. Please try again.');
@@ -151,306 +127,165 @@ function BookingModal({ coach, seekerProfileId, userEmail, onClose, onBooked }) 
     }
   };
 
-  const formatDateLabel = (d) => {
-    const today = new Date(); today.setHours(0,0,0,0);
-    const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
-    const target = new Date(formatDateKey(d) + 'T00:00');
-    if (target.getTime() === today.getTime()) return 'Today';
-    if (target.getTime() === tomorrow.getTime()) return 'Tomorrow';
-    return null;
-  };
-
-  const formatTime12 = (t) => {
-    const [h] = t.split(':');
-    const hour = parseInt(h, 10);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
-    const h12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-    return `${h12}:00 ${ampm}`;
-  };
-
-  const formatFullDate = (ds) => new Date(ds + 'T00:00').toLocaleDateString('en-US', {
-    weekday: 'long', month: 'long', day: 'numeric',
-  });
+  const back = STEPS[step].back;
 
   return (
-    <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="modal modal-lg">
-        <div className="modal-header">
-          <h3>
-            {step === 1 && 'Pick a date'}
-            {step === 2 && 'Pick a time'}
-            {showIntake && 'Intake form'}
-            {!showIntake && step === 3 && 'Confirm booking'}
-            {step === 4 && 'Booking confirmed!'}
-          </h3>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={STEPS[step].title}
+      size="lg"
+      footer={back && (
+        <Button icon="chevronLeft" onClick={() => setStep(back)}>Back</Button>
+      )}
+    >
+      {step === 'date' && (
+        <>
+          <p className="cc-muted" style={{ margin: 0 }}>
+            Choose a day for your session with {coach.name}.
+          </p>
+          <DateGrid
+            days={days}
+            value={selectedDate}
+            onChange={(d) => { setSelectedDate(d); setStep('time'); }}
+          />
+        </>
+      )}
 
-        <div className="modal-body">
-          {/* Step 1 – Date */}
-          {step === 1 && (
-            <div>
-              <p style={{ fontSize: '14px', color: 'var(--text-soft)', marginBottom: '16px' }}>
-                Select a date for your session with {coach.name}
-              </p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px' }}>
-                {days.map(d => {
-                  const ds = formatDateKey(d);
-                  const label = formatDateLabel(d);
-                  const isSelected = selectedDate === ds;
-                  return (
+      {step === 'time' && (
+        <>
+          <p className="cc-muted" style={{ margin: 0 }}>
+            {formatDateLong(selectedDate)} · 55 minute video session
+          </p>
+          <TimeSlotGrid slots={SLOTS} value={selectedTime} taken={taken} onChange={pickTime} />
+        </>
+      )}
+
+      {step === 'intake' && intakeForm && (
+        <>
+          <p className="cc-muted" style={{ margin: 0 }}>
+            {coach.name} would like to learn a little about you first.
+          </p>
+          {(intakeForm.questions || []).map(q => (
+            <div key={q.id} className="cc-field">
+              <span className="cc-field-label">
+                {q.question}{q.required && <span style={{ color: 'var(--cc-danger)' }}> *</span>}
+              </span>
+
+              {q.type === 'text' && (
+                <textarea
+                  className="cc-input cc-textarea"
+                  rows={3}
+                  value={answers[q.id] || ''}
+                  onChange={e => setAnswers(a => ({ ...a, [q.id]: e.target.value }))}
+                />
+              )}
+
+              {q.type === 'choice' && (
+                <div className="cc-stack cc-gap-2">
+                  {(q.options || []).map(opt => (
+                    <label key={opt} className="cc-check">
+                      <input
+                        type="checkbox"
+                        checked={(answers[q.id] || []).includes(opt)}
+                        onChange={e => {
+                          const prev = answers[q.id] || [];
+                          setAnswers(a => ({
+                            ...a,
+                            [q.id]: e.target.checked ? [...prev, opt] : prev.filter(x => x !== opt),
+                          }));
+                        }}
+                      />
+                      <span>{opt}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+
+              {q.type === 'scale' && (
+                <div className="cc-slots" style={{ gridTemplateColumns: 'repeat(10, 1fr)' }}>
+                  {[1,2,3,4,5,6,7,8,9,10].map(n => (
                     <button
-                      key={ds}
-                      onClick={() => { setSelectedDate(ds); setStep(2); }}
-                      style={{
-                        border: `2px solid ${isSelected ? 'var(--accent)' : 'var(--border-card)'}`,
-                        borderRadius: 'var(--r-md)',
-                        background: isSelected ? 'var(--accent)' : 'var(--card-bg)',
-                        color: isSelected ? '#fff' : 'var(--text-b)',
-                        padding: '10px 4px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        gap: '2px',
-                        cursor: 'pointer',
-                        transition: 'all .15s',
-                        fontFamily: 'inherit',
-                      }}
-                    >
-                      <span style={{ fontSize: '11px', fontWeight: 600, opacity: isSelected ? 0.85 : 1, color: isSelected ? '#fff' : 'var(--text-soft)' }}>
-                        {label || d.toLocaleDateString('en-US', { weekday: 'short' })}
-                      </span>
-                      <span style={{ fontSize: '18px', fontWeight: 700 }}>{d.getDate()}</span>
-                      <span style={{ fontSize: '11px', opacity: isSelected ? 0.85 : 1, color: isSelected ? '#fff' : 'var(--text-soft)' }}>
-                        {d.toLocaleDateString('en-US', { month: 'short' })}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Step 2 – Time */}
-          {step === 2 && (
-            <div>
-              <p style={{ fontSize: '14px', color: 'var(--text-soft)', marginBottom: '16px' }}>
-                {formatFullDate(selectedDate)} · 55 min video session
-              </p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
-                {STANDARD_SLOTS.map(t => {
-                  const booked = bookedSessions.includes(t);
-                  const isSelected = selectedTime === t;
-                  return (
-                    <button
-                      key={t}
-                      disabled={booked}
-                      onClick={() => {
-                        setSelectedTime(t);
-                        if (intakeForm?.is_required && intakeForm?.questions?.length > 0) {
-                          setShowIntake(true);
-                        } else {
-                          setStep(3);
-                        }
-                      }}
-                      style={{
-                        border: `2px solid ${isSelected ? 'var(--accent)' : booked ? 'var(--border-card)' : 'var(--border-card)'}`,
-                        borderRadius: 'var(--r-md)',
-                        background: isSelected ? 'var(--accent)' : booked ? '#f3f4f6' : 'var(--card-bg)',
-                        color: isSelected ? '#fff' : booked ? '#9ca3af' : 'var(--text-b)',
-                        padding: '14px 8px',
-                        fontWeight: 600,
-                        fontSize: '15px',
-                        cursor: booked ? 'not-allowed' : 'pointer',
-                        opacity: booked ? 0.5 : 1,
-                        transition: 'all .15s',
-                        fontFamily: 'inherit',
-                        textDecoration: booked ? 'line-through' : 'none',
-                      }}
-                    >
-                      {formatTime12(t)}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Intake form step */}
-          {showIntake && intakeForm && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-              <p style={{ fontSize: '14px', color: 'var(--text-soft)' }}>
-                {coach.name} would like to learn a bit about you before your first session.
-              </p>
-              {(intakeForm.questions || []).map(q => (
-                <div key={q.id}>
-                  <label style={{ display: 'block', fontWeight: 600, fontSize: '14px', marginBottom: '6px', color: 'var(--text-h)' }}>
-                    {q.question}{q.required && <span style={{ color: '#dc2626' }}> *</span>}
-                  </label>
-                  {q.type === 'text' && (
-                    <textarea
-                      className="form-input"
-                      style={{ minHeight: '72px' }}
-                      value={intakeAnswers[q.id] || ''}
-                      onChange={e => setIntakeAnswers(a => ({ ...a, [q.id]: e.target.value }))}
-                    />
-                  )}
-                  {q.type === 'choice' && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                      {(q.options || []).map(opt => (
-                        <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14px' }}>
-                          <input
-                            type="checkbox"
-                            checked={(intakeAnswers[q.id] || []).includes(opt)}
-                            onChange={e => {
-                              const prev = intakeAnswers[q.id] || [];
-                              setIntakeAnswers(a => ({
-                                ...a,
-                                [q.id]: e.target.checked ? [...prev, opt] : prev.filter(x => x !== opt),
-                              }));
-                            }}
-                          />
-                          {opt}
-                        </label>
-                      ))}
-                    </div>
-                  )}
-                  {q.type === 'scale' && (
-                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                      {[1,2,3,4,5,6,7,8,9,10].map(n => (
-                        <button
-                          key={n}
-                          onClick={() => setIntakeAnswers(a => ({ ...a, [q.id]: n }))}
-                          style={{
-                            width: '38px', height: '38px', border: '2px solid',
-                            borderColor: intakeAnswers[q.id] === n ? 'var(--accent)' : 'var(--border-card)',
-                            borderRadius: '8px', fontWeight: 700, fontSize: '14px', cursor: 'pointer',
-                            background: intakeAnswers[q.id] === n ? 'var(--accent)' : 'var(--card-bg)',
-                            color: intakeAnswers[q.id] === n ? '#fff' : 'var(--text-b)',
-                            fontFamily: 'inherit',
-                          }}
-                        >{n}</button>
-                      ))}
-                    </div>
-                  )}
+                      key={n}
+                      type="button"
+                      className={`cc-slot${answers[q.id] === n ? ' cc-slot-on' : ''}`}
+                      onClick={() => setAnswers(a => ({ ...a, [q.id]: n }))}
+                    >{n}</button>
+                  ))}
                 </div>
-              ))}
-              <button
-                className="btn btn-primary btn-lg"
-                style={{ width: '100%', justifyContent: 'center' }}
-                onClick={() => { setShowIntake(false); setStep(3); }}
-              >
-                Continue →
-              </button>
+              )}
             </div>
-          )}
-
-          {/* Step 3 – Confirm */}
-          {!showIntake && step === 3 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div className="card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <p style={{ fontSize: '13px', color: 'var(--text-soft)', fontWeight: 600 }}>SESSION SUMMARY</p>
-                <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
-                  <div
-                    className="avatar avatar-md"
-                    style={{ background: avatarColor(coach.name), color: '#fff', fontWeight: 700, flexShrink: 0 }}
-                  >
-                    {initials(coach.name)}
-                  </div>
-                  <div>
-                    <p style={{ fontWeight: 700, fontSize: '16px', color: 'var(--text-h)' }}>{coach.name}</p>
-                    <p style={{ fontSize: '13px', color: 'var(--text-soft)' }}>{coach.title}</p>
-                  </div>
-                </div>
-                <div style={{ borderTop: '1px solid var(--border-card)', paddingTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
-                    <span style={{ color: 'var(--text-soft)' }}>Date</span>
-                    <span style={{ fontWeight: 600, color: 'var(--text-b)' }}>{formatFullDate(selectedDate)}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
-                    <span style={{ color: 'var(--text-soft)' }}>Time</span>
-                    <span style={{ fontWeight: 600, color: 'var(--text-b)' }}>{formatTime12(selectedTime)}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
-                    <span style={{ color: 'var(--text-soft)' }}>Duration</span>
-                    <span style={{ fontWeight: 600, color: 'var(--text-b)' }}>55 min</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
-                    <span style={{ color: 'var(--text-soft)' }}>Type</span>
-                    <span style={{ fontWeight: 600, color: 'var(--text-b)' }}><Icon name="video" size={14} /> Video</span>
-                  </div>
-                  {coach.price_per_session && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', borderTop: '1px solid var(--border-card)', paddingTop: '8px', marginTop: '4px' }}>
-                      <span style={{ fontWeight: 700, color: 'var(--text-h)' }}>Total</span>
-                      <span style={{ fontWeight: 700, color: 'var(--accent)' }}>${coach.price_per_session}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-              {error && <p style={{ color: '#dc2626', fontSize: '13px' }}>{error}</p>}
-              <button
-                className="btn btn-primary btn-lg"
-                style={{ width: '100%', justifyContent: 'center' }}
-                onClick={handleBook}
-                disabled={saving}
-              >
-                {saving ? 'Booking…' : 'Confirm & Book'}
-              </button>
-            </div>
-          )}
-
-          {/* Step 4 – Success */}
-          {step === 4 && (
-            <div style={{ textAlign: 'center', padding: '20px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-              <span style={{ fontSize: '56px' }}>✅</span>
-              <h2 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--text-h)' }}>Session booked!</h2>
-              <p style={{ color: 'var(--text-soft)', fontSize: '15px' }}>
-                Your session with {coach.name} on {formatFullDate(selectedDate)} at {formatTime12(selectedTime)} is confirmed.
-              </p>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <button className="btn btn-primary" onClick={() => { onBooked(); onClose(); }}>View my sessions</button>
-                <button className="btn btn-outline" onClick={onClose}>Close</button>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {(step === 2 || step === 3 || showIntake) && (
-          <div className="modal-footer">
-            <button
-              className="btn btn-outline"
-              onClick={() => {
-                if (showIntake) { setShowIntake(false); }
-                else setStep(s => s - 1);
-              }}
-            >← Back</button>
+          ))}
+          <div>
+            <Button variant="primary" iconAfter="chevronRight" onClick={() => setStep('confirm')}>
+              Continue
+            </Button>
           </div>
-        )}
-      </div>
-    </div>
+        </>
+      )}
+
+      {step === 'confirm' && (
+        <>
+          <Card quiet>
+            <SectionHeader label="Session summary" />
+            <div className="cc-inline cc-gap-3" style={{ marginBottom: 'var(--cc-space-4)' }}>
+              <Avatar name={coach.name} src={coach.avatar_url} size="md" />
+              <div>
+                <div className="cc-row-title">{coach.name}</div>
+                <div className="cc-row-meta">{coach.title}</div>
+              </div>
+            </div>
+            <dl className="cc-defs">
+              <div className="cc-def"><dt>Date</dt><dd>{formatDateLong(selectedDate)}</dd></div>
+              <div className="cc-def"><dt>Time</dt><dd>{timeLabel(selectedTime)}</dd></div>
+              <div className="cc-def"><dt>Duration</dt><dd>55 minutes</dd></div>
+              <div className="cc-def"><dt>Format</dt><dd>Video</dd></div>
+              {coach.price_per_session && (
+                <div className="cc-def cc-def-total">
+                  <dt>Total</dt><dd>${coach.price_per_session}</dd>
+                </div>
+              )}
+            </dl>
+          </Card>
+
+          <p className="cc-quiet" style={{ fontSize: 'var(--cc-text-sm)', margin: 0 }}>
+            You'll be taken to Stripe to pay {coach.name} directly. Your session is
+            confirmed once payment completes.
+          </p>
+
+          {error && (
+            <p className="cc-alert cc-alert-danger" role="alert">
+              <Icon name="alert" size={14} /><span>{error}</span>
+            </p>
+          )}
+
+          <Button variant="primary" size="lg" block loading={saving} onClick={handleBook}>
+            Continue to payment
+          </Button>
+        </>
+      )}
+    </Modal>
   );
 }
 
-// ── Main Page ────────────────────────────────────────────────────────────────
+// ── Page ─────────────────────────────────────────────────────────────────────
 export default function CoachProfilePage() {
   const { user } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [coach, setCoach]           = useState(null);
-  const [content, setContent]       = useState([]);
-  const [packages, setPackages]     = useState([]);
-  const [reviews, setReviews]       = useState([]);
-  const [loading, setLoading]       = useState(true);
-  const [showModal, setShowModal]   = useState(false);
+  const [coach, setCoach]     = useState(null);
+  const [content, setContent] = useState([]);
+  const [packages, setPackages] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const [seekerProfileId, setSeekerProfileId] = useState(null);
 
   useEffect(() => {
     loadData();
-    if (new URLSearchParams(location.search).get('book') === 'true') {
-      setShowModal(true);
-    }
+    if (new URLSearchParams(location.search).get('book') === 'true') setShowModal(true);
   }, []); // eslint-disable-line
 
   const loadData = async () => {
@@ -477,7 +312,7 @@ export default function CoachProfilePage() {
   if (loading) {
     return (
       <AppLayout role="seeker">
-        <div className="page-loading"><div className="spinner" /><p>Loading coach profile…</p></div>
+        <div className="cc cc-page"><div className="cc-loading"><span /></div></div>
       </AppLayout>
     );
   }
@@ -485,276 +320,232 @@ export default function CoachProfilePage() {
   if (!coach) {
     return (
       <AppLayout role="seeker">
-        <div className="empty-state" style={{ marginTop: 80 }}>
-          <span className="empty-icon"><Icon name="mood" size={22} /></span>
-          <p>Coach not found.</p>
-          <button className="btn btn-outline" onClick={() => navigate('/coaches')}>← All Coaches</button>
+        <div className="cc cc-page">
+          <EmptyState
+            icon="search"
+            title="Coach not found"
+            body="This profile may have been removed."
+            action={<Button variant="primary" onClick={() => navigate('/coaches')}>Browse coaches</Button>}
+          />
         </div>
       </AppLayout>
     );
   }
 
-  const bg = avatarColor(coach.name);
+  const bookable = !!coach.stripe_charges_enabled;
+  // Seekers pay the coach directly, so there is nothing to book until Stripe
+  // has enabled charges. Both entry points are gated — the sidebar button
+  // previously was not, so the guard on the header button could be walked past.
+  const bookButton = (size) => (
+    <Button
+      variant="primary"
+      size={size}
+      icon="sessions"
+      block={size === 'lg'}
+      disabled={!bookable}
+      title={bookable ? undefined : 'This coach has not finished setting up payments yet'}
+      onClick={() => setShowModal(true)}
+    >
+      Book a session
+    </Button>
+  );
 
   return (
     <AppLayout role="seeker">
       <SEO
         title={coach.name + (coach.title ? ` — ${coach.title}` : '')}
-        description={coach.bio || `Work with ${coach.name}, a verified coach on TCCO.`}
+        description={coach.bio || `Work with ${coach.name}, a verified coach on The Coaching Collective.`}
         url={`${appBaseUrl()}/coaches/${coach.id}`}
       />
-      <div className="page-body">
-        {/* Back */}
-        <button className="btn btn-outline btn-sm" onClick={() => navigate('/coaches')}>← All Coaches</button>
+      <div className="cc cc-page">
+        <div>
+          <Button variant="ghost" size="sm" icon="chevronLeft" onClick={() => navigate('/coaches')}>
+            All coaches
+          </Button>
+        </div>
 
-        {/* Profile header card */}
-        <div className="card" style={{ padding: '32px' }}>
-          <div style={{ display: 'flex', gap: '28px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-            {/* Avatar XL */}
-            <div style={{
-              width: 96, height: 96, borderRadius: '50%',
-              background: coach.avatar_url ? 'transparent' : bg,
-              backgroundImage: coach.avatar_url ? `url(${coach.avatar_url})` : undefined,
-              backgroundSize: 'cover', backgroundPosition: 'center',
-              color: '#fff', fontWeight: 700, fontSize: '28px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-              border: '3px solid var(--gray-200)',
-            }}>
-              {!coach.avatar_url && initials(coach.name)}
-            </div>
+        {/* Profile header */}
+        <Card>
+          <div className="cc-coachhead">
+            <Avatar name={coach.name} src={coach.avatar_url} size="xl" />
 
-            <div style={{ flex: 1, minWidth: 200 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                <h1 style={{ fontSize: '32px', fontWeight: 700, color: 'var(--text-h)', lineHeight: 1.1 }}>{coach.name}</h1>
-                {coach.verified && <span className="badge badge-green">✓ Verified</span>}
+            <div className="cc-grow">
+              <div className="cc-inline cc-gap-3" style={{ flexWrap: 'wrap' }}>
+                <h1 className="cc-pagehead-title" style={{ fontSize: 'var(--cc-text-2xl)' }}>{coach.name}</h1>
+                {coach.verified && <Badge tone="success">Verified</Badge>}
               </div>
-              <p style={{ fontSize: '16px', color: 'var(--text-soft)', marginTop: '6px' }}>{coach.title}</p>
+              {coach.title && <p className="cc-pagehead-sub">{coach.title}</p>}
 
-              {/* Stats row */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginTop: '14px', flexWrap: 'wrap' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <StarDisplay rating={coach.rating || 0} size={18} />
-                  <span style={{ fontWeight: 700, color: 'var(--text-h)' }}>
-                    {coach.rating ? Number(coach.rating).toFixed(1) : '—'}
-                  </span>
-                </div>
-                {coach.review_count > 0 && (
-                  <span style={{ fontSize: '13px', color: 'var(--text-soft)' }}>{coach.review_count} reviews</span>
-                )}
+              <div className="cc-inline cc-gap-4" style={{ flexWrap: 'wrap', marginTop: 'var(--cc-space-3)' }}>
+                <StarRating value={coach.rating || 0} readOnly showValue count={coach.review_count || undefined} />
                 {coach.price_per_session && (
-                  <span style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-h)' }}>
-                    ${coach.price_per_session}<span style={{ fontSize: '13px', fontWeight: 400, color: 'var(--text-soft)' }}>/session</span>
+                  <span className="cc-price">
+                    <span className="cc-figure">${coach.price_per_session}</span>
+                    <span className="cc-quiet"> / session</span>
                   </span>
                 )}
                 {coach.languages?.length > 0 && (
-                  <span style={{ fontSize: '13px', color: 'var(--text-soft)' }}>🌐 {coach.languages.join(', ')}</span>
+                  <span className="cc-inline cc-gap-2 cc-quiet" style={{ fontSize: 'var(--cc-text-sm)' }}>
+                    <Icon name="globe" size={14} /> {coach.languages.join(', ')}
+                  </span>
                 )}
               </div>
 
-              {/* Specialties */}
               {coach.specialties?.length > 0 && (
-                <div className="chips-row" style={{ marginTop: '12px' }}>
-                  {coach.specialties.map(s => (
-                    <span key={s} className="chip" style={{ fontSize: '12px', padding: '4px 10px' }}>{s}</span>
-                  ))}
+                <div className="cc-inline cc-gap-2" style={{ flexWrap: 'wrap', marginTop: 'var(--cc-space-3)' }}>
+                  {coach.specialties.map(s => <Tag key={s}>{s}</Tag>)}
                 </div>
               )}
             </div>
 
-            {/* Book + Message buttons */}
-            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-              {/* Seekers pay the coach directly, so there is nothing to book
-                  until Stripe has enabled charges on the coach's account. */}
-              <button
-                className="btn btn-primary btn-lg"
-                onClick={() => setShowModal(true)}
-                disabled={!coach.stripe_charges_enabled}
-                title={coach.stripe_charges_enabled ? undefined : 'This coach has not finished setting up payments yet'}
-              >
-                <Icon name="sessions" size={14} /> Book a Session
-              </button>
-              {!coach.stripe_charges_enabled && (
-                <p style={{ width: '100%', fontSize: '13px', color: 'var(--text-soft)', margin: '4px 0 0' }}>
-                  This coach isn't accepting bookings yet — they're still setting up payments.
-                </p>
-              )}
+            <div className="cc-stack cc-gap-2">
+              {bookButton('md')}
               {seekerProfileId && (
-                <button
-                  className="btn btn-outline btn-lg"
+                <Button
+                  icon="messages"
                   onClick={async () => {
-                    await supabase
-                      .from('message_threads')
+                    await supabase.from('message_threads')
                       .upsert({ seeker_id: seekerProfileId, coach_id: coach.id }, { onConflict: 'seeker_id,coach_id' })
                       .select().single();
                     navigate('/messages');
                   }}
                 >
-                  <Icon name="messages" size={14} /> Message
-                </button>
+                  Message
+                </Button>
               )}
             </div>
           </div>
-        </div>
 
-        {/* Session Packages */}
+          {!bookable && (
+            <p className="cc-alert cc-alert-info" style={{ marginTop: 'var(--cc-space-4)' }} role="status">
+              <Icon name="pending" size={14} />
+              <span>This coach isn't accepting bookings yet — they're still setting up payments.</span>
+            </p>
+          )}
+        </Card>
+
+        {/* Packages */}
         {packages.length > 0 && (
-          <div>
-            <p className="section-label" style={{ marginBottom: '12px' }}>SESSION PACKAGES</p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '14px' }}>
+          <section>
+            <SectionHeader label="Session packages" />
+            <div className="cc-action-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))' }}>
               {packages.map(pkg => (
-                <div key={pkg.id} className="card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <p style={{ fontWeight: 700, fontSize: '16px', color: 'var(--text-h)' }}>{pkg.name}</p>
-                  {pkg.description && <p style={{ fontSize: '13px', color: 'var(--text-soft)' }}>{pkg.description}</p>}
-                  <div style={{ display: 'flex', gap: '12px', fontSize: '13px', color: 'var(--text-soft)' }}>
-                    <span>📅 {pkg.session_count} sessions</span>
-                    {pkg.validity_days && <span>⏳ {pkg.validity_days} days</span>}
+                <Card key={pkg.id}>
+                  <div className="cc-row-title">{pkg.name}</div>
+                  {pkg.description && (
+                    <p className="cc-muted" style={{ fontSize: 'var(--cc-text-sm)', margin: 'var(--cc-space-2) 0 0' }}>
+                      {pkg.description}
+                    </p>
+                  )}
+                  <div className="cc-inline cc-gap-3 cc-quiet" style={{ fontSize: 'var(--cc-text-xs)', marginTop: 'var(--cc-space-3)' }}>
+                    <span className="cc-inline cc-gap-1"><Icon name="sessions" size={12} /> {pkg.session_count} sessions</span>
+                    {pkg.validity_days && <span className="cc-inline cc-gap-1"><Icon name="clock" size={12} /> {pkg.validity_days} days</span>}
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-card)', paddingTop: '10px' }}>
-                    <span style={{ fontWeight: 700, fontSize: '18px', color: 'var(--accent)' }}>${pkg.price}</span>
-                    <button
-                      className="btn btn-primary btn-sm"
-                      onClick={() => setShowModal(true)}
-                    >
-                      Buy package
-                    </button>
+                  <div className="cc-inline" style={{ justifyContent: 'space-between', marginTop: 'var(--cc-space-4)', paddingTop: 'var(--cc-space-3)', borderTop: '1px solid var(--cc-border-hairline)' }}>
+                    <span className="cc-figure" style={{ fontSize: 'var(--cc-text-lg)' }}>${pkg.price}</span>
+                    <Button size="sm" disabled={!bookable} onClick={() => setShowModal(true)}>Enquire</Button>
                   </div>
-                </div>
+                </Card>
               ))}
             </div>
-          </div>
+          </section>
         )}
 
-        {/* Two-column body */}
-        <div className="coach-profile-cols" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px', alignItems: 'start' }}>
-          {/* Left */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        {/* Two columns */}
+        <div className="cc-coachcols">
+          <div className="cc-stack cc-gap-6">
             {coach.bio && (
-              <div className="card">
-                <p className="section-label">ABOUT</p>
-                <p style={{ fontSize: '15px', color: 'var(--text-b)', lineHeight: 1.7, marginTop: '8px' }}>{coach.bio}</p>
-              </div>
+              <Card>
+                <SectionHeader label="About" />
+                <p className="cc-prose">{coach.bio}</p>
+              </Card>
             )}
             {coach.approach && (
-              <div className="card">
-                <p className="section-label">COACHING APPROACH</p>
-                <p style={{ fontSize: '15px', color: 'var(--text-b)', lineHeight: 1.7, marginTop: '8px' }}>{coach.approach}</p>
-              </div>
+              <Card>
+                <SectionHeader label="Coaching approach" />
+                <p className="cc-prose">{coach.approach}</p>
+              </Card>
             )}
 
-            {/* Reviews */}
             {reviews.length > 0 && (
-              <div>
-                <p className="section-label" style={{ marginBottom: '12px' }}>
-                  REVIEWS ({reviews.length})
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <section>
+                <SectionHeader label={`Reviews (${reviews.length})`} />
+                <div className="cc-stack cc-gap-3">
                   {reviews.map(r => (
-                    <div key={r.id} className="card" style={{ padding: '16px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                        <div
-                          className="avatar avatar-sm"
-                          style={{ background: 'var(--primary, #1B9B7D)', color: '#fff', fontWeight: 700, fontSize: '13px' }}
-                        >
-                          {r.seeker?.name?.[0] || '?'}
-                        </div>
-                        <div>
-                          <p style={{ fontWeight: 600, fontSize: '14px', color: 'var(--text-h)' }}>
+                    <Card key={r.id}>
+                      <div className="cc-inline cc-gap-3">
+                        <Avatar name={r.seeker?.name} size="sm" />
+                        <div className="cc-grow">
+                          <div className="cc-row-title" style={{ fontSize: 'var(--cc-text-sm)' }}>
                             {r.seeker?.name || 'Anonymous'}
-                          </p>
-                          <div style={{ display: 'flex', gap: '2px' }}>
-                            {[1,2,3,4,5].map(i => (
-                              <span key={i} style={{ color: i <= r.rating ? '#f59e0b' : '#d1d5db', fontSize: '14px' }}>★</span>
-                            ))}
                           </div>
+                          <StarRating value={r.rating} readOnly size={13} />
                         </div>
-                        <span style={{ marginLeft: 'auto', fontSize: '12px', color: 'var(--text-soft)' }}>
+                        <span className="cc-quiet" style={{ fontSize: 'var(--cc-text-xs)' }}>
                           {new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
                         </span>
                       </div>
-                      {r.body && (
-                        <p style={{ fontSize: '14px', color: 'var(--text-soft)', fontStyle: 'italic' }}>"{r.body}"</p>
-                      )}
-                    </div>
+                      {r.body && <p className="cc-prose" style={{ marginTop: 'var(--cc-space-3)' }}>{r.body}</p>}
+                    </Card>
                   ))}
                 </div>
-              </div>
+              </section>
             )}
 
-            {/* Coach content */}
             {content.length > 0 && (
-              <div>
-                <p className="section-label" style={{ marginBottom: '12px' }}>
-                  CONTENT BY {coach.name?.split(' ')[0]?.toUpperCase()}
-                </p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+              <section>
+                <SectionHeader label={`Content by ${coach.name?.split(' ')[0]}`} />
+                <div className="cc-action-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
                   {content.map(item => (
-                    <div key={item.id} className="card" style={{ padding: '16px' }}>
-                      <span style={{ fontSize: '24px' }}>
-                        {item.type === 'audio' ? '🎧' : item.type === 'article' ? '📄' : item.type === 'live_event' ? '🎥' : '📋'}
-                      </span>
-                      <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-h)', marginTop: '8px' }}>{item.title}</p>
-                      <p style={{ fontSize: '12px', color: 'var(--text-soft)', marginTop: '4px' }}>{item.description?.slice(0, 80)}</p>
-                    </div>
+                    <Card key={item.id}>
+                      <span className="cc-quiet"><Icon name={CONTENT_ICON[item.type] || 'article'} size={18} /></span>
+                      <div className="cc-row-title" style={{ fontSize: 'var(--cc-text-sm)', marginTop: 'var(--cc-space-3)' }}>
+                        {item.title}
+                      </div>
+                      {item.description && (
+                        <p className="cc-muted" style={{ fontSize: 'var(--cc-text-xs)', margin: 'var(--cc-space-2) 0 0' }}>
+                          {item.description.slice(0, 80)}
+                        </p>
+                      )}
+                    </Card>
                   ))}
                 </div>
-              </div>
+              </section>
             )}
           </div>
 
-          {/* Right */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div className="card">
-              <p className="section-label">QUICK FACTS</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', marginTop: '12px' }}>
-                {coach.years_experience && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-soft)' }}>Experience</span>
-                    <span style={{ fontWeight: 600 }}>{coach.years_experience} years</span>
-                  </div>
+          <div className="cc-stack cc-gap-4">
+            <Card>
+              <SectionHeader label="Quick facts" />
+              {/* years_experience and sessions_completed were read here but
+                  neither column exists on coach_profiles, so both rows were
+                  permanently invisible. Only real fields are shown. */}
+              <dl className="cc-defs">
+                <div className="cc-def"><dt>Session length</dt><dd>55 minutes</dd></div>
+                <div className="cc-def"><dt>Format</dt><dd>Video</dd></div>
+                {coach.review_count > 0 && (
+                  <div className="cc-def"><dt>Reviews</dt><dd>{coach.review_count}</dd></div>
                 )}
-                {coach.sessions_completed > 0 && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-soft)' }}>Sessions done</span>
-                    <span style={{ fontWeight: 600 }}>{coach.sessions_completed}</span>
-                  </div>
+                {coach.languages?.length > 0 && (
+                  <div className="cc-def"><dt>Languages</dt><dd>{coach.languages.join(', ')}</dd></div>
                 )}
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--text-soft)' }}>Session length</span>
-                  <span style={{ fontWeight: 600 }}>55 min</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--text-soft)' }}>Format</span>
-                  <span style={{ fontWeight: 600 }}><Icon name="video" size={14} /> Video</span>
-                </div>
-              </div>
-            </div>
+                {coach.cancellation_policy && (
+                  <div className="cc-def"><dt>Cancellation</dt><dd>{coach.cancellation_policy}</dd></div>
+                )}
+              </dl>
+            </Card>
 
-            <button
-              className="btn btn-primary btn-lg"
-              style={{ width: '100%', justifyContent: 'center' }}
-              onClick={() => setShowModal(true)}
-            >
-              <Icon name="sessions" size={14} /> Book a Session
-            </button>
+            {bookButton('lg')}
           </div>
         </div>
       </div>
 
-      {showModal && (
-        <BookingModal
-          coach={coach}
-          seekerProfileId={seekerProfileId}
-          userEmail={user?.email}
-          onClose={() => setShowModal(false)}
-          onBooked={() => navigate('/sessions')}
-        />
-      )}
-
-      <style>{`
-        @media (max-width: 900px) {
-          .coach-profile-cols { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
+      <BookingModal
+        coach={coach}
+        seekerProfileId={seekerProfileId}
+        open={showModal}
+        onClose={() => setShowModal(false)}
+      />
     </AppLayout>
   );
 }

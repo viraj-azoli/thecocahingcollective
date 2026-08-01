@@ -465,6 +465,97 @@
   background: var(--cc-surface-page);
 }
 
+/* ── Coach profile ──────────────────────────────────────────────────── */
+
+.cc-coachhead { display: flex; gap: var(--cc-space-6); align-items: flex-start; flex-wrap: wrap; }
+.cc-coachcols { display: grid; grid-template-columns: 2fr 1fr; gap: var(--cc-space-6); align-items: start; }
+@media (max-width: 900px) { .cc-coachcols { grid-template-columns: 1fr; } }
+
+.cc-price { font-size: var(--cc-text-base); }
+.cc-price .cc-figure { font-size: var(--cc-text-lg); color: var(--cc-text-primary); }
+
+/* Long-form body copy — bios, approach, review text */
+.cc-prose {
+  font-size: var(--cc-text-base);
+  line-height: 1.7;
+  color: var(--cc-text-secondary);
+  margin: var(--cc-space-2) 0 0;
+  max-width: 68ch;
+}
+
+.cc-gap-6 { gap: var(--cc-space-6); }
+.cc-gap-1 { gap: var(--cc-space-1); }
+
+/* ── Booking pickers ────────────────────────────────────────────────── */
+
+.cc-dategrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: var(--cc-space-2); }
+@media (max-width: 560px) { .cc-dategrid { grid-template-columns: repeat(4, 1fr); } }
+
+.cc-date {
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+  background: var(--cc-surface-card);
+  border: 1px solid var(--cc-border-hairline);
+  border-radius: var(--cc-r-sm);
+  padding: var(--cc-space-3) var(--cc-space-1);
+  cursor: pointer;
+  font-family: var(--cc-font-sans);
+  transition: border-color var(--cc-dur) var(--cc-ease), background var(--cc-dur) var(--cc-ease);
+}
+.cc-date:hover { border-color: var(--cc-border-strong); }
+.cc-date-dow { font-size: 10px; color: var(--cc-text-tertiary); }
+.cc-date-num {
+  font-family: var(--cc-font-serif);
+  font-size: var(--cc-text-lg);
+  line-height: 1.1;
+  color: var(--cc-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.cc-date-mon { font-size: 10px; color: var(--cc-text-tertiary); }
+.cc-date-on { background: var(--cc-brand-subtle); border-color: var(--cc-brand); }
+.cc-date-on .cc-date-num,
+.cc-date-on .cc-date-dow,
+.cc-date-on .cc-date-mon { color: var(--cc-brand); }
+
+.cc-slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--cc-space-2); }
+@media (max-width: 560px) { .cc-slots { grid-template-columns: repeat(3, 1fr); } }
+
+.cc-slot {
+  background: var(--cc-surface-card);
+  border: 1px solid var(--cc-border-hairline);
+  border-radius: var(--cc-r-sm);
+  padding: var(--cc-space-3) var(--cc-space-2);
+  font-family: var(--cc-font-sans);
+  font-size: var(--cc-text-base);
+  color: var(--cc-text-primary);
+  cursor: pointer;
+  transition: border-color var(--cc-dur) var(--cc-ease), background var(--cc-dur) var(--cc-ease);
+}
+.cc-slot:hover:not(:disabled) { border-color: var(--cc-border-strong); }
+.cc-slot-on { background: var(--cc-brand-subtle); border-color: var(--cc-brand); color: var(--cc-brand); font-weight: 500; }
+.cc-slot-taken {
+  background: var(--cc-surface-sunken);
+  color: var(--cc-text-tertiary);
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+/* Definition rows — the booking summary and the quick-facts panel */
+.cc-defs { display: flex; flex-direction: column; gap: var(--cc-space-2); }
+.cc-def { display: flex; justify-content: space-between; gap: var(--cc-space-4); font-size: var(--cc-text-base); }
+.cc-def dt { color: var(--cc-text-secondary); }
+.cc-def dd { color: var(--cc-text-primary); margin: 0; text-align: right; }
+.cc-def-total {
+  border-top: 1px solid var(--cc-border-hairline);
+  padding-top: var(--cc-space-3);
+  margin-top: var(--cc-space-1);
+}
+.cc-def-total dt { color: var(--cc-text-primary); font-weight: 500; }
+.cc-def-total dd {
+  font-family: var(--cc-font-serif);
+  font-size: var(--cc-text-lg);
+  font-variant-numeric: tabular-nums;
+}
+
 /* ── Modal ──────────────────────────────────────────────────────────── */
 
 .cc-overlay {
