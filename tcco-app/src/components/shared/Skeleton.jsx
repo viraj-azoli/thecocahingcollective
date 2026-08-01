@@ -31,9 +31,9 @@ export function SkeletonCard({ style = {} }) {
   return (
     <div
       style={{
-        background: 'var(--card-bg, #fff)',
-        border: '1px solid var(--border-card, #e5e7eb)',
-        borderRadius: '12px',
+        background: 'var(--cc-surface-card)',
+        border: '1px solid var(--cc-border-hairline)',
+        borderRadius: 'var(--cc-r-md)',
         padding: '20px',
         display: 'flex',
         flexDirection: 'column',
@@ -57,9 +57,9 @@ export function SkeletonCard({ style = {} }) {
 function SkeletonStatCard() {
   return (
     <div style={{
-      background: 'var(--card-bg, #fff)',
-      border: '1px solid var(--border-card, #e5e7eb)',
-      borderRadius: '12px', padding: '20px',
+      background: 'var(--cc-surface-card)',
+      border: '1px solid var(--cc-border-hairline)',
+      borderRadius: 'var(--cc-r-md)', padding: '20px',
       display: 'flex', flexDirection: 'column', gap: '8px',
     }}>
       <SkeletonBlock width="32px" height="32px" borderRadius="8px" />
@@ -86,8 +86,8 @@ export function SkeletonDashboard() {
           </div>
         </div>
         <div style={{
-          background: 'var(--card-bg, #fff)', border: '1px solid var(--border-card, #e5e7eb)',
-          borderRadius: '12px', padding: '20px', minWidth: '220px', display: 'flex',
+          background: 'var(--cc-surface-card)', border: '1px solid var(--cc-border-hairline)',
+          borderRadius: 'var(--cc-r-md)', padding: '20px', minWidth: '220px', display: 'flex',
           flexDirection: 'column', gap: '10px',
         }}>
           <SkeletonBlock width="100px" height="12px" />
@@ -101,8 +101,8 @@ export function SkeletonDashboard() {
         <div className="db-quick-grid">
           {[1,2,3,4].map(i => (
             <div key={i} style={{
-              background: 'var(--card-bg, #fff)', border: '1px solid var(--border-card, #e5e7eb)',
-              borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px',
+              background: 'var(--cc-surface-card)', border: '1px solid var(--cc-border-hairline)',
+              borderRadius: 'var(--cc-r-md)', padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px',
             }}>
               <SkeletonBlock width="32px" height="32px" borderRadius="8px" />
               <SkeletonBlock width="70%" height="14px" />

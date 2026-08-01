@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Icon from '../../ui/Icon';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
@@ -70,12 +71,12 @@ export default function ProgressPage() {
 
   // Achievements
   const achievements = [
-    { icon: '🌱', label: 'First session',   desc: 'Completed your first coaching session',  earned: sessionsCompleted >= 1 },
-    { icon: '🔥', label: '7-day streak',    desc: 'Maintained a 7-day practice streak',      earned: dayStreak >= 7 },
-    { icon: '📓', label: 'Journal starter', desc: 'Written your first journal entry',         earned: journals.length >= 1 },
-    { icon: '🎯', label: '10 sessions',     desc: 'Completed 10 coaching sessions',           earned: sessionsCompleted >= 10 },
-    { icon: '😊', label: 'Mood tracker',    desc: 'Tracked mood for 7+ days',                earned: journals.length >= 7 },
-    { icon: '🌟', label: 'Library explorer',desc: 'Started 3+ pieces of content',            earned: contentEng.length >= 3 },
+    { icon: 'seedling', label: 'First session',   desc: 'Completed your first coaching session',  earned: sessionsCompleted >= 1 },
+    { icon: 'streak', label: '7-day streak',    desc: 'Maintained a 7-day practice streak',      earned: dayStreak >= 7 },
+    { icon: 'journal', label: 'Journal starter', desc: 'Written your first journal entry',         earned: journals.length >= 1 },
+    { icon: 'goal', label: '10 sessions',     desc: 'Completed 10 coaching sessions',           earned: sessionsCompleted >= 10 },
+    { icon: 'mood', label: 'Mood tracker',    desc: 'Tracked mood for 7+ days',                earned: journals.length >= 7 },
+    { icon: 'award', label: 'Library explorer',desc: 'Started 3+ pieces of content',            earned: contentEng.length >= 3 },
   ];
 
   return (
@@ -91,25 +92,25 @@ export default function ProgressPage() {
         {/* Hero stats */}
         <div className="stats-grid-4">
           <div className="stat-card">
-            <span className="stat-icon">🔥</span>
+            <span className="stat-icon"><Icon name="streak" size={16} /></span>
             <div className="stat-value">{dayStreak}</div>
             <div className="stat-label">Day Streak</div>
             <div className="stat-delta positive">Keep it going!</div>
           </div>
           <div className="stat-card">
-            <span className="stat-icon">🎯</span>
+            <span className="stat-icon"><Icon name="goal" size={16} /></span>
             <div className="stat-value">{sessionsCompleted}</div>
             <div className="stat-label">Sessions</div>
             <div className="stat-delta">All time</div>
           </div>
           <div className="stat-card">
-            <span className="stat-icon">📓</span>
+            <span className="stat-icon"><Icon name="journal" size={16} /></span>
             <div className="stat-value">{journals.length}</div>
             <div className="stat-label">Journal Entries</div>
             <div className="stat-delta">Last 30 days</div>
           </div>
           <div className="stat-card">
-            <span className="stat-icon">😊</span>
+            <span className="stat-icon"><Icon name="mood" size={16} /></span>
             <div className="stat-value">{moodAvg}</div>
             <div className="stat-label">Avg Mood</div>
             <div className="stat-delta">Out of 5.0</div>
@@ -121,7 +122,7 @@ export default function ProgressPage() {
           <p className="section-label" style={{ marginBottom: '20px' }}>MOOD OVER TIME</p>
           {moodEntries.length === 0 ? (
             <div className="empty-state">
-              <span className="empty-icon">📓</span>
+              <span className="empty-icon"><Icon name="journal" size={22} /></span>
               <p>No mood data yet. Start journaling to track your mood.</p>
             </div>
           ) : (
@@ -151,7 +152,7 @@ export default function ProgressPage() {
           <p className="section-label" style={{ marginBottom: '20px' }}>SESSIONS COMPLETED</p>
           {monthKeys.length === 0 ? (
             <div className="empty-state">
-              <span className="empty-icon">🎯</span>
+              <span className="empty-icon"><Icon name="goal" size={22} /></span>
               <p>No sessions recorded yet.</p>
             </div>
           ) : (
@@ -223,7 +224,7 @@ export default function ProgressPage() {
           <p className="section-label" style={{ marginBottom: '16px' }}>RECENT ENTRIES</p>
           {journals.length === 0 ? (
             <div className="empty-state">
-              <span className="empty-icon">📓</span>
+              <span className="empty-icon"><Icon name="journal" size={22} /></span>
               <p>No journal entries yet. Start writing to track your growth.</p>
             </div>
           ) : (

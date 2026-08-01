@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Icon from '../../ui/Icon';
 import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
 import '../Layout/AppLayout.css';
@@ -55,7 +56,7 @@ export default function AdminSessionsPage() {
 
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <div className="search-wrap" style={{ flex: '1 1 200px' }}>
-            <span className="search-icon">🔍</span>
+            <span className="search-icon"><Icon name="search" size={15} /></span>
             <input
               className="search-bar"
               placeholder="Search by seeker or coach name…"
@@ -109,7 +110,7 @@ export default function AdminSessionsPage() {
           </table>
           {filtered.length === 0 && (
             <div className="empty-state" style={{ padding: '40px' }}>
-              <span className="empty-icon">📅</span>
+              <span className="empty-icon"><Icon name="sessions" size={22} /></span>
               <p>No sessions match your filters.</p>
             </div>
           )}

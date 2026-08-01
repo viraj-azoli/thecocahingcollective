@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Icon from '../../ui/Icon';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
@@ -74,7 +75,7 @@ export default function FavouritesPage() {
 
         {favourites.length === 0 ? (
           <div className="empty-state">
-            <span className="empty-icon">🤍</span>
+            <span className="empty-icon"><Icon name="saved" size={22} /></span>
             <p>No saved coaches yet. Heart a coach to save them here.</p>
             <button className="btn btn-primary" onClick={() => navigate('/coaches')}>Browse coaches →</button>
           </div>

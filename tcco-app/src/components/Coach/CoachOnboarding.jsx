@@ -1,4 +1,5 @@
 import React from 'react';
+import Icon from '../../ui/Icon';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { useCoachOnboarding } from '../../hooks/useCoachOnboarding';
@@ -220,7 +221,7 @@ export default function CoachOnboarding() {
             </div>
 
             <div className="info-box">
-              <h4>📝 Next Steps</h4>
+              <h4><Icon name="edit" size={14} /> Next Steps</h4>
               <p>After setup, you'll connect your Stripe account for payments and set your availability calendar.</p>
             </div>
           </>

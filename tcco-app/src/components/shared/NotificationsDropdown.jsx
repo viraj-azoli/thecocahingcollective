@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
+import Icon from '../../ui/Icon';
 import { useAuth } from '../../auth/useAuth';
 import { useNavigate } from 'react-router-dom';
 import './NotificationsDropdown.css';
 
 const TYPE_ICONS = {
-  new_booking:           '📅',
-  session_reminder:      '⏰',
-  new_message:           '💬',
-  verification_approved: '✅',
-  new_review:            '⭐',
-  system:                '📢',
+  new_booking:           'sessions',
+  session_reminder:      'clock',
+  new_message:           'messages',
+  verification_approved: 'success',
+  new_review:            'star',
+  system:                'bell',
 };
 
 function timeAgo(ts) {
@@ -105,7 +106,7 @@ export default function NotificationsDropdown() {
         onClick={() => setOpen(v => !v)}
         aria-label={`Notifications${unread > 0 ? ` (${unread} unread)` : ''}`}
       >
-        🔔
+        <Icon name="bell" size={18} />
         {unread > 0 && (
           <span className="notif-badge">{unread > 9 ? '9+' : unread}</span>
         )}
@@ -125,7 +126,7 @@ export default function NotificationsDropdown() {
           <div className="notif-list">
             {notes.length === 0 ? (
               <div className="notif-empty">
-                <span style={{ fontSize: '28px' }}>🔔</span>
+                <Icon name="bell" size={24} />
                 <p>You're all caught up!</p>
               </div>
             ) : (
@@ -135,7 +136,7 @@ export default function NotificationsDropdown() {
                   className={`notif-item ${!n.read_at ? 'notif-unread' : ''}`}
                   onClick={() => handleClick(n)}
                 >
-                  <span className="notif-icon">{TYPE_ICONS[n.type] || '📢'}</span>
+                  <span className="notif-icon"><Icon name={TYPE_ICONS[n.type] || 'bell'} size={15} /></span>
                   <div className="notif-content">
                     <p className="notif-title">{n.title}</p>
                     {n.body && <p className="notif-body">{n.body}</p>}

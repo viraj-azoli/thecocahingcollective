@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Icon from '../../ui/Icon';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
@@ -8,11 +9,11 @@ import { showToast } from '../shared/Toast';
 import '../Layout/AppLayout.css';
 
 const MOODS = [
-  { rating: 1, emoji: '😔', label: 'Low',    color: '#D97706' },
-  { rating: 2, emoji: '😕', label: 'Off',    color: '#F59E0B' },
-  { rating: 3, emoji: '😐', label: 'Okay',   color: '#EAB308' },
-  { rating: 4, emoji: '😊', label: 'Good',   color: '#16A34A' },
-  { rating: 5, emoji: '✨', label: 'Bright', color: '#06B6D4' },
+  { rating: 1, emoji: 'mood', label: 'Low',    color: '#D97706' },
+  { rating: 2, emoji: 'mood', label: 'Off',    color: '#F59E0B' },
+  { rating: 3, emoji: 'mood', label: 'Okay',   color: '#EAB308' },
+  { rating: 4, emoji: 'mood', label: 'Good',   color: '#16A34A' },
+  { rating: 5, emoji: 'spark', label: 'Bright', color: '#06B6D4' },
 ];
 
 const PROMPTS = [
@@ -384,7 +385,7 @@ export default function JournalPage() {
           {/* Placeholder */}
           {!showNew && !selected && (
             <div className="empty-state" style={{ marginTop: '80px' }}>
-              <span className="empty-icon">📓</span>
+              <span className="empty-icon"><Icon name="journal" size={22} /></span>
               <p>Select an entry or create a new one</p>
               <button className="btn btn-primary btn-sm" onClick={() => setShowNew(true)}>
                 + New entry

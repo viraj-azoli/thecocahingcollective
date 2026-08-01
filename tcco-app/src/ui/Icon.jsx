@@ -4,7 +4,9 @@ import {
   ChevronRight, ChevronLeft, ChevronDown, Clock, Video, FileText, Flame,
   Smile, Target, Sparkles, AlertCircle, CircleCheck, CircleDot, Loader2,
   CalendarDays, Wallet, ClipboardList, Package, LayoutDashboard, Compass,
-  KeyRound, BookOpen,
+  KeyRound, BookOpen, Headphones, FileText as Article, Film, Camera, Paperclip,
+  Download, Share2, ShieldCheck, GraduationCap, Sprout, Award, Leaf, Globe,
+  Hammer, PenLine, Link2, TriangleAlert, BarChart3,
 } from 'lucide-react';
 
 // The single place icons are imported. Screens ask for a name, never for a
@@ -53,6 +55,26 @@ const ICONS = {
   seekers: Compass,
   whitelist: KeyRound,
   content: BookOpen,
+  audio: Headphones,
+  article: Article,
+  live: Film,
+  program: ClipboardList,
+  photo: Camera,
+  attachment: Paperclip,
+  download: Download,
+  share: Share2,
+  shield: ShieldCheck,
+  credential: GraduationCap,
+  seedling: Sprout,
+  award: Award,
+  leaf: Leaf,
+  globe: Globe,
+  tools: Hammer,
+  edit: PenLine,
+  link: Link2,
+  warning: TriangleAlert,
+  chart: BarChart3,
+  earnings2: Wallet,
 };
 
 export default function Icon({ name, size = 16, strokeWidth = 1.75, className = '', ...rest }) {

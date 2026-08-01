@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Icon from '../../ui/Icon';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
@@ -13,10 +14,10 @@ const ALLOWED_FILE_TYPES = {
 };
 
 const CONTENT_TYPE_METADATA = {
-  audio:      { label: 'Audio',      icon: '🎧' },
-  article:    { label: 'Article',    icon: '📄' },
-  live_event: { label: 'Live Event', icon: '🎥' },
-  program:    { label: 'Program',    icon: '📋' },
+  audio:      { label: 'Audio',      icon: 'audio' },
+  article:    { label: 'Article',    icon: 'article' },
+  live_event: { label: 'Live Event', icon: 'live' },
+  program:    { label: 'Program',    icon: 'intake' },
 };
 
 const VALID_CONTENT_TYPES = ['audio', 'article', 'live_event', 'program'];
@@ -335,7 +336,7 @@ export default function ContentPage() {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
             {items.map(item => {
-              const meta = CONTENT_TYPE_METADATA[item.type] || { icon: '📄', label: item.type };
+              const meta = CONTENT_TYPE_METADATA[item.type] || { icon: 'article', label: item.type };
               const tagsArr = Array.isArray(item.tags) ? item.tags : [];
               return (
                 <div
@@ -379,7 +380,7 @@ export default function ContentPage() {
                       rel="noreferrer"
                       style={{ fontSize: '12px', color: 'var(--accent)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                     >
-                      📎 View file
+                      <Icon name="attachment" size={14} /> View file
                     </a>
                   )}
 

@@ -276,6 +276,36 @@
 .al-wrapper .toggle-row { border-color: var(--cc-border-hairline); }
 .al-wrapper .toggle-info { color: var(--cc-text-secondary); font-size: var(--cc-text-sm); }
 
+/* ── Skeleton shimmer ───────────────────────────────────────────────────
+   The shimmer used neutral greys, so the loading state was visibly a
+   different palette from the content that replaced it. */
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--cc-surface-sunken) 25%,
+    var(--cc-border-hairline) 50%,
+    var(--cc-surface-sunken) 75%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--cc-r-sm);
+}
+
+/* ── Toast ──────────────────────────────────────────────────────────── */
+
+.toast {
+  font-family: var(--cc-font-sans);
+  font-size: var(--cc-text-sm);
+  border-radius: var(--cc-r-md);
+  box-shadow: var(--cc-shadow-md);
+  border: 1px solid var(--cc-border-hairline);
+  background: var(--cc-surface-card);
+  color: var(--cc-text-primary);
+}
+.toast-success { border-left: 3px solid var(--cc-success); }
+.toast-error   { border-left: 3px solid var(--cc-danger); }
+.toast-info    { border-left: 3px solid var(--cc-info); }
+
 /* ── Focus, everywhere ──────────────────────────────────────────────────
    No :focus-visible styling existed anywhere in the app before this. */
 

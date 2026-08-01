@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Icon from '../../ui/Icon';
 import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
 import { showToast } from '../shared/Toast';
@@ -62,7 +63,7 @@ export default function AdminContentPage() {
 
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <div className="search-wrap" style={{ flex: '1 1 200px' }}>
-            <span className="search-icon">🔍</span>
+            <span className="search-icon"><Icon name="search" size={15} /></span>
             <input
               className="search-bar"
               placeholder="Search by title or coach…"
@@ -84,7 +85,7 @@ export default function AdminContentPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {filtered.length === 0 ? (
             <div className="empty-state">
-              <span className="empty-icon">📚</span>
+              <span className="empty-icon"><Icon name="library" size={22} /></span>
               <p>No content found.</p>
             </div>
           ) : filtered.map(item => (

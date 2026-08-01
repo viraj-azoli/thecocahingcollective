@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Icon from '../../ui/Icon';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
@@ -144,7 +145,7 @@ export default function IntakeFormsPage() {
             {/* Questions */}
             {questions.length === 0 && (
               <div className="empty-state" style={{ padding: '32px' }}>
-                <span className="empty-icon">📋</span>
+                <span className="empty-icon"><Icon name="intake" size={22} /></span>
                 <p>No questions yet. Add your first question below.</p>
               </div>
             )}
@@ -222,7 +223,7 @@ export default function IntakeFormsPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '800px' }}>
             {responses.length === 0 ? (
               <div className="empty-state">
-                <span className="empty-icon">📥</span>
+                <span className="empty-icon"><Icon name="download" size={22} /></span>
                 <p>No responses yet. Share your profile with seekers to collect intake responses.</p>
               </div>
             ) : (

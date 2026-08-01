@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Icon from '../../ui/Icon';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
@@ -376,7 +377,7 @@ function BookingModal({ coach, seekerProfileId, userEmail, onClose, onBooked }) 
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
                     <span style={{ color: 'var(--text-soft)' }}>Type</span>
-                    <span style={{ fontWeight: 600, color: 'var(--text-b)' }}>📹 Video</span>
+                    <span style={{ fontWeight: 600, color: 'var(--text-b)' }}><Icon name="video" size={14} /> Video</span>
                   </div>
                   {coach.price_per_session && (
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', borderTop: '1px solid var(--border-card)', paddingTop: '8px', marginTop: '4px' }}>
@@ -485,7 +486,7 @@ export default function CoachProfilePage() {
     return (
       <AppLayout role="seeker">
         <div className="empty-state" style={{ marginTop: 80 }}>
-          <span className="empty-icon">😔</span>
+          <span className="empty-icon"><Icon name="mood" size={22} /></span>
           <p>Coach not found.</p>
           <button className="btn btn-outline" onClick={() => navigate('/coaches')}>← All Coaches</button>
         </div>
@@ -570,7 +571,7 @@ export default function CoachProfilePage() {
                 disabled={!coach.stripe_charges_enabled}
                 title={coach.stripe_charges_enabled ? undefined : 'This coach has not finished setting up payments yet'}
               >
-                📅 Book a Session
+                <Icon name="sessions" size={14} /> Book a Session
               </button>
               {!coach.stripe_charges_enabled && (
                 <p style={{ width: '100%', fontSize: '13px', color: 'var(--text-soft)', margin: '4px 0 0' }}>
@@ -588,7 +589,7 @@ export default function CoachProfilePage() {
                     navigate('/messages');
                   }}
                 >
-                  💬 Message
+                  <Icon name="messages" size={14} /> Message
                 </button>
               )}
             </div>
@@ -723,7 +724,7 @@ export default function CoachProfilePage() {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: 'var(--text-soft)' }}>Format</span>
-                  <span style={{ fontWeight: 600 }}>📹 Video</span>
+                  <span style={{ fontWeight: 600 }}><Icon name="video" size={14} /> Video</span>
                 </div>
               </div>
             </div>
@@ -733,7 +734,7 @@ export default function CoachProfilePage() {
               style={{ width: '100%', justifyContent: 'center' }}
               onClick={() => setShowModal(true)}
             >
-              📅 Book a Session
+              <Icon name="sessions" size={14} /> Book a Session
             </button>
           </div>
         </div>

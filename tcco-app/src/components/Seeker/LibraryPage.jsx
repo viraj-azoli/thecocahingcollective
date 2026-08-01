@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Icon from '../../ui/Icon';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
 import { track } from '../../lib/analytics';
@@ -7,10 +8,10 @@ import { showToast } from '../shared/Toast';
 import '../Layout/AppLayout.css';
 
 const TYPE_META = {
-  audio:      { icon: '🎧', label: 'Audio' },
-  article:    { icon: '📄', label: 'Article' },
-  live_event: { icon: '🎥', label: 'Live' },
-  program:    { icon: '📋', label: 'Program' },
+  audio:      { icon: 'audio', label: 'Audio' },
+  article:    { icon: 'article', label: 'Article' },
+  live_event: { icon: 'live', label: 'Live' },
+  program:    { icon: 'intake', label: 'Program' },
 };
 
 const FILTERS = ['All', 'Audio', 'Article', 'Live', 'Program'];
@@ -160,7 +161,7 @@ export default function LibraryPage() {
         {/* Content grid */}
         {filtered.length === 0 ? (
           <div className="empty-state">
-            <span className="empty-icon">📚</span>
+            <span className="empty-icon"><Icon name="library" size={22} /></span>
             <p>No content found in this category.</p>
           </div>
         ) : (
@@ -197,7 +198,7 @@ export default function LibraryPage() {
 }
 
 function ContentCard({ item, eng, onStart, onComplete, isFeatured }) {
-  const meta = TYPE_META[item.type] || { icon: '📄', label: item.type };
+  const meta = TYPE_META[item.type] || { icon: 'article', label: item.type };
   const status = eng?.status;
   const pct = eng?.completion_percentage ?? 0;
 

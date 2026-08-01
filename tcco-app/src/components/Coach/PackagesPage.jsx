@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Icon from '../../ui/Icon';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
@@ -88,7 +89,7 @@ export default function PackagesPage() {
 
         {packages.length === 0 && !editing ? (
           <div className="empty-state">
-            <span className="empty-icon">📦</span>
+            <span className="empty-icon"><Icon name="packages" size={22} /></span>
             <p>No packages yet. Create your first package to offer session bundles.</p>
             <button className="btn btn-primary" onClick={() => setEditing(emptyPkg())}>Create package</button>
           </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Icon from '../../ui/Icon';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
@@ -143,25 +144,25 @@ export default function AdminDashboard() {
         {/* Platform Stats */}
         <div className="stats-grid-4">
           <div className="stat-card">
-            <span className="stat-icon">👥</span>
+            <span className="stat-icon"><Icon name="seekers" size={16} /></span>
             <div className="stat-value">{stats.seekerCount || 0}</div>
             <div className="stat-label">Total Seekers</div>
             <div className="stat-delta positive">All time</div>
           </div>
           <div className="stat-card">
-            <span className="stat-icon">🏋️</span>
+            <span className="stat-icon"><Icon name="coaches" size={16} /></span>
             <div className="stat-value">{stats.coachCount || 0}</div>
             <div className="stat-label">Total Coaches</div>
             <div className="stat-delta">{unverified.length} pending</div>
           </div>
           <div className="stat-card">
-            <span className="stat-icon">📅</span>
+            <span className="stat-icon"><Icon name="sessions" size={16} /></span>
             <div className="stat-value">{stats.sessionCount || 0}</div>
             <div className="stat-label">Total Sessions</div>
             <div className="stat-delta positive">All time</div>
           </div>
           <div className="stat-card">
-            <span className="stat-icon">📓</span>
+            <span className="stat-icon"><Icon name="journal" size={16} /></span>
             <div className="stat-value">{stats.journalCount || 0}</div>
             <div className="stat-label">Journal Entries</div>
             <div className="stat-delta positive">All time</div>
@@ -178,7 +179,7 @@ export default function AdminDashboard() {
           </div>
           {unverified.length === 0 ? (
             <div className="empty-state">
-              <span className="empty-icon">✅</span>
+              <span className="empty-icon"><Icon name="success" size={22} /></span>
               <p>All coaches verified</p>
             </div>
           ) : (
@@ -211,7 +212,7 @@ export default function AdminDashboard() {
           <p className="section-label" style={{ marginBottom: '14px' }}>RECENT SESSIONS</p>
           {recentSessions.length === 0 ? (
             <div className="empty-state">
-              <span className="empty-icon">📅</span>
+              <span className="empty-icon"><Icon name="sessions" size={22} /></span>
               <p>No sessions yet.</p>
             </div>
           ) : (
@@ -260,7 +261,7 @@ export default function AdminDashboard() {
           </div>
           {recentSeekers.length === 0 ? (
             <div className="empty-state">
-              <span className="empty-icon">🧭</span>
+              <span className="empty-icon"><Icon name="seekers" size={22} /></span>
               <p>No seekers yet.</p>
             </div>
           ) : (

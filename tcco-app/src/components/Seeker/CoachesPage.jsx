@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Icon from '../../ui/Icon';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
@@ -149,7 +150,7 @@ export default function CoachesPage() {
 
         {/* Search */}
         <div className="search-wrap">
-          <span className="search-icon">🔍</span>
+          <span className="search-icon"><Icon name="search" size={15} /></span>
           <input
             className="search-bar"
             placeholder="Search by name, specialty, or keyword…"
@@ -202,7 +203,7 @@ export default function CoachesPage() {
           <SkeletonCoachesGrid count={6} />
         ) : filtered.length === 0 ? (
           <div className="empty-state">
-            <span className="empty-icon">👥</span>
+            <span className="empty-icon"><Icon name="coaches" size={22} /></span>
             <p>No coaches found matching your filters.</p>
             <button className="btn btn-outline btn-sm" onClick={clearFilters}>Clear filters</button>
           </div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Icon from '../../ui/Icon';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
@@ -37,7 +38,7 @@ export default function AdminOnboarding() {
     <div className="admin-onboarding-container">
       <div className="admin-onboarding-card">
         <div className="admin-header">
-          <h1>🛡️ Admin Dashboard Setup</h1>
+          <h1><Icon name="shield" size={14} /> Admin Dashboard Setup</h1>
           <p>You have admin privileges. Set up your admin dashboard to manage the platform.</p>
         </div>
 

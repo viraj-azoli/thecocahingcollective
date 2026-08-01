@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Icon from '../../ui/Icon';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
@@ -90,13 +91,13 @@ export default function CoachDashboard() {
         {/* Stats */}
         <div className="stats-grid-4">
           <div className="stat-card">
-            <span className="stat-icon">👥</span>
+            <span className="stat-icon"><Icon name="coaches" size={16} /></span>
             <div className="stat-value">{clientIds.size}</div>
             <div className="stat-label">Active Clients</div>
             <div className="stat-delta">All time</div>
           </div>
           <div className="stat-card">
-            <span className="stat-icon">📅</span>
+            <span className="stat-icon"><Icon name="sessions" size={16} /></span>
             <div className="stat-value">{thisMonthCompleted.length}</div>
             <div className="stat-label">Sessions This Month</div>
             <div className="stat-delta positive">+{upcomingSessions.length} upcoming</div>
@@ -108,7 +109,7 @@ export default function CoachDashboard() {
             <div className="stat-delta">{completedSessions.filter(s => s.rating).length} reviews</div>
           </div>
           <div className="stat-card">
-            <span className="stat-icon">💰</span>
+            <span className="stat-icon"><Icon name="earnings" size={16} /></span>
             <div className="stat-value">${earnings.toLocaleString()}</div>
             <div className="stat-label">Earnings This Month</div>
             <div className="stat-delta positive">{thisMonthCompleted.length} sessions</div>
@@ -132,7 +133,7 @@ export default function CoachDashboard() {
                     <p style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-h)' }}>{s.seeker?.name || 'Client'}</p>
                     <p style={{ fontSize: '13px', color: 'var(--text-soft)' }}>⏰ {s.scheduled_time?.slice(0,5)} · {s.duration_minutes || 55} min</p>
                   </div>
-                  <button className="btn btn-primary btn-sm" onClick={() => navigate('/coach/sessions')}>🔗 Join</button>
+                  <button className="btn btn-primary btn-sm" onClick={() => navigate('/coach/sessions')}><Icon name="link" size={14} /> Join</button>
                 </div>
               ))}
             </div>
@@ -147,7 +148,7 @@ export default function CoachDashboard() {
           </div>
           {upcomingSessions.length === 0 ? (
             <div className="empty-state" style={{ padding: '32px' }}>
-              <span className="empty-icon" style={{ fontSize: '32px' }}>📅</span>
+              <span className="empty-icon"><Icon name="sessions" size={22} /></span>
               <p>No upcoming sessions.</p>
             </div>
           ) : (
@@ -179,9 +180,9 @@ export default function CoachDashboard() {
           <p className="section-label" style={{ marginBottom: '12px' }}>QUICK ACTIONS</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
             {[
-              { icon: '🗓️', label: 'Update Availability', to: '/coach/availability' },
-              { icon: '📚', label: 'Create Content', to: '/coach/content' },
-              { icon: '💰', label: 'View Earnings', to: '/coach/earnings' },
+              { icon: 'availability', label: 'Update Availability', to: '/coach/availability' },
+              { icon: 'library', label: 'Create Content', to: '/coach/content' },
+              { icon: 'earnings', label: 'View Earnings', to: '/coach/earnings' },
             ].map(a => (
               <button
                 key={a.label}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Icon from '../../ui/Icon';
 import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
 import { showToast } from '../shared/Toast';
@@ -114,7 +115,7 @@ export default function AdminCoachesPage() {
 
         {/* Search */}
         <div className="search-wrap">
-          <span className="search-icon">🔍</span>
+          <span className="search-icon"><Icon name="search" size={15} /></span>
           <input
             className="search-bar"
             placeholder="Search by name or title…"
@@ -143,7 +144,7 @@ export default function AdminCoachesPage() {
 
         {filtered.length === 0 ? (
           <div className="empty-state">
-            <span className="empty-icon">👥</span>
+            <span className="empty-icon"><Icon name="coaches" size={22} /></span>
             <p>No coaches found.</p>
           </div>
         ) : (
