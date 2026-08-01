@@ -1,0 +1,237 @@
+<!--
+  Coach walkthrough email — the second in the sequence.
+
+  Send this AFTER coach-invitation.html, once the coach has an account.
+  The invitation covers why and how to sign up; this one walks through the
+  app itself, screen by screen, in the order of the sidebar.
+
+  Every screen, tab and field named here was checked against the live app.
+  Brevo: uses {{ params.FIRSTNAME }}.
+
+  Georgia stands in for Newsreader, system sans for Inter — webfonts do not
+  load reliably in mail clients. Tables and inline styles throughout, since
+  Outlook supports neither flexbox nor grid. No images, so nothing breaks
+  when a client blocks them.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no"/>
+<meta name="x-apple-disable-message-reformatting"/>
+<title>Finding your way around The Coaching Collective</title>
+<style>
+  body { margin:0; padding:0; }
+  table { border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; }
+  img { border:0; outline:none; text-decoration:none; display:block; }
+  a { text-decoration:none; }
+  .ecw { width:100% !important; min-width:0 !important; }
+  @media only screen and (max-width:620px) {
+    .ecw { width:100% !important; }
+    .epad { padding-left:24px !important; padding-right:24px !important; }
+    .eh1 { font-size:26px !important; line-height:32px !important; }
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;background-color:#F4F2ED;">
+
+<div style="display:none;font-size:1px;color:#F4F2ED;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">
+  A short tour of your coach dashboard — what each screen does, and the three things worth setting up first.
+</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F4F2ED;">
+<tr><td align="center" style="padding:32px 12px;">
+
+<table role="presentation" class="ecw" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background-color:#FFFFFF;border:1px solid #E4E9E7;border-radius:10px;overflow:hidden;">
+
+  <!-- ── Masthead ── -->
+  <tr>
+    <td align="center" style="background-color:#16352C;padding:36px 32px 32px;">
+      <div style="font-family:Georgia,'Times New Roman',serif;font-size:13px;letter-spacing:0.18em;text-transform:uppercase;color:#8FB3A4;padding-bottom:14px;">
+        A short tour
+      </div>
+      <div class="eh1" style="font-family:Georgia,'Times New Roman',serif;font-size:30px;line-height:38px;color:#F7F5F0;">
+        Finding your way around
+      </div>
+    </td>
+  </tr>
+
+  <!-- ── Opening ── -->
+  <tr>
+    <td class="epad" style="padding:36px 40px 4px;">
+      <p style="margin:0 0 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:26px;color:#16352C;">
+        Hi {{ params.FIRSTNAME }},
+      </p>
+      <p style="margin:0 0 8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:26px;color:#5A6B64;">
+        Now that you have an account, here is what each part of it does. Nothing here is
+        urgent &mdash; but the three marked <strong style="color:#16352C;">Do this first</strong>
+        are what stand between you and your first booking.
+      </p>
+    </td>
+  </tr>
+
+  <!-- ── Do this first ── -->
+  <tr>
+    <td class="epad" style="padding:24px 40px 8px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#E9EFEC;border-radius:8px;">
+        <tr><td style="padding:22px 26px;">
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.11em;text-transform:uppercase;color:#4A7B68;padding-bottom:12px;">
+            Do this first
+          </div>
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:26px;color:#3F5B50;">
+            <strong style="color:#16352C;">1. Settings</strong> &mdash; photo, bio, specialties, rate<br/>
+            <strong style="color:#16352C;">2. Earnings</strong> &mdash; connect Stripe so you can be paid<br/>
+            <strong style="color:#16352C;">3. Availability</strong> &mdash; publish the hours you work
+          </div>
+          <p style="margin:14px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;line-height:22px;color:#4A7B68;">
+            Until all three are done your profile stays hidden from clients &mdash; we do not show
+            a coach who cannot be booked.
+          </p>
+        </td></tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- ── Screen by screen ── -->
+  <tr>
+    <td class="epad" style="padding:34px 40px 4px;">
+      <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.11em;text-transform:uppercase;color:#8A9A93;padding-bottom:6px;">
+        Your sidebar, top to bottom
+      </div>
+    </td>
+  </tr>
+
+  <tr>
+    <td class="epad" style="padding:12px 40px 8px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+
+        <tr><td style="padding:16px 0;border-bottom:1px solid #E4E9E7;">
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;color:#16352C;padding-bottom:4px;">Home</div>
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:23px;color:#5A6B64;">Today&rsquo;s sessions, what is coming up, and quick actions. Start here each morning &mdash; if nothing is booked today, it will say so plainly rather than making you hunt.</div>
+        </td></tr>
+
+        <tr><td style="padding:16px 0;border-bottom:1px solid #E4E9E7;">
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;color:#16352C;padding-bottom:4px;">Clients</div>
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:23px;color:#5A6B64;">Everyone who has booked with you. Open a client to see their full session history in one place, so you are not reconstructing context from memory before a call.</div>
+        </td></tr>
+
+        <tr><td style="padding:16px 0;border-bottom:1px solid #E4E9E7;">
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;color:#16352C;padding-bottom:4px;">Sessions</div>
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:23px;color:#5A6B64;">Split into <strong style="color:#16352C;">Upcoming</strong> and <strong style="color:#16352C;">Past</strong>. Join a call from here, and write your own private notes afterwards. Clients never see those.</div>
+        </td></tr>
+
+        <tr><td style="padding:16px 0;border-bottom:1px solid #E4E9E7;">
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;color:#16352C;padding-bottom:4px;">Messages</div>
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:23px;color:#5A6B64;">Conversations with clients between sessions. Keeps your personal inbox and phone number out of it.</div>
+        </td></tr>
+
+        <tr><td style="padding:16px 0;border-bottom:1px solid #E4E9E7;">
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;color:#16352C;padding-bottom:4px;">Content</div>
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:23px;color:#5A6B64;">Publish audio, articles, live events or longer programs to the shared library. Anything you publish also appears on your profile, so people can get a feel for how you think before they book.</div>
+        </td></tr>
+
+        <tr><td style="padding:16px 0;border-bottom:1px solid #E4E9E7;">
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;color:#16352C;padding-bottom:4px;">Availability &nbsp;<span style="font-weight:400;font-size:13px;color:#4A7B68;">&mdash; do this first</span></div>
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:23px;color:#5A6B64;">Mark the hours you are willing to work, then Save. Clients can only ever book inside those hours, and a slot disappears the moment someone takes it.</div>
+        </td></tr>
+
+        <tr><td style="padding:16px 0;border-bottom:1px solid #E4E9E7;">
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;color:#16352C;padding-bottom:4px;">Earnings &nbsp;<span style="font-weight:400;font-size:13px;color:#4A7B68;">&mdash; do this first</span></div>
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:23px;color:#5A6B64;">Connect your Stripe account here &mdash; this is how you get paid, and nothing works without it. Afterwards this screen shows your revenue and the last six months of completed sessions.</div>
+        </td></tr>
+
+        <tr><td style="padding:16px 0;border-bottom:1px solid #E4E9E7;">
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;color:#16352C;padding-bottom:4px;">Intake Forms</div>
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:23px;color:#5A6B64;">Questions a client answers before a first session. Three kinds: free text, multiple choice, or a 1&ndash;10 scale. Mark the form required and it becomes part of booking, so you never start a first session cold.</div>
+        </td></tr>
+
+        <tr><td style="padding:16px 0;border-bottom:1px solid #E4E9E7;">
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;color:#16352C;padding-bottom:4px;">Packages</div>
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:23px;color:#5A6B64;">Multi-session bundles &mdash; say six sessions at a set price, valid for a number of days. Useful when the work is a programme rather than a one-off.</div>
+        </td></tr>
+
+        <tr><td style="padding:16px 0;">
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;color:#16352C;padding-bottom:4px;">Settings &nbsp;<span style="font-weight:400;font-size:13px;color:#4A7B68;">&mdash; do this first</span></div>
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:23px;color:#5A6B64;">Your photo, bio, specialties, languages, rate per session and cancellation policy. This is what clients read when deciding &mdash; it is worth more than an hour of your time.</div>
+        </td></tr>
+
+      </table>
+    </td>
+  </tr>
+
+  <!-- ── What a booking looks like ── -->
+  <tr><td class="epad" style="padding:26px 40px 0;"><div style="height:1px;background-color:#E4E9E7;line-height:1px;font-size:0;">&nbsp;</div></td></tr>
+
+  <tr>
+    <td class="epad" style="padding:28px 40px 4px;">
+      <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.11em;text-transform:uppercase;color:#8A9A93;padding-bottom:16px;">
+        What happens when someone books
+      </div>
+      <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:26px;color:#5A6B64;">
+        They pick a time from your published hours, answer your intake questions if you set
+        any, and pay you. The session then appears under
+        <strong style="color:#16352C;">Sessions &rarr; Upcoming</strong> and you both get a
+        confirmation email. On the day, open the session and press
+        <strong style="color:#16352C;">Join</strong> &mdash; the video call runs in the browser,
+        with nothing to install and no link to send.
+      </div>
+      <p style="margin:16px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;color:#5A6B64;">
+        Afterwards the session moves to <strong style="color:#16352C;">Past</strong>, where you
+        can write your notes and the client can leave a review.
+      </p>
+    </td>
+  </tr>
+
+  <!-- ── CTA ── -->
+  <tr>
+    <td class="epad" align="center" style="padding:34px 40px 8px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+        <tr><td align="center" bgcolor="#1A5843" style="border-radius:6px;">
+          <a href="https://thecoachingcollectiveonline.com/app/coach/settings"
+             style="display:inline-block;padding:15px 40px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;font-weight:600;color:#FFFFFF;border-radius:6px;">
+            Open your dashboard
+          </a>
+        </td></tr>
+      </table>
+      <p style="margin:16px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;line-height:20px;color:#8A9A93;">
+        Or paste this into your browser:<br/>
+        <span style="color:#5A6B64;">thecoachingcollectiveonline.com/app</span>
+      </p>
+    </td>
+  </tr>
+
+  <!-- ── Close ── -->
+  <tr>
+    <td class="epad" style="padding:26px 40px 40px;">
+      <p style="margin:0 0 14px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;color:#5A6B64;">
+        If something is not behaving the way this describes, tell us &mdash; reply to this email
+        and it comes straight to us. We would rather hear about it than have you work around it.
+      </p>
+      <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:16px;line-height:24px;color:#16352C;">
+        Enjoy the work.<br/>
+        <span style="color:#5A6B64;font-size:15px;">The Coaching Collective</span>
+      </p>
+    </td>
+  </tr>
+
+</table>
+
+<!-- ── Footer ── -->
+<table role="presentation" class="ecw" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;">
+  <tr><td align="center" style="padding:24px 24px 8px;">
+    <p style="margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;line-height:20px;color:#8A9A93;">
+      The Coaching Collective &middot; Chicago, USA<br/>
+      <a href="mailto:info@thecoachingcollectiveonline.com" style="color:#5A6B64;">info@thecoachingcollectiveonline.com</a>
+    </p>
+    <p style="margin:10px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;line-height:20px;color:#A8B3AE;">
+      You are receiving this because you have a coach account with us.
+    </p>
+  </td></tr>
+</table>
+
+</td></tr>
+</table>
+</body>
+</html>
