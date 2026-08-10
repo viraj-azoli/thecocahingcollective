@@ -3,6 +3,7 @@ import { useAuth } from '../../auth/useAuth';
 import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
 import { showToast } from '../shared/Toast';
+import Icon from '../../ui/Icon';
 import '../Layout/AppLayout.css';
 
 function getMonthKey(date) {
@@ -111,19 +112,19 @@ export default function EarningsPage() {
         {/* Stats */}
         <div className="stats-grid-3">
           <div className="stat-card">
-            <span className="stat-icon">&#128197;</span>
+            <span className="stat-icon"><Icon name="sessions" size={15} /></span>
             <div className="stat-value">${thisMonthTotal.toLocaleString()}</div>
             <div className="stat-label">This Month</div>
             <div className="stat-delta">{thisMonthSessions.length} session{thisMonthSessions.length !== 1 ? 's' : ''}</div>
           </div>
           <div className="stat-card">
-            <span className="stat-icon">&#128198;</span>
+            <span className="stat-icon"><Icon name="sessions" size={15} /></span>
             <div className="stat-value">${lastMonthTotal.toLocaleString()}</div>
             <div className="stat-label">Last Month</div>
             <div className="stat-delta">{lastMonthSessions.length} session{lastMonthSessions.length !== 1 ? 's' : ''}</div>
           </div>
           <div className="stat-card">
-            <span className="stat-icon">&#128176;</span>
+            <span className="stat-icon"><Icon name="earnings" size={15} /></span>
             <div className="stat-value">${allTimeTotal.toLocaleString()}</div>
             <div className="stat-label">All Time</div>
             <div className="stat-delta positive">{sessions.length} total sessions</div>

@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabase';
 import AppLayout from '../Layout/AppLayout';
 import VideoRoom from '../shared/VideoRoom';
 import { showToast } from '../shared/Toast';
+import Icon from '../../ui/Icon';
 import '../Layout/AppLayout.css';
 
 const DAY_ABBR = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -299,7 +300,7 @@ export default function CoachSessionsPage() {
                               disabled={joiningId === s.id}
                               onClick={() => joinSession(s)}
                             >
-                              {joiningId === s.id ? '…' : '🔗 Join'}
+                              {joiningId === s.id ? '…' : <><Icon name="video" size={13} /> Join</>}
                             </button>
                           )}
                         </div>
