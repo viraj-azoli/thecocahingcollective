@@ -1,0 +1,82 @@
+<!--
+  Preview of welcome_coach — the actual template lives in
+  tcco-app/supabase/functions/send-email/index.ts and fires automatically
+  from AuthContext.signup() the instant a coach completes registration
+  (only possible for whitelisted addresses).
+
+  This file is a static copy with example data ("Jordan") for review — editing
+  it does NOT change what gets sent. Edit the cardShell() call in index.ts and
+  redeploy the function instead.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="x-apple-disable-message-reformatting"/>
+<title>Thank you for joining as a coach</title>
+<style>
+  body { margin:0; padding:0; }
+  table { border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; }
+  img { border:0; outline:none; text-decoration:none; }
+  a { text-decoration:none; }
+  @media only screen and (max-width:620px) {
+    .ecw { width:100% !important; }
+    .epad { padding-left:24px !important; padding-right:24px !important; }
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;background-color:#F4F2ED;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F4F2ED;">
+<tr><td align="center" style="padding:32px 12px;">
+<table role="presentation" class="ecw" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background-color:#FFFFFF;border:1px solid #E4E9E7;border-radius:10px;overflow:hidden;">
+  <tr>
+    <td align="center" style="background-color:#16352C;padding:36px 32px 32px;">
+      <div style="font-family:Georgia,'Times New Roman',serif;font-size:13px;letter-spacing:0.18em;text-transform:uppercase;color:#8FB3A4;padding-bottom:14px;">You're in</div>
+      <div style="font-family:Georgia,'Times New Roman',serif;font-size:28px;line-height:36px;color:#F7F5F0;">Thank you for joining as a coach</div>
+    </td>
+  </tr>
+  <tr>
+    <td class="epad" style="padding:36px 40px 40px;">
+      <p style="margin:0 0 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:26px;color:#16352C;">
+        Hi Jordan,
+      </p>
+      <p style="margin:0 0 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:26px;color:#5A6B64;">
+        Thank you for joining The Coaching Collective. Clients pay you directly
+        through your own Stripe account — you keep 100%, we take no commission
+        and never touch the money.
+      </p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#E9EFEC;border-radius:8px;margin-top:8px;">
+        <tr><td style="padding:20px 24px;">
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.11em;text-transform:uppercase;color:#4A7B68;padding-bottom:10px;">
+            Before you're visible to clients
+          </div>
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:25px;color:#3F5B50;">
+            <strong style="color:#16352C;">1. Settings</strong> — photo, bio, specialties, rate<br/>
+            <strong style="color:#16352C;">2. Earnings</strong> — connect Stripe so you can be paid<br/>
+            <strong style="color:#16352C;">3. Availability</strong> — publish the hours you work
+          </div>
+        </td></tr>
+      </table>
+      <p style="margin:20px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;color:#5A6B64;">
+        Once those three are done and we've verified your profile, you'll appear
+        in the directory and can start receiving bookings — we'll email you the
+        moment that happens. A fuller walkthrough of the dashboard is on its way
+        separately.
+      </p>
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:20px;">
+        <tr><td align="center" bgcolor="#1A5843" style="border-radius:6px;">
+          <a href="https://thecoachingcollectiveonline.com/app/coach/settings" style="display:inline-block;padding:14px 32px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;color:#FFFFFF;border-radius:6px;">Complete your profile</a>
+        </td></tr>
+      </table>
+      <p style="margin:32px 0 0;padding-top:20px;border-top:1px solid #E4E9E7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;line-height:19px;color:#8A9A93;">
+        The Coaching Collective &middot; Chicago, USA<br/>
+        <a href="mailto:info@thecoachingcollectiveonline.com" style="color:#8A9A93;">info@thecoachingcollectiveonline.com</a>
+      </p>
+    </td>
+  </tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>

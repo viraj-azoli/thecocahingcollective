@@ -38,6 +38,64 @@ const button = (href: string, label: string) => `
   <a href="${href}" style="display:inline-block;background:#2D9E6B;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:600;margin-top:16px;">${label}</a>
 `;
 
+// Masthead card used by welcome_seeker / welcome_coach — matches the
+// standalone marketing emails (coach-invitation.html, coach-app-guide.html):
+// dark green banner with an eyebrow, serif headline, hairline-border body,
+// table layout throughout since Outlook supports neither flexbox nor grid.
+// Kept separate from shell() above so booking_confirmation, session_reminder
+// and coach_verification_approved are untouched.
+const cardShell = (eyebrow: string, headline: string, body: string) => `
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="x-apple-disable-message-reformatting"/>
+<style>
+  body { margin:0; padding:0; }
+  table { border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; }
+  img { border:0; outline:none; text-decoration:none; }
+  a { text-decoration:none; }
+  @media only screen and (max-width:620px) {
+    .ecw { width:100% !important; }
+    .epad { padding-left:24px !important; padding-right:24px !important; }
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;background-color:#F4F2ED;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F4F2ED;">
+<tr><td align="center" style="padding:32px 12px;">
+<table role="presentation" class="ecw" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background-color:#FFFFFF;border:1px solid #E4E9E7;border-radius:10px;overflow:hidden;">
+  <tr>
+    <td align="center" style="background-color:#16352C;padding:36px 32px 32px;">
+      <div style="font-family:Georgia,'Times New Roman',serif;font-size:13px;letter-spacing:0.18em;text-transform:uppercase;color:#8FB3A4;padding-bottom:14px;">${eyebrow}</div>
+      <div style="font-family:Georgia,'Times New Roman',serif;font-size:28px;line-height:36px;color:#F7F5F0;">${headline}</div>
+    </td>
+  </tr>
+  <tr>
+    <td class="epad" style="padding:36px 40px 40px;">
+      ${body}
+      <p style="margin:32px 0 0;padding-top:20px;border-top:1px solid #E4E9E7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;line-height:19px;color:#8A9A93;">
+        The Coaching Collective &middot; Chicago, USA<br/>
+        <a href="mailto:info@thecoachingcollectiveonline.com" style="color:#8A9A93;">info@thecoachingcollectiveonline.com</a>
+      </p>
+    </td>
+  </tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>
+`;
+
+const cardButton = (href: string, label: string) => `
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:20px;">
+    <tr><td align="center" bgcolor="#1A5843" style="border-radius:6px;">
+      <a href="${href}" style="display:inline-block;padding:14px 32px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;color:#FFFFFF;border-radius:6px;">${label}</a>
+    </td></tr>
+  </table>
+`;
+
 const templates: Record<string, (data: TemplateData) => { subject: string; html: string }> = {
   booking_confirmation: (d) => ({
     subject: `Your session with ${d.coachName} is confirmed`,
@@ -62,37 +120,71 @@ const templates: Record<string, (data: TemplateData) => { subject: string; html:
     `),
   }),
 
+  // Fires the instant signup() resolves, before onboarding — so `name` is
+  // whatever AuthContext derived from the email address, not a real display
+  // name yet. Kept short and warm on purpose: this is the "you're in"
+  // confirmation, not the full tour — that's a separate, later email.
   welcome_seeker: (d) => ({
-    subject: `Welcome to The Coaching Collective, ${d.name} 🌿`,
-    html: shell('Welcome 🌿', `
-      <p style="color:#374151;font-size:16px;">Hi ${d.name},</p>
-      <p style="color:#374151;">You're in. This is the beginning of something meaningful.</p>
-      <p style="color:#374151;">Start by exploring our coaches and finding the right match for you.</p>
-      ${button(`${d.appUrl}/coaches`, 'Find Your Coach →')}
+    subject: `You're in, ${d.name}`,
+    html: cardShell('You’re in', 'Thank you for joining us', `
+      <p style="margin:0 0 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:26px;color:#16352C;">
+        Hi ${d.name},
+      </p>
+      <p style="margin:0 0 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:26px;color:#5A6B64;">
+        Thank you for joining The Coaching Collective. We built this as a small,
+        curated group of coaches rather than an open marketplace — every coach
+        here is someone we'd point a friend toward.
+      </p>
+      <p style="margin:0 0 8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:26px;color:#5A6B64;">
+        Your journal and session notes are private by default — nobody sees them
+        but you, not even your coach unless you choose to share.
+      </p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#E9EFEC;border-radius:8px;margin-top:20px;">
+        <tr><td style="padding:20px 24px;">
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.11em;text-transform:uppercase;color:#4A7B68;padding-bottom:10px;">
+            Getting started
+          </div>
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:25px;color:#3F5B50;">
+            Browse coaches by specialty, then book a first session whenever you're ready — there's no rush and no obligation.
+          </div>
+        </td></tr>
+      </table>
+      ${cardButton(`${d.appUrl}/coaches`, 'Browse coaches')}
     `),
   }),
 
   // This template was requested by the signup flow but never existed, so every
   // coach signup got back a 400 "Unknown template: welcome_coach" and no email.
   welcome_coach: (d) => ({
-    subject: `Welcome to The Coaching Collective, ${d.name} 🌿`,
-    html: shell('Welcome to the Collective 🌿', `
-      <p style="color:#374151;font-size:16px;">Hi ${d.name},</p>
-      <p style="color:#374151;">
-        We're glad you're here. Your coach account is set up, and the next step is
-        building out your profile so seekers can find you.
+    subject: `You're in, ${d.name}`,
+    html: cardShell('You’re in', 'Thank you for joining as a coach', `
+      <p style="margin:0 0 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:26px;color:#16352C;">
+        Hi ${d.name},
       </p>
-      <div style="background:#F4EFE6;border-radius:12px;padding:20px;margin:20px 0;">
-        <p style="margin:0 0 10px;color:#12372A;font-weight:700;">Getting started</p>
-        <p style="margin:6px 0;color:#374151;">1. Complete your profile — bio, specialties and approach</p>
-        <p style="margin:6px 0;color:#374151;">2. Set your availability and session pricing</p>
-        <p style="margin:6px 0;color:#374151;">3. Submit for verification</p>
-      </div>
-      <p style="color:#374151;">
-        Once your profile is verified you'll appear in the directory and can start
-        receiving bookings. We'll email you the moment that happens.
+      <p style="margin:0 0 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:26px;color:#5A6B64;">
+        Thank you for joining The Coaching Collective. Clients pay you directly
+        through your own Stripe account — you keep 100%, we take no commission
+        and never touch the money.
       </p>
-      ${button(`${d.appUrl}/onboarding-coach`, 'Complete Your Profile →')}
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#E9EFEC;border-radius:8px;margin-top:8px;">
+        <tr><td style="padding:20px 24px;">
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.11em;text-transform:uppercase;color:#4A7B68;padding-bottom:10px;">
+            Before you're visible to clients
+          </div>
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:25px;color:#3F5B50;">
+            <strong style="color:#16352C;">1. Settings</strong> — photo, bio, specialties, rate<br/>
+            <strong style="color:#16352C;">2. Earnings</strong> — connect Stripe so you can be paid<br/>
+            <strong style="color:#16352C;">3. Availability</strong> — publish the hours you work
+          </div>
+        </td></tr>
+      </table>
+      <p style="margin:20px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;color:#5A6B64;">
+        Once those three are done and we've verified your profile, you'll appear
+        in the directory and can start receiving bookings — we'll email you the
+        moment that happens. A fuller walkthrough of the dashboard is on its way
+        separately.
+      </p>
+      ${cardButton(`${d.appUrl}/coach/settings`, 'Complete your profile')}
     `),
   }),
 
