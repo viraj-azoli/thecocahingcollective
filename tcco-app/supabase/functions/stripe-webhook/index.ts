@@ -95,7 +95,29 @@ serve(async (req) => {
         const sessionId = checkout.metadata?.tcco_session_id;
 
         if (!sessionId) {
-          console.error('checkout.session.completed with no tcco_session_id:', checkout.id);
+          // Check if this is a digital product checkout (e.g. Mindset Card Deck via Payment Link)
+          const customerEmail = checkout.customer_details?.email || checkout.customer_email;
+          const customerName = checkout.customer_details?.name || '';
+
+          if (customerEmail && checkout.payment_status === 'paid') {
+            console.log('Sending Mindset Card Deck delivery email via Brevo to:', customerEmail);
+            try {
+              await supabase.functions.invoke('send-email', {
+                body: {
+                  to: customerEmail,
+                  template: 'mindset_deck_delivery',
+                  data: {
+                    name: customerName,
+                    downloadUrl: 'https://www.thecoachingcollectiveonline.com/pages/assets/downloads/the-mindset-card-deck.pdf',
+                  },
+                },
+              });
+            } catch (err) {
+              console.error('Failed to send card deck email:', err);
+            }
+          } else {
+            console.log('checkout.session.completed with no tcco_session_id or customer email:', checkout.id);
+          }
           break;
         }
         if (checkout.payment_status !== 'paid') {

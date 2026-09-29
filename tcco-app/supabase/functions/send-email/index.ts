@@ -196,6 +196,38 @@ const templates: Record<string, (data: TemplateData) => { subject: string; html:
       ${button(`${d.appUrl}/coach/dashboard`, 'Go to Dashboard →')}
     `),
   }),
+
+  mindset_deck_delivery: (d) => ({
+    subject: 'Your Mindset Card Deck is here 🃏',
+    html: cardShell('Instant Download', 'Your Mindset Card Deck is here', `
+      <p style="margin:0 0 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:26px;color:#16352C;">
+        Hi ${d.name || 'there'},
+      </p>
+      <p style="margin:0 0 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:26px;color:#5A6B64;">
+        Thank you for purchasing <strong>The Mindset Card Deck</strong>. Pamela created these 54 reflection cards to offer a small, tangible way to reset your thinking, one prompt at a time.
+      </p>
+      <p style="margin:0 0 8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:26px;color:#5A6B64;">
+        Your deck is print-ready and formatted for easy viewing on any device. Download your high-resolution copy below:
+      </p>
+      ${cardButton(String(d.downloadUrl || 'https://www.thecoachingcollectiveonline.com/pages/assets/downloads/the-mindset-card-deck.pdf'), '📥 Download Card Deck (PDF)')}
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#E9EFEC;border-radius:8px;margin-top:24px;">
+        <tr><td style="padding:20px 24px;">
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.11em;text-transform:uppercase;color:#4A7B68;padding-bottom:10px;">
+            How to use your deck
+          </div>
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;line-height:24px;color:#3F5B50;">
+            • <strong>Digital:</strong> Save the PDF into Apple Books or Files to pull a card on the go.<br/>
+            • <strong>Print:</strong> Print double-sided on heavy cardstock to cut out physical cards.<br/>
+            • <strong>Practice:</strong> Pull one card every morning for two minutes of intentional reflection.
+          </div>
+        </td></tr>
+      </table>
+      <p style="margin:20px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;line-height:22px;color:#5A6B64;">
+        You can also access the download page anytime here:<br/>
+        <a href="https://www.thecoachingcollectiveonline.com/thank-you-mindset-deck.html" style="color:#1A5843;font-weight:500;">https://www.thecoachingcollectiveonline.com/thank-you-mindset-deck.html</a>
+      </p>
+    `),
+  }),
 };
 
 function isValidEmail(email: string): boolean {
