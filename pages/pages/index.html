@@ -1519,17 +1519,20 @@
       </div>
 
       <div class="col-md-6 col-lg-8 col-xl-6 pl-lg-0 px-xl-3">
-        <form action="https://api.web3forms.com/submit" method="POST"
+        <form class="js-home-newsletter-form"
+              action="https://afe40f08.sibforms.com/serve/MUIFAEjRSfWK8cAOTT9002AyFC9TG5vO6uIpFvUXPns_QdWCkhpLCCQ_Mz_r2Q4hj1PyHyPaIoj3XkY17BUWzag6uM2_vmvHfoOTu9GBhyqj5H2JQik9qeFDnkf59T578KQKn76Jw8niZYl2I_0U2mekPpwN75FO3B_YeNDclLQNVJ3gui9NEzc3FvYA9F9OagpooMbcosFRnQWEAA=="
+              method="POST"
+              target="sib-hidden-frame-home"
               data-zanim-xs='{"from":{"opacity":1,"x":30},"to":{"opacity":1,"x":0},"duration":1.5,"delay":0.1}'>
-          <input type="hidden" name="access_key" value="34ef2f77-896b-4212-abe4-92c92c4b8213">
-          <input type="hidden" name="subject" value="Newsletter Signup, The Coaching Collective">
-          <input type="hidden" name="redirect" value="https://www.thecoachingcollectiveonline.com/thank-you.html">
-          <input type="checkbox" name="botcheck" style="display:none;">
+          <input type="hidden" name="locale" value="en">
+          <div aria-hidden="true" style="position:absolute;left:-5000px;">
+            <input type="text" name="email_address_check" value="" tabindex="-1" autocomplete="off">
+          </div>
 
           <div class="floating-label-group floating-label-group-lg mb-0">
             <input class="floating-label-input border-0 form-control form-control-lg"
                    id="newsletter_email"
-                   name="email"
+                   name="EMAIL"
                    type="email"
                    placeholder="Your Email"
                    required />
@@ -1538,12 +1541,14 @@
 
             </label>
 
-            <button class="btn btn-input-icon" type="submit">
+            <button class="btn btn-input-icon" type="submit" aria-label="Subscribe">
               <span class="fas fa-arrow-right"></span>
             </button>
           </div>
 
+          <div class="js-home-newsletter-msg" style="display:none;margin-top:10px;padding:8px 14px;border-radius:6px;font-size:13px;line-height:1.4;background:rgba(255,255,255,0.15);backdrop-filter:blur(4px);color:#ffffff;border:1px solid rgba(255,255,255,0.25);"></div>
         </form>
+        <iframe name="sib-hidden-frame-home" id="sib-hidden-frame-home" style="display:none;width:0;height:0;border:0;"></iframe>
       </div>
 
     </div>
@@ -1769,6 +1774,64 @@
     <script src="../assets/js/theme.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARdVcREeBK44lIWnv5-iPijKqvlSAVwbw&callback=initMap" async></script>
 
+    <script>
+    /* Homepage newsletter signup — submits directly to Brevo's verified list form endpoint */
+    (function () {
+      var form = document.querySelector('.js-home-newsletter-form');
+      var iframe = document.getElementById('sib-hidden-frame-home');
+      if (!form) return;
+
+      var isSubmitting = false;
+
+      form.addEventListener('submit', function (e) {
+        var honeypot = form.querySelector('[name="email_address_check"]');
+        if (honeypot && honeypot.value) {
+          e.preventDefault();
+          return;
+        }
+
+        var button = form.querySelector('button[type="submit"]');
+        var msg = form.querySelector('.js-home-newsletter-msg');
+        isSubmitting = true;
+
+        if (button) {
+          button.disabled = true;
+          button.innerHTML = '<span class="fas fa-spinner fa-spin"></span>';
+        }
+        if (msg) msg.style.display = 'none';
+
+        setTimeout(function () {
+          if (isSubmitting) {
+            handleSuccess();
+          }
+        }, 1200);
+      });
+
+      if (iframe) {
+        iframe.addEventListener('load', function () {
+          if (isSubmitting) {
+            handleSuccess();
+          }
+        });
+      }
+
+      function handleSuccess() {
+        isSubmitting = false;
+        var button = form.querySelector('button[type="submit"]');
+        var msg = form.querySelector('.js-home-newsletter-msg');
+        form.reset();
+
+        if (button) {
+          button.disabled = false;
+          button.innerHTML = '<span class="fas fa-arrow-right"></span>';
+        }
+        if (msg) {
+          msg.innerHTML = '<i class="fas fa-check-circle" style="color:#a8e6cf;margin-right:6px;"></i><strong>You\'re in!</strong> Check your inbox for a welcome email.';
+          msg.style.display = 'block';
+        }
+      }
+    })();
+    </script>
   </body>
 
 </html>
