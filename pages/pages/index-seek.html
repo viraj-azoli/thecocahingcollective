@@ -922,6 +922,23 @@
         <!-- PODCAST 1 -->
         <div class="col-sm-6 col-lg-4 px-2 sortable-item photography mb-3">
           <div class="hoverdir-item position-relative rounded overflow-hidden">
+            <a class="d-block" href="https://www.youtube.com/watch?v=DZu5JOdnuag" target="_blank" rel="noopener noreferrer">
+              <img class="img-fluid rounded" src="https://i.ytimg.com/vi/DZu5JOdnuag/hqdefault.jpg" alt="What if feeling lost is actually the beginning of finding your way? — The Listening Room podcast episode" />
+              <div class="hoverdir-item-content">
+                <div class="h-100 d-flex flex-center p-3 hoverdir-text">
+                  <div class="text-700">
+                    <h3 class="text-white lh-1 fs-2">What If Feeling Lost Is the Beginning?</h3>
+                    <p class="ls-0 mb-0" style="color: white !important;">Navigating transitions &amp; finding your way, with Claire Fitzsimmons</p>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- PODCAST 2 -->
+        <div class="col-sm-6 col-lg-4 px-2 sortable-item photography mb-3">
+          <div class="hoverdir-item position-relative rounded overflow-hidden">
             <a class="d-block" href="https://www.youtube.com/watch?v=-CxcUKyjIVY" target="_blank" rel="noopener noreferrer">
               <img class="img-fluid rounded" src="https://i.ytimg.com/vi/-CxcUKyjIVY/hqdefault.jpg" alt="Your Age Isn't the Limit — The Listening Room podcast episode" />
               <div class="hoverdir-item-content">
@@ -1679,24 +1696,25 @@
       <div class="col-lg-5">
         <h5 class="mb-4">Share what’s on your mind</h5>
 
-        <form class="zform text-left" method="post">
-          <input type="hidden" name="to" value="info@thecoachingcollectiveonline.com" />
+        <form class="text-left" action="https://api.web3forms.com/submit" method="POST">
+          <input type="hidden" name="access_key" value="34ef2f77-896b-4212-abe4-92c92c4b8213">
+          <input type="hidden" name="subject" value="New Message, TCCO Seeker Homepage">
+          <input type="hidden" name="redirect" value="https://www.thecoachingcollectiveonline.com/thank-you.html">
+          <input type="checkbox" name="botcheck" style="display:none;">
 
           <div class="form-group mb-3">
-            <input class="fs-0 form-control" type="text" placeholder="Your Name" required="required" />
+            <input class="fs-0 form-control" type="text" name="name" placeholder="Your Name" required />
           </div>
 
           <div class="form-group mb-3">
-            <input class="fs-0 form-control" type="email" placeholder="Your Email" required="required" />
+            <input class="fs-0 form-control" type="email" name="email" placeholder="Your Email" required />
           </div>
 
           <div class="form-group mb-3">
-            <textarea class="fs-0 form-control contact-message" rows="8"
+            <textarea class="fs-0 form-control contact-message" name="message" rows="8"
                       placeholder="You can share anything, what you're feeling, what you're looking for, or even just where to start..."
-                      required="required"></textarea>
+                      required></textarea>
           </div>
-
-          <div class="zform-feedback my-2"></div>
 
           <button class="btn btn-block btn-dark hvr-sweep-top" type="submit">
             Send Message →
