@@ -113,5 +113,20 @@ h1 em{font-style:italic;color:var(--green-light);}
     </div>
   </div>
 
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      if (params.get('type') === 'message') {
+        document.querySelector('h1').innerHTML = 'Thank You for <em>Reaching Out</em>';
+        document.querySelector('.subtitle').textContent = 'Your message has been received with care. We typically respond within 1–2 business days.';
+        var step1 = document.querySelectorAll('.step-text')[0];
+        if (step1) {
+          step1.querySelector('h4').textContent = 'Delivered to our team';
+          step1.querySelector('p').textContent = 'Your message has landed directly in our inbox.';
+        }
+      }
+    })();
+  </script>
+
 </body>
 </html>
